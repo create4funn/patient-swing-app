@@ -1,6 +1,8 @@
 package view;
 
+import Card.SmartCardWord;
 import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -9,9 +11,8 @@ import javax.swing.UIManager;
  */
 public class PatientForm extends javax.swing.JFrame {
 
-    /**
-     * Creates new form patientForm2
-     */
+    private boolean isConnect = false;
+    private SmartCardWord card = new SmartCardWord();
     public PatientForm() {
         initComponents();
     }
@@ -46,7 +47,7 @@ public class PatientForm extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnConnect = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
@@ -137,10 +138,15 @@ public class PatientForm extends javax.swing.JFrame {
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Đăng xuất");
 
-        jButton2.setBackground(new java.awt.Color(255, 153, 153));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Kết nối");
+        btnConnect.setBackground(new java.awt.Color(255, 153, 153));
+        btnConnect.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnConnect.setForeground(new java.awt.Color(255, 255, 255));
+        btnConnect.setText("Kết nối");
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConnectActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -185,7 +191,7 @@ public class PatientForm extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnChangeInfo))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -239,7 +245,7 @@ public class PatientForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnChangeInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -393,6 +399,23 @@ public class PatientForm extends javax.swing.JFrame {
         a.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        // TODO add your handling code here:
+        if(isConnect == false){
+            if(card.connectCard()){
+                isConnect = true;
+                btnConnect.setText("Hủy kết nối");
+            }else{
+                JOptionPane.showMessageDialog(this, "Faile");
+            }
+        }else{
+            if(card.disconnect()){
+                isConnect = false;
+                btnConnect.setText("Kết nối");
+            }
+        }
+    }//GEN-LAST:event_btnConnectActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -413,8 +436,8 @@ public class PatientForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChangeInfo;
     private javax.swing.JButton btnChangePin;
+    private javax.swing.JButton btnConnect;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton7;

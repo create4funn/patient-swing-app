@@ -5,10 +5,11 @@
         <group>
             <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/view/InputMoney.java</file>
             <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/view/ChangePin.java</file>
+            <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/Card/SmartCardWord.java</file>
             <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/view/AddInfomationForm.java</file>
             <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/view/PatientForm.java</file>
-            <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/view/formLogin.java</file>
             <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/view/AccountForm.java</file>
+            <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/icon/connect_icon.png</file>
             <file>file:/C:/Users/DELL/Documents/NetBeansProjects/PatientSmartCard/src/view/MenuAdmin.java</file>
         </group>
     </open-files>
