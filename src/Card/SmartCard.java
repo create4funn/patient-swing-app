@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  *
  * @author DELL
  */
-public class SmartCardWord {
+public class SmartCard {
     public static final byte[] AID_APPLET = {(byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x00, (byte) 0x00};
     private Card card;
     private TerminalFactory factory;
@@ -21,7 +21,7 @@ public class SmartCardWord {
     private List<CardTerminal> terminals;
     private ResponseAPDU response;
 
-    public SmartCardWord() {
+    public SmartCard() {
     }
 
     public boolean connectCard() {
@@ -34,7 +34,7 @@ public class SmartCardWord {
             if (channel == null) {
                 return false;
             }
-            response = channel.transmit(new CommandAPDU(0x00, (byte) 0x00, 0x00, 0x00, AID_APPLET));
+            response = channel.transmit(new CommandAPDU(0x00, (byte) 0xA4, 0x04, 0x00, AID_APPLET));
             String check = Integer.toHexString(response.getSW());
             if (check.equals("9000")) {
                 return true;
