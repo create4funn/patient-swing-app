@@ -1,7 +1,8 @@
 package view;
 
-import Card.SmartCardWord;
+import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.Color;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -12,7 +13,7 @@ import javax.swing.UIManager;
 public class PatientForm extends javax.swing.JFrame {
 
     private boolean isConnect = false;
-    private SmartCardWord card = new SmartCardWord();
+    private SmartCard card = new SmartCard();
     public PatientForm() {
         initComponents();
     }
@@ -401,17 +402,29 @@ public class PatientForm extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         // TODO add your handling code here:
-        if(isConnect == false){
+            if(!isConnect){
             if(card.connectCard()){
                 isConnect = true;
-                btnConnect.setText("Hủy kết nối");
-            }else{
-                JOptionPane.showMessageDialog(this, "Faile");
+                //Đoạn này là để chỉnh hiển thị nút
+                btnConnect.setText("Ngắt kết nối");
+                btnConnect.setForeground(Color.RED);
+                btnConnect.setEnabled(true);
             }
-        }else{
+            else{
+                JOptionPane.showMessageDialog(this, "Chưa connect được đến applet");
+                isConnect = false;
+                //Đoạn này là để chỉnh hiển thị nút
+                btnConnect.setText("Kết nối");
+                btnConnect.setForeground(Color.BLACK);
+            }
+        }        
+        else{
             if(card.disconnect()){
                 isConnect = false;
+                //Đoạn này là để chỉnh hiển thị nút
                 btnConnect.setText("Kết nối");
+                btnConnect.setForeground(Color.BLACK);
+                btnConnect.setEnabled(false);
             }
         }
     }//GEN-LAST:event_btnConnectActionPerformed
