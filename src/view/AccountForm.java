@@ -4,7 +4,10 @@
  */
 package view;
 
+import Card.SmartCard;
+import java.awt.Color;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 
@@ -22,6 +25,8 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
     }
 
+    SmartCard card = new SmartCard();
+    boolean isConnect = false;
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,6 +76,11 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConnect.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConnectActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnConnect);
 
         btnAddCard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_add_40px.png"))); // NOI18N
@@ -143,6 +153,35 @@ public class AccountForm extends javax.swing.JInternalFrame {
         AddInfomationForm a = new AddInfomationForm((JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
         a.setVisible(true);
     }//GEN-LAST:event_btnAddCardActionPerformed
+
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        // TODO add your handling code here:
+            if(!isConnect){
+            if(card.connectCard()){
+                isConnect = true;
+                //Đoạn này là để chỉnh hiển thị nút
+                btnConnect.setText("Ngắt kết nối");
+                btnConnect.setForeground(Color.RED);
+                btnConnect.setEnabled(true);
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Chưa connect được đến applet");
+                isConnect = false;
+                //Đoạn này là để chỉnh hiển thị nút
+                btnConnect.setText("Kết nối");
+                btnConnect.setForeground(Color.BLACK);
+            }
+        }        
+        else{
+            if(card.disconnect()){
+                isConnect = false;
+                //Đoạn này là để chỉnh hiển thị nút
+                btnConnect.setText("Kết nối");
+                btnConnect.setForeground(Color.BLACK);
+                btnConnect.setEnabled(false);
+            }
+        }
+    }//GEN-LAST:event_btnConnectActionPerformed
 
 
 

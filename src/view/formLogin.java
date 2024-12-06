@@ -1,6 +1,7 @@
 package view;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import Card.SmartCard;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
