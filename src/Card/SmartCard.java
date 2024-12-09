@@ -147,6 +147,37 @@ public class SmartCard {
         }
     }
 
+    public boolean updatePatientPin(String newPin) {
+        try {
+            // Convert the new PIN string to a byte array
+            byte[] pinBytes = ConvertStringToByteArr(newPin);
+
+            // Create the APDU command for updating the PIN
+            byte[] command = new byte[5 + pinBytes.length]; // Header (5 bytes) + PIN data
+            command[0] = (byte) 0x00; // CLA
+            command[1] = (byte) 0x31; // INS for UPDATE_PIN
+            command[2] = (byte) 0x00; // P1
+            command[3] = (byte) 0x00; // P2
+            command[4] = (byte) pinBytes.length; // Lc: length of the new PIN
+            System.arraycopy(pinBytes, 0, command, 5, pinBytes.length); // Append PIN data
+
+            // Send the command APDU to the applet
+            ResponseAPDU response = sendCommandAPDU(command);
+
+            // Check the response status word (SW)
+            if (response != null && response.getSW() == 0x9000) {
+                System.out.println("Patient PIN updated successfully.");
+                return true;
+            } else {
+                System.out.println("Failed to update PIN, SW: " + Integer.toHexString(response.getSW()));
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Error updating PIN: " + e);
+            return false;
+        }
+    }
+
     public boolean CheckPin(String userPin) {
         try {
             // Convert the PIN string to a byte array
@@ -164,18 +195,27 @@ public class SmartCard {
             // Send the command APDU to the applet
             ResponseAPDU response = sendCommandAPDU(command);
 
-            // Check the response status word (SW)
+            // Check the response status word (SW) and data
             if (response != null) {
+                byte[] responseBytes = response.getBytes();
                 int sw = response.getSW();
-                if (sw == 0x9000) {
+
+                // Check for correct PIN
+                if (responseBytes.length >= 3 && responseBytes[0] == (byte) 0x00 && sw == 0x9000) {
+                    isCardBlocked = false; // Card is not blocked
                     System.out.println("PIN verified successfully.");
                     return true;
-                } else if (sw == 0x6983) {
+                } // Check for wrong PIN
+                else if (responseBytes.length >= 3 && responseBytes[0] == (byte) 0x01 && sw == 0x9000) {
+                    System.out.println("Incorrect PIN entered.");
+                    return false;
+                } // Check if the card is blocked
+                else if (sw == 0x6983) {
+                    isCardBlocked = true; // Card is blocked
                     System.out.println("Card is blocked.");
-                    isCardBlocked = true;
                     return false;
                 } else {
-                    System.out.println("PIN verification failed. SW: " + Integer.toHexString(sw));
+                    System.out.println("Unexpected response. SW: " + Integer.toHexString(sw));
                     return false;
                 }
             } else {
@@ -187,7 +227,7 @@ public class SmartCard {
             return false;
         }
     }
-    
+
     // Method to convert byte array to string array using a delimiter
     /* Mảng Byte sẽ được chuyển sang mảng String, thứ tự các giá trị trong mảng String như sau:
         String[0]: Hoten

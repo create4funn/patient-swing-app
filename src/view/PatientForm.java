@@ -12,12 +12,27 @@ import javax.swing.UIManager;
  */
 public class PatientForm extends javax.swing.JFrame {
 
-    private boolean isConnect = false;
+    String[] patientInfo;
     private SmartCard card = new SmartCard();
+
     public PatientForm() {
         initComponents();
+        init();
     }
 
+    private void init(){
+        card.connectCard();
+        String[] patientInfo;
+        patientInfo = card.getPatientInfo();
+
+        jhoTen.setText(patientInfo[0]);
+        jNgaySinh.setText(patientInfo[1]);
+        jQueQuan.setText(patientInfo[2]);
+        jGioiTinh.setText(patientInfo[3]);
+        jMaBenhNhan.setText(patientInfo[4]);
+        jSdt.setText(patientInfo[5]);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -136,7 +151,7 @@ public class PatientForm extends javax.swing.JFrame {
         btnConnect.setBackground(new java.awt.Color(255, 153, 153));
         btnConnect.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnConnect.setForeground(new java.awt.Color(255, 255, 255));
-        btnConnect.setText("Kết nối");
+        btnConnect.setText("Làm mới");
         btnConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConnectActionPerformed(evt);
@@ -395,38 +410,15 @@ public class PatientForm extends javax.swing.JFrame {
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         // TODO add your handling code here:
         String[] patientInfo;
-            if(!isConnect){
-            if(card.connectCard()){
-                patientInfo = card.getPatientInfo();
-                
-                jhoTen.setText(patientInfo[0]);
-                jNgaySinh.setText(patientInfo[1]);
-                jQueQuan.setText(patientInfo[2]);
-                jGioiTinh.setText(patientInfo[3]);
-                jMaBenhNhan.setText(patientInfo[4]);
-                jSdt.setText(patientInfo[5]);
-                isConnect = true;
-                //Đoạn này là để chỉnh hiển thị nút
-                btnConnect.setText("Ngắt kết nối");
-                btnConnect.setForeground(Color.RED);
-                btnConnect.setEnabled(true);
-            }
-            else{
-                JOptionPane.showMessageDialog(this, "Chưa connect được đến applet");
-                isConnect = false;
-                //Đoạn này là để chỉnh hiển thị nút
-                btnConnect.setText("Kết nối");
-                btnConnect.setForeground(Color.BLACK);
-            }
-        }        
-        else{
-            if(card.disconnect()){
-                isConnect = false;
-                //Đoạn này là để chỉnh hiển thị nút
-                btnConnect.setText("Kết nối");
-                btnConnect.setForeground(Color.BLACK);
-            }
-        }
+        patientInfo = card.getPatientInfo();
+
+        jhoTen.setText(patientInfo[0]);
+        jNgaySinh.setText(patientInfo[1]);
+        jQueQuan.setText(patientInfo[2]);
+        jGioiTinh.setText(patientInfo[3]);
+        jMaBenhNhan.setText(patientInfo[4]);
+        jSdt.setText(patientInfo[5]);
+
     }//GEN-LAST:event_btnConnectActionPerformed
 
     /**
@@ -444,7 +436,7 @@ public class PatientForm extends javax.swing.JFrame {
                 new PatientForm().setVisible(true);
             }
         });
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

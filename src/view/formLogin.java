@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-
 /**
  *
  * @author DELL
@@ -16,9 +15,8 @@ public class formLogin extends javax.swing.JFrame {
     /**
      * Creates new form formLogin
      */
-    
     private SmartCard card = new SmartCard();
-    
+
     public formLogin() {
         initComponents();
         setLocationRelativeTo(null);
@@ -30,7 +28,8 @@ public class formLogin extends javax.swing.JFrame {
             System.out.println("Connect thành công");
             //JOptionPane.showMessageDialog(this, "Connect thành công");
         } else {
-            JOptionPane.showMessageDialog(this, "Chưa connect được đến applet");           
+            JOptionPane.showMessageDialog(this, "Chưa connect được đến applet");
+            this.dispose(); // Close the frame if the connection fails
         }
     }
 
@@ -152,38 +151,43 @@ public class formLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPasswordActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-    // Get the user-entered PIN
-    String userPin = txtPassword.getText();
+        // Get the user-entered PIN
+        String userPin = txtPassword.getText();
 
-    try {
-        // Initialize the SmartCard instance and attempt to connect to the card
-        if (!card.connectCard()) {
-            JOptionPane.showMessageDialog(this, "Failed to connect to the card.");
-            return;
-        }
-
-        // Check the PIN using the SmartCard class
-        boolean isPinValid = card.CheckPin(userPin);
-
-        if (isPinValid) {
-            // Login successful
-            JOptionPane.showMessageDialog(this, "Login successful!");
-        } else {
-            // Check if the card is blocked
-            if (card.isCardBlocked == true) {
-                // Display a specific message for card blockage
-                JOptionPane.showMessageDialog(this, "Wrong input more than 3 times. Card is blocked.");
-            } else {
-                // General login failure message
-                JOptionPane.showMessageDialog(this, "Login failed. Incorrect PIN.");
+        try {
+            // Initialize the SmartCard instance and attempt to connect to the card
+            if (!card.connectCard()) {
+                JOptionPane.showMessageDialog(this, "Failed to connect to the card.");
+                return;
             }
+
+            // Check the PIN using the SmartCard class
+            boolean isPinValid = card.CheckPin(userPin);
+
+            if (isPinValid) {
+                // Login successful
+                JOptionPane.showMessageDialog(this, "Login successful!");
+
+                // Create a new instance of PatientForm
+                PatientForm patientForm = new PatientForm();
+                patientForm.setVisible(true); // Show the new form
+
+                // Dispose of the current JFrame (login form)
+                this.dispose();
+            } else {
+                // Check if the card is blocked
+                if (card.isCardBlocked) {
+                    // Display a specific message for card blockage
+                    JOptionPane.showMessageDialog(this, "Wrong input more than 3 times. Card is blocked.");
+                } else {
+                    // General login failure message
+                    JOptionPane.showMessageDialog(this, "Login failed. Incorrect PIN.");
+                }
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage());
         }
-
-        // Disconnect the card after operations
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage());
-    }
 
     }//GEN-LAST:event_btnLoginActionPerformed
 
@@ -191,7 +195,7 @@ public class formLogin extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             // Enter was pressed. Your code goes here.
-            
+
         }
     }//GEN-LAST:event_txtPasswordKeyPressed
 
