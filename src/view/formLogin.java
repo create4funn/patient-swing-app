@@ -62,7 +62,7 @@ public class formLogin extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Mã Pin");
+        jLabel3.setText("Vui Lòng nhập mã Pin");
 
         txtPassword.setBackground(new java.awt.Color(13, 36, 51));
         txtPassword.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -122,7 +122,7 @@ public class formLogin extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addComponent(jLabel1)
-                .addGap(51, 51, 51)
+                .addGap(153, 153, 153)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -130,7 +130,7 @@ public class formLogin extends javax.swing.JFrame {
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(93, Short.MAX_VALUE))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -152,8 +152,39 @@ public class formLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPasswordActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        // TODO add your handling code here:
-        
+    // Get the user-entered PIN
+    String userPin = txtPassword.getText();
+
+    try {
+        // Initialize the SmartCard instance and attempt to connect to the card
+        if (!card.connectCard()) {
+            JOptionPane.showMessageDialog(this, "Failed to connect to the card.");
+            return;
+        }
+
+        // Check the PIN using the SmartCard class
+        boolean isPinValid = card.CheckPin(userPin);
+
+        if (isPinValid) {
+            // Login successful
+            JOptionPane.showMessageDialog(this, "Login successful!");
+        } else {
+            // Check if the card is blocked
+            if (card.isCardBlocked == true) {
+                // Display a specific message for card blockage
+                JOptionPane.showMessageDialog(this, "Wrong input more than 3 times. Card is blocked.");
+            } else {
+                // General login failure message
+                JOptionPane.showMessageDialog(this, "Login failed. Incorrect PIN.");
+            }
+        }
+
+        // Disconnect the card after operations
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage());
+    }
+
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void txtPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyPressed

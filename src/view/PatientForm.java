@@ -117,22 +117,16 @@ public class PatientForm extends javax.swing.JFrame {
         jLabel1.setText("1000000d");
 
         jhoTen.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jhoTen.setText("jLabel4");
 
         jNgaySinh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jNgaySinh.setText("jLabel6");
 
         jQueQuan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jQueQuan.setText("jLabel7");
 
         jSdt.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jSdt.setText("jLabel8");
 
         jGioiTinh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jGioiTinh.setText("jLabel9");
 
         jMaBenhNhan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jMaBenhNhan.setText("jLabel10");
 
         jButton1.setBackground(new java.awt.Color(255, 51, 51));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -190,15 +184,13 @@ public class PatientForm extends javax.swing.JFrame {
                 .addGap(0, 26, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnChangeInfo))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnChangePin)
-                        .addGap(42, 42, 42)
-                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(btnChangePin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnConnect, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
+                .addGap(37, 37, 37)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnChangeInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(46, 46, 46))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -406,6 +398,7 @@ public class PatientForm extends javax.swing.JFrame {
             if(!isConnect){
             if(card.connectCard()){
                 patientInfo = card.getPatientInfo();
+                
                 jhoTen.setText(patientInfo[0]);
                 jNgaySinh.setText(patientInfo[1]);
                 jQueQuan.setText(patientInfo[2]);

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Card;
 
 /**
@@ -16,65 +12,86 @@ public class Patient {
     private String mabn;
     private String gioitinh;
     private String mapin;
+    private String balance;
+    private String picture;
 
-    public Patient(String hoten, String ngaysinh, String quequan, String mabn, String gioitinh, String mapin) {
-        this.hoten = hoten;
-        this.ngaysinh = ngaysinh;
-        this.quequan = quequan;
-        this.mabn = mabn;
-        this.gioitinh = gioitinh;
-        this.mapin = mapin;
+    // Private static instance of the class
+    private static Patient instance;
+
+    // Private constructor to prevent instantiation
+    private Patient() {
     }
 
-    public Patient() {
+    // Public method to provide the Singleton instance
+    public static Patient getInstance() {
+        if (instance == null) {
+            instance = new Patient();
+        }
+        return instance;
     }
 
+    // Getters and setters for fields
     public String getHoten() {
         return hoten;
-    }
-
-    public String getNgaysinh() {
-        return ngaysinh;
-    }
-
-    public String getQuequan() {
-        return quequan;
-    }
-
-    public String getMabn() {
-        return mabn;
-    }
-
-    public String getGioitinh() {
-        return gioitinh;
-    }
-
-    public String getMapin() {
-        return mapin;
     }
 
     public void setHoten(String hoten) {
         this.hoten = hoten;
     }
 
+    public String getNgaysinh() {
+        return ngaysinh;
+    }
+
     public void setNgaysinh(String ngaysinh) {
         this.ngaysinh = ngaysinh;
+    }
+
+    public String getQuequan() {
+        return quequan;
     }
 
     public void setQuequan(String quequan) {
         this.quequan = quequan;
     }
 
+    public String getMabn() {
+        return mabn;
+    }
+
     public void setMabn(String mabn) {
         this.mabn = mabn;
+    }
+
+    public String getGioitinh() {
+        return gioitinh;
     }
 
     public void setGioitinh(String gioitinh) {
         this.gioitinh = gioitinh;
     }
 
+    public String getMapin() {
+        return mapin;
+    }
+
     public void setMapin(String mapin) {
         this.mapin = mapin;
     }
-    
+
+    public String getBalance() {
+        return balance;
+    }
+
+    public void setBalance(String balance) {
+        this.balance = balance;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 }

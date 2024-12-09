@@ -25,6 +25,7 @@ public class SmartCard {
     private CardTerminal terminal;
     private List<CardTerminal> terminals;
     private ResponseAPDU response;
+    public static boolean isCardBlocked = false;
 
     public SmartCard() {
     }
@@ -91,6 +92,102 @@ public class SmartCard {
         }
     }
 
+    // Method to get patient info from the applet
+    public String[] getPatientPin() {
+        byte[] command; // Example command, adjust as needed
+        command = new byte[]{(byte) 0x00, (byte) 0x12, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        ResponseAPDU response = sendCommandAPDU(command);
+        if (response != null && response.getSW() == 0x9000) {
+            byte[] data = response.getData();
+            return convertByteToStringArr(data, '.');
+        } else {
+            System.out.println("Failed to get patient info, SW: " + Integer.toHexString(response.getSW()));
+            return null;
+        }
+    }
+
+    public boolean updatePatientInfo(String hoTen, String ngaySinh, String queQuan, String gioiTinh, String maBenhNhan, String sdt, String maPin) {
+        try {
+            // Build the patient info string with delimiters in the reverse order (to match init_bn)
+            StringBuilder dataBuilder = new StringBuilder();
+            dataBuilder.append(hoTen).append(".") // hoTen
+                    .append(ngaySinh).append(".") // ngaySinh
+                    .append(queQuan).append(".") // queQuan
+                    .append(gioiTinh).append(".") // gioiTinh
+                    .append(maBenhNhan).append(".") // maBenhNhan
+                    .append(sdt).append(".") // sdt
+                    .append(maPin).append(".");  // maPin (last field)
+
+            // Convert the string to a byte array
+            byte[] dataBytes = ConvertStringToByteArr(dataBuilder.toString());
+
+            // Create the APDU command with the constructed byte array
+            byte[] command = new byte[5 + dataBytes.length]; // Header (5 bytes) + data
+            command[0] = (byte) 0x00; // CLA
+            command[1] = (byte) 0x10; // INS for UPDATE_BN
+            command[2] = (byte) 0x00; // P1
+            command[3] = (byte) 0x00; // P2
+            command[4] = (byte) dataBytes.length; // Lc: length of the data
+            System.arraycopy(dataBytes, 0, command, 5, dataBytes.length); // Append data
+
+            // Send the command APDU to the applet
+            ResponseAPDU response = sendCommandAPDU(command);
+
+            // Check the response status word (SW)
+            if (response != null && response.getSW() == 0x9000) {
+                System.out.println("Patient info updated successfully.");
+                return true;
+            } else {
+                System.out.println("Failed to update patient info, SW: " + Integer.toHexString(response.getSW()));
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Error updating patient info: " + e);
+            return false;
+        }
+    }
+
+    public boolean CheckPin(String userPin) {
+        try {
+            // Convert the PIN string to a byte array
+            byte[] pinBytes = ConvertStringToByteArr(userPin);
+
+            // Create the APDU command with the PIN
+            byte[] command = new byte[5 + pinBytes.length]; // Header (5 bytes) + PIN data
+            command[0] = (byte) 0x00; // CLA
+            command[1] = (byte) 0x20; // INS for VERIFY_PIN
+            command[2] = (byte) 0x00; // P1
+            command[3] = (byte) 0x00; // P2
+            command[4] = (byte) pinBytes.length; // Lc: length of the PIN
+            System.arraycopy(pinBytes, 0, command, 5, pinBytes.length); // Append PIN data
+
+            // Send the command APDU to the applet
+            ResponseAPDU response = sendCommandAPDU(command);
+
+            // Check the response status word (SW)
+            if (response != null) {
+                int sw = response.getSW();
+                if (sw == 0x9000) {
+                    System.out.println("PIN verified successfully.");
+                    return true;
+                } else if (sw == 0x6983) {
+                    System.out.println("Card is blocked.");
+                    isCardBlocked = true;
+                    return false;
+                } else {
+                    System.out.println("PIN verification failed. SW: " + Integer.toHexString(sw));
+                    return false;
+                }
+            } else {
+                System.out.println("No response from the card.");
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Error verifying PIN: " + e);
+            return false;
+        }
+    }
+    
     // Method to convert byte array to string array using a delimiter
     /* Mảng Byte sẽ được chuyển sang mảng String, thứ tự các giá trị trong mảng String như sau:
         String[0]: Hoten
@@ -99,7 +196,7 @@ public class SmartCard {
         String[3]: GioiTinh
         String[4]: MaBenhNhan(SoBHYT)
         String[5]: SDT
-    */
+     */
     public static String[] convertByteToStringArr(byte[] byteArray, char delimiter) {
         // Convert byte array to string
         String str = new String(byteArray);
@@ -128,7 +225,19 @@ public class SmartCard {
 //        for (int i = 0; i < result.length; i++) {
 //            System.out.println("String[" + i + "]: " + result[i]);
 //        }
-
         return result;
+    }
+
+    // Method to convert a string to a byte array
+    public static byte[] ConvertStringToByteArr(String input) {
+        // Initialize aA byte array to hold the hexadecimal representation of the input string
+        byte[] byteArray = new byte[input.length()];
+
+        // Convert each character to a byte
+        for (int i = 0; i < input.length(); i++) {
+            byteArray[i] = (byte) input.charAt(i);
+        }
+
+        return byteArray;
     }
 }
