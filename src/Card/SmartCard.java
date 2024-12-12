@@ -1,8 +1,14 @@
 package Card;
 
 import java.awt.HeadlessException;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
 import javax.smartcardio.CardException;
@@ -35,7 +41,7 @@ public class SmartCard {
             factory = TerminalFactory.getDefault();
             terminals = factory.terminals().list();
             terminal = terminals.get(0);
-            card = terminal.connect("T=0");
+            card = terminal.connect("T=1");
             channel = card.getBasicChannel();
             if (channel == null) {
                 return false;
@@ -106,6 +112,38 @@ public class SmartCard {
         }
     }
 
+// Method to get patient picture from the applet
+    public BufferedImage GetPatientPicture() {
+        byte[] command;
+        // Example command for APDU extended with 0x23, adjust as needed for your specific applet
+        command = new byte[]{(byte) 0x00, (byte) 0x23, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+
+        // Send the APDU command to get the picture data
+        ResponseAPDU response = sendCommandAPDU(command);
+
+        // Check response status
+        if (response != null && response.getSW() == 0x9000) {
+            byte[] imageData = response.getData();
+
+            // Debug: Print the number of bytes received
+            System.out.println("Received " + imageData.length + " bytes.");
+
+            // Debug: Print the content of the received bytes
+            System.out.print("Data content (hex): ");
+            for (byte b : imageData) {
+                System.out.printf("%02X ", b);
+            }
+            System.out.println();
+
+            // Convert the byte array into an image
+            return convertByteArrayToImage(imageData);
+        } else {
+            // Print error message if operation failed
+            System.out.println("Failed to get patient picture, SW: " + Integer.toHexString(response.getSW()));
+            return null;
+        }
+    }
+
     public boolean updatePatientInfo(String hoTen, String ngaySinh, String queQuan, String gioiTinh, String maBenhNhan, String sdt, String maPin) {
         try {
             // Build the patient info string with delimiters in the reverse order (to match init_bn)
@@ -155,7 +193,7 @@ public class SmartCard {
             // Create the APDU command for updating the PIN
             byte[] command = new byte[5 + pinBytes.length]; // Header (5 bytes) + PIN data
             command[0] = (byte) 0x00; // CLA
-            command[1] = (byte) 0x31; // INS for UPDATE_PIN
+            command[1] = (byte) 0x21; // INS for UPDATE_PIN
             command[2] = (byte) 0x00; // P1
             command[3] = (byte) 0x00; // P2
             command[4] = (byte) pinBytes.length; // Lc: length of the new PIN
@@ -174,6 +212,50 @@ public class SmartCard {
             }
         } catch (Exception e) {
             System.out.println("Error updating PIN: " + e);
+            return false;
+        }
+    }
+
+    public boolean updatePatientPicture(BufferedImage image) {
+        try {
+            byte[] pictureBytes = convertImageToByteArray(image);
+            if (pictureBytes == null) {
+                System.out.println("Failed to convert image to byte array.");
+                return false;
+            }
+
+            // Create extended APDU command
+            byte[] command = new byte[7 + pictureBytes.length];
+            command[0] = (byte) 0x00; // CLA
+            command[1] = (byte) 0x22; // INS for UPDATE_PICTURE
+            command[2] = (byte) 0x00; // P1
+            command[3] = (byte) 0x00; // P2
+            command[4] = (byte) 0x00; // Extended length indicator
+            command[5] = (byte) (pictureBytes.length >> 8); // Lc high byte
+            command[6] = (byte) (pictureBytes.length & 0xFF); // Lc low byte
+            System.arraycopy(pictureBytes, 0, command, 7, pictureBytes.length);
+
+            // Debug: Print the command APDU in hex
+            System.out.print("Command APDU (hex): ");
+            for (byte b : command) {
+                System.out.printf("%02X ", b);
+            }
+            System.out.println();
+
+            // Send the command APDU
+            ResponseAPDU response = sendCommandAPDU(command);
+
+            // Check response
+            if (response == null || response.getSW() != 0x9000) {
+                System.out.println("Failed to update picture, SW: "
+                        + (response != null ? Integer.toHexString(response.getSW()) : "null"));
+                return false;
+            }
+
+            System.out.println("Patient picture updated successfully.");
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error updating picture: " + e);
             return false;
         }
     }
@@ -270,14 +352,49 @@ public class SmartCard {
 
     // Method to convert a string to a byte array
     public static byte[] ConvertStringToByteArr(String input) {
-        // Initialize aA byte array to hold the hexadecimal representation of the input string
+        // Log the input string
+        System.out.println("Input String: " + input);
+
+        // Initialize a byte array to hold the hexadecimal representation of the input string
         byte[] byteArray = new byte[input.length()];
+        System.out.println("Initialized byte array of length: " + byteArray.length);
 
         // Convert each character to a byte
         for (int i = 0; i < input.length(); i++) {
+            // Log the character and its index
+            System.out.println("Processing character at index " + i + ": " + input.charAt(i));
+
+            // Convert the character to a byte and store it in the array
             byteArray[i] = (byte) input.charAt(i);
+
+            // Log the converted byte value
+            System.out.println("Converted byte: " + byteArray[i]);
         }
 
+        // Log the resulting byte array as a string
+        System.out.println("Resulting byte array: " + java.util.Arrays.toString(byteArray));
+
         return byteArray;
+    }
+
+    public BufferedImage convertByteArrayToImage(byte[] byteArray) {
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(byteArray);
+            return ImageIO.read(bis);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public byte[] convertImageToByteArray(BufferedImage image) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            return baos.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

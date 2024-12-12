@@ -2,7 +2,9 @@ package view;
 
 import Card.SmartCard;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -16,13 +18,17 @@ public class AddInfomationForm extends javax.swing.JDialog {
     /**
      * Creates new form AddInfomationForm
      */
-    private SmartCard card = new SmartCard();
+    private final SmartCard card = new SmartCard();
 
     public AddInfomationForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        init();
     }
-
+    
+    public void init(){
+        card.connectCard();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -249,16 +255,16 @@ public class AddInfomationForm extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    // Collect patient info from the UI components
-    String hoTen = jhoTen.getText();
-    String ngaySinh = jNgaySinh.getText();
-    String queQuan = jQueQuan.getText();
-    String maBenhNhan = jMaBenhNhan.getText();
-    String sdt = jSdt.getText();
-    String gioiTinh = (String) jGioiTinh.getSelectedItem();
-    String maPin = jMaPin.getText(); // Assuming this is needed for some authentication purposes
+        // Collect patient info from the UI components
+        String hoTen = jhoTen.getText();
+        String ngaySinh = jNgaySinh.getText();
+        String queQuan = jQueQuan.getText();
+        String maBenhNhan = jMaBenhNhan.getText();
+        String sdt = jSdt.getText();
+        String gioiTinh = (String) jGioiTinh.getSelectedItem();
+        String maPin = jMaPin.getText(); // Assuming this is needed for some authentication purposes
 
-    // Instantiate the SmartCard class and connect to the card
+        // Instantiate the SmartCard class and connect to the card
         card.connectCard();
         // Attempt to update the patient info
         boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt, maPin);
@@ -272,8 +278,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnChooseImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseImgActionPerformed
-        // TODO add your handling code here:
-        // Sử dụng JFileChooser để chọn file
+// Sử dụng JFileChooser để chọn file
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Ảnh (JPG, PNG)", "jpg", "jpeg", "png"));
         int result = fileChooser.showOpenDialog(this);
@@ -281,7 +286,20 @@ public class AddInfomationForm extends javax.swing.JDialog {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             displayImage(selectedFile.getAbsolutePath());
+
+            try {
+                // Read the image file into a BufferedImage
+                BufferedImage image = ImageIO.read(selectedFile);
+
+                // Convert the BufferedImage to a byte array
+                card.updatePatientPicture(image);
+                // Print or use the byte array
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
     }//GEN-LAST:event_btnChooseImgActionPerformed
 
     private void displayImage(String imagePath) {
@@ -365,4 +383,5 @@ public class AddInfomationForm extends javax.swing.JDialog {
     private java.awt.Label label6;
     private java.awt.Label label8;
     // End of variables declaration//GEN-END:variables
+
 }

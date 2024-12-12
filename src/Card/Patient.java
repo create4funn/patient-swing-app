@@ -1,9 +1,5 @@
 package Card;
 
-/**
- *
- * @author pc
- */
 public class Patient {
 
     private String hoten;
@@ -13,7 +9,7 @@ public class Patient {
     private String gioitinh;
     private String mapin;
     private String balance;
-    private String picture;
+    private byte[] picture; // Updated to byte[] to store binary image data
 
     // Private static instance of the class
     private static Patient instance;
@@ -87,11 +83,11 @@ public class Patient {
         this.balance = balance;
     }
 
-    public String getPicture() {
+    public byte[] getPicture() { // Getter for picture
         return picture;
     }
 
-    public void setPicture(String picture) {
+    public void setPicture(byte[] picture) { // Setter for picture
         this.picture = picture;
     }
 }
