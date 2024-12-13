@@ -81,13 +81,13 @@
                               </Group>
                               <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jNgaySinh" pref="203" max="32767" attributes="0"/>
                                   <Component id="jQueQuan" pref="203" max="32767" attributes="0"/>
                                   <Component id="jSdt" pref="203" max="32767" attributes="0"/>
                                   <Component id="jMaBenhNhan" pref="203" max="32767" attributes="0"/>
                                   <Component id="jhoTen" max="32767" attributes="0"/>
                                   <Component id="jGioiTinh" alignment="0" min="-2" pref="84" max="-2" attributes="0"/>
                                   <Component id="jMaPin" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jNgaySinh" alignment="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
@@ -116,9 +116,9 @@
                               <Component id="label3" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jNgaySinh" max="32767" attributes="0"/>
-                              <Component id="label4" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="label4" min="-2" pref="22" max="-2" attributes="0"/>
+                              <Component id="jNgaySinh" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -217,8 +217,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jhoTen">
         </Component>
-        <Component class="javax.swing.JTextField" name="jNgaySinh">
-        </Component>
         <Component class="javax.swing.JTextField" name="jQueQuan">
         </Component>
         <Component class="javax.swing.JTextField" name="jSdt">
@@ -303,6 +301,8 @@
             </DimensionLayout>
           </Layout>
         </Container>
+        <Component class="com.toedter.calendar.JDateChooser" name="jNgaySinh">
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel4">
