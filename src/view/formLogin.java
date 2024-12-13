@@ -2,6 +2,12 @@ package view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import Card.SmartCard;
+import entities.User;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import util.HibernateUtil;
+
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -21,7 +27,7 @@ public class formLogin extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
-    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -186,14 +192,21 @@ public class formLogin extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         // TODO add your handling code here:
-        
+        Session sessionFactory = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = sessionFactory.beginTransaction();
+        User user = new User();
+        user.setName("Hoang dz");
+        sessionFactory.save(user);
+        transaction.commit();
+        sessionFactory.close();
+        System.out.println("Save success");
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void txtPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             // Enter was pressed. Your code goes here.
-            
+
         }
     }//GEN-LAST:event_txtPasswordKeyPressed
 
