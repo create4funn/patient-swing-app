@@ -5,7 +5,6 @@
 package view;
 
 import Card.SmartCard;
-import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -18,6 +17,9 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
  */
 public class AccountForm extends javax.swing.JInternalFrame {
 
+    private boolean isConnect = false;
+    private SmartCard card = new SmartCard();
+    
     public AccountForm() {
         initComponents();
         BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
@@ -25,8 +27,6 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
     }
 
-    SmartCard card = new SmartCard();
-    boolean isConnect = false;
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,6 +44,8 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnAddCard = new javax.swing.JButton();
         btnChangeCard = new javax.swing.JButton();
         btnEditCard = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
 
         setBorder(null);
@@ -70,6 +72,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         jToolBar1.setBorder(javax.swing.BorderFactory.createTitledBorder("Chức năng"));
         jToolBar1.setRollover(true);
 
+        btnConnect.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/connect_icon.png"))); // NOI18N
         btnConnect.setText("Kết nối");
         btnConnect.setFocusable(false);
@@ -83,6 +86,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         });
         jToolBar1.add(btnConnect);
 
+        btnAddCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnAddCard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_add_40px.png"))); // NOI18N
         btnAddCard.setText("Thêm");
         btnAddCard.setFocusable(false);
@@ -96,6 +100,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         });
         jToolBar1.add(btnAddCard);
 
+        btnChangeCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnChangeCard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_edit_40px.png"))); // NOI18N
         btnChangeCard.setText("Sửa");
         btnChangeCard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -103,12 +108,31 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnChangeCard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(btnChangeCard);
 
+        btnEditCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnEditCard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_delete_40px.png"))); // NOI18N
         btnEditCard.setText("Xóa");
         btnEditCard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnEditCard.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnEditCard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(btnEditCard);
+
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Lock_icon (1).png"))); // NOI18N
+        jButton1.setText("Khóa");
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setMargin(new java.awt.Insets(2, 20, 2, 20));
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jButton1);
+
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Unlock icon.png"))); // NOI18N
+        jButton2.setText("Mở khóa");
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setMargin(new java.awt.Insets(2, 20, 2, 20));
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(jButton2);
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jTextField1.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
@@ -119,12 +143,12 @@ public class AccountForm extends javax.swing.JInternalFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(38, 38, 38)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addGap(32, 32, 32))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(66, 66, 66)
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(69, 69, 69)
+                .addGap(127, 127, 127)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -136,7 +160,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                         .addGap(31, 31, 31)
                         .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(44, 44, 44)
+                        .addGap(46, 46, 46)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(69, 69, 69)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -150,35 +174,29 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
     private void btnAddCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCardActionPerformed
         // TODO add your handling code here:
-        AddInfomationForm a = new AddInfomationForm((JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
-        a.setVisible(true);
+        if (isConnect) {
+            AddInfomationForm a = new AddInfomationForm((JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
+            a.setVisible(true);
+        }else{
+            JOptionPane.showMessageDialog(this, "Chưa connect đến applet");
+        }
+        
     }//GEN-LAST:event_btnAddCardActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        // TODO add your handling code here:
-            if(!isConnect){
-            if(card.connectCard()){
+        if (!isConnect) {
+            if (card.connectCard()) {
                 isConnect = true;
-                //Đoạn này là để chỉnh hiển thị nút
                 btnConnect.setText("Ngắt kết nối");
-                btnConnect.setForeground(Color.RED);
-                btnConnect.setEnabled(true);
-            }
-            else{
+            } else {
                 JOptionPane.showMessageDialog(this, "Chưa connect được đến applet");
                 isConnect = false;
-                //Đoạn này là để chỉnh hiển thị nút
                 btnConnect.setText("Kết nối");
-                btnConnect.setForeground(Color.BLACK);
             }
-        }        
-        else{
-            if(card.disconnect()){
+        } else {
+            if (card.disconnect()) {
                 isConnect = false;
-                //Đoạn này là để chỉnh hiển thị nút
                 btnConnect.setText("Kết nối");
-                btnConnect.setForeground(Color.BLACK);
-                btnConnect.setEnabled(false);
             }
         }
     }//GEN-LAST:event_btnConnectActionPerformed
@@ -193,6 +211,8 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnChangeCard;
     private javax.swing.JButton btnConnect;
     private javax.swing.JButton btnEditCard;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
