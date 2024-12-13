@@ -2,6 +2,11 @@ package view;
 
 import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
+import entities.User;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import util.HibernateUtil;
+
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -206,6 +211,13 @@ public class formLogin extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = session.beginTransaction();
+            User user = new User();
+            user.setName("hoang");
+            session.save(user);
+            transaction.commit();
+            session.close();
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
