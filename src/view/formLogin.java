@@ -1,5 +1,6 @@
 package view;
 
+import Card.Patient;
 import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
 import entities.User;
@@ -8,6 +9,7 @@ import org.hibernate.Transaction;
 import util.HibernateUtil;
 
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -30,10 +32,10 @@ public class formLogin extends javax.swing.JFrame {
 
     private void connectCard() {
         if (card.connectCard()) {
-            System.out.println("Connect thành công");
+            System.out.println("Kết nối thành công");
             //JOptionPane.showMessageDialog(this, "Connect thành công");
         } else {
-            JOptionPane.showMessageDialog(this, "Chưa connect được đến applet");
+            JOptionPane.showMessageDialog(this, "Chưa kết nối được đến applet");
             this.dispose(); // Close the frame if the connection fails
         }
     }
@@ -162,7 +164,7 @@ public class formLogin extends javax.swing.JFrame {
         try {
             // Initialize the SmartCard instance and attempt to connect to the card
             if (!card.connectCard()) {
-                JOptionPane.showMessageDialog(this, "Failed to connect to the card.");
+                JOptionPane.showMessageDialog(this, "Chưa kết nối được đến thẻ.");
                 return;
             }
 
@@ -171,7 +173,32 @@ public class formLogin extends javax.swing.JFrame {
 
             if (isPinValid) {
                 // Login successful
-                JOptionPane.showMessageDialog(this, "Login successful!");
+                JOptionPane.showMessageDialog(this, "Kết nối thành công");
+
+                // Initialize the Patient instance
+                Patient patient = Patient.getInstance();
+
+                // Retrieve patient information from the Java card
+                String[] patientInfo = card.getPatientInfo();
+                if (patientInfo != null && patientInfo.length >= 6) { // Assuming there are at least 6 fields
+                    patient.setHoten(patientInfo[0]);   // Patient name
+                    patient.setNgaysinh(patientInfo[1]); // Date of birth
+                    patient.setQuequan(patientInfo[2]); // Hometown
+                    patient.setGioitinh(patientInfo[3]);    // Gender
+                    patient.setSdt(patientInfo[4]); // Phone Number
+                    patient.setMabn(patientInfo[5]); // Patient ID
+                } else {
+                    JOptionPane.showMessageDialog(this, "Không thể lấy thông tin bệnh nhân từ thẻ.");
+                    return; // Exit if patient info retrieval failed
+                }
+
+                // Retrieve and set the patient picture
+                BufferedImage picture = card.GetPatientPicture();
+                if (picture != null) {
+                    patient.setPicture(picture); // Set the retrieved picture
+                } else {
+                    JOptionPane.showMessageDialog(this, "Không thể lấy ảnh của bệnh nhân từ thẻ.");
+                }
 
                 // Create a new instance of PatientForm
                 PatientForm patientForm = new PatientForm();
@@ -214,7 +241,7 @@ public class formLogin extends javax.swing.JFrame {
             Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = session.beginTransaction();
             User user = new User();
-            user.setName("hoang");
+            user.setHoten("hoang");
             session.save(user);
             transaction.commit();
             session.close();

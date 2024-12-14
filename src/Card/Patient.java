@@ -1,5 +1,7 @@
 package Card;
 
+import java.awt.image.BufferedImage; // Import for BufferedImage
+
 public class Patient {
 
     private String hoten;
@@ -8,8 +10,9 @@ public class Patient {
     private String mabn;
     private String gioitinh;
     private String mapin;
+    private String sdt;
     private String balance;
-    private byte[] picture; // Updated to byte[] to store binary image data
+    private BufferedImage picture; // Changed to BufferedImage
 
     // Private static instance of the class
     private static Patient instance;
@@ -41,6 +44,14 @@ public class Patient {
 
     public void setNgaysinh(String ngaysinh) {
         this.ngaysinh = ngaysinh;
+    }
+
+    public String getSdt() {
+        return sdt;
+    }
+
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
     }
 
     public String getQuequan() {
@@ -83,11 +94,11 @@ public class Patient {
         this.balance = balance;
     }
 
-    public byte[] getPicture() { // Getter for picture
+    public BufferedImage getPicture() { // Updated getter for picture
         return picture;
     }
 
-    public void setPicture(byte[] picture) { // Setter for picture
+    public void setPicture(BufferedImage picture) { // Updated setter for picture
         this.picture = picture;
     }
 }

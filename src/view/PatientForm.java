@@ -1,5 +1,6 @@
 package view;
 
+import Card.Patient;
 import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
@@ -24,25 +25,24 @@ public class PatientForm extends javax.swing.JFrame {
     }
 
     private void init() {
-        card.connectCard();
-        String[] patientInfo;
-        patientInfo = card.getPatientInfo();
-        BufferedImage patientPicture = card.GetPatientPicture();
+        // Retrieve the Patient instance
+        Patient patient = Patient.getInstance();
+        // Set the values from the Patient instance to the UI components
+        jhoTen.setText(patient.getHoten());
+        jNgaySinh.setText(patient.getNgaysinh());
+        jQueQuan.setText(patient.getQuequan());
+        jGioiTinh.setText(patient.getGioitinh());
+        jSdt.setText(patient.getSdt());
+        jMaBenhNhan.setText(patient.getMabn());
 
-        jhoTen.setText(patientInfo[0]);
-        jNgaySinh.setText(patientInfo[1]);
-        jQueQuan.setText(patientInfo[2]);
-        jGioiTinh.setText(patientInfo[3]);
-        jMaBenhNhan.setText(patientInfo[4]);
-        jSdt.setText(patientInfo[5]);
-
-        // Get patient picture
-        if (patientPicture != null) {
-            Image scaledImage = patientPicture.getScaledInstance(jPicture.getWidth(), jPicture.getHeight(), Image.SCALE_SMOOTH);
+        // Get and display the patient picture
+        BufferedImage picture = patient.getPicture();
+        if (picture != null) {
+            Image scaledImage = picture.getScaledInstance(jPicture.getWidth(), jPicture.getHeight(), Image.SCALE_SMOOTH);
             ImageIcon pictureIcon = new ImageIcon(scaledImage);
             jPicture.setIcon(pictureIcon);
         } else {
-            System.out.println("Failed to retrieve patient picture.");
+            System.out.println("No patient picture available.");
         }
     }
 
@@ -424,8 +424,8 @@ public class PatientForm extends javax.swing.JFrame {
         jNgaySinh.setText(patientInfo[1]);
         jQueQuan.setText(patientInfo[2]);
         jGioiTinh.setText(patientInfo[3]);
-        jMaBenhNhan.setText(patientInfo[4]);
-        jSdt.setText(patientInfo[5]);
+        jSdt.setText(patientInfo[4]);
+        jMaBenhNhan.setText(patientInfo[5]);
 
     }//GEN-LAST:event_btnConnectActionPerformed
 

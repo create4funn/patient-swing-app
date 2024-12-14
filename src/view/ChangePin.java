@@ -152,27 +152,33 @@ public class ChangePin extends javax.swing.JDialog {
     String reOldPass = jReOldPass.getText();
     String newPass = jNewPass.getText();
 
-    // Validate inputs
-    if (!oldPass.equals(reOldPass)) {
-        // Show error dialog for mismatched passwords
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Password must match.", 
-            "Error", 
-            javax.swing.JOptionPane.ERROR_MESSAGE);
-    } else if (!java.util.Arrays.asList(pass).contains(oldPass)) {
-        // Show error dialog if oldPass does not match current PIN
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Password does not match the current password.", 
-            "Error", 
-            javax.swing.JOptionPane.ERROR_MESSAGE);
-    } else {
-        // Update PIN and show success dialog
-        card.updatePatientPin(newPass);
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Password updated successfully.", 
-            "Success", 
-            javax.swing.JOptionPane.INFORMATION_MESSAGE);
-    }
+// Validate inputs
+        if (!oldPass.equals(reOldPass)) {
+            // Show error dialog for mismatched passwords
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Mật khẩu nhập lại phải giống nhau",
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        } else if (!java.util.Arrays.asList(pass).contains(oldPass)) {
+            // Show error dialog if oldPass does not match current PIN
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Mật khẩu không trùng với mật khẩu hiện tại.",
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        } else if (oldPass.equals(newPass)) {
+            // Show error dialog if newPass matches oldPass
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Mật khẩu mới phải trùng với mật khẩu cũ",
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        } else {
+            // Update PIN and show success dialog
+            card.updatePatientPin(newPass);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Cập nhập mật khẩu thành công.",
+                    "Success",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jOldPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOldPassActionPerformed
