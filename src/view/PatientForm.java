@@ -46,6 +46,27 @@ public class PatientForm extends javax.swing.JFrame {
         }
     }
 
+    public void loadPatienInfo(){
+        String[] patientInfo;
+        patientInfo = card.getPatientInfo();
+        BufferedImage patientPicture = card.GetPatientPicture();
+
+        jhoTen.setText(patientInfo[0]);
+        jNgaySinh.setText(patientInfo[1]);
+        jQueQuan.setText(patientInfo[2]);
+        jGioiTinh.setText(patientInfo[3]);
+        jMaBenhNhan.setText(patientInfo[4]);
+        jSdt.setText(patientInfo[5]);
+
+        // Get patient picture
+        if (patientPicture != null) {
+            Image scaledImage = patientPicture.getScaledInstance(jPicture.getWidth(), jPicture.getHeight(), Image.SCALE_SMOOTH);
+            ImageIcon pictureIcon = new ImageIcon(scaledImage);
+            jPicture.setIcon(pictureIcon);
+        } else {
+            System.out.println("Failed to retrieve patient picture.");
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -417,15 +438,15 @@ public class PatientForm extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         // TODO add your handling code here:
-        String[] patientInfo;
-        patientInfo = card.getPatientInfo();
-
-        jhoTen.setText(patientInfo[0]);
-        jNgaySinh.setText(patientInfo[1]);
-        jQueQuan.setText(patientInfo[2]);
-        jGioiTinh.setText(patientInfo[3]);
-        jMaBenhNhan.setText(patientInfo[4]);
-        jSdt.setText(patientInfo[5]);
+//        String[] patientInfo;
+//        patientInfo = card.getPatientInfo();
+//
+//        jhoTen.setText(patientInfo[0]);
+//        jNgaySinh.setText(patientInfo[1]);
+//        jQueQuan.setText(patientInfo[2]);
+//        jGioiTinh.setText(patientInfo[3]);
+//        jMaBenhNhan.setText(patientInfo[4]);
+//        jSdt.setText(patientInfo[5]);
 
     }//GEN-LAST:event_btnConnectActionPerformed
 

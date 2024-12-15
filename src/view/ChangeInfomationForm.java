@@ -20,8 +20,11 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
      */
     private final SmartCard card = new SmartCard();
 
+    private PatientForm owner;
+    
     public ChangeInfomationForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        this.owner = (PatientForm) parent;
         initComponents();
         init();
     }
@@ -288,12 +291,15 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
         // Instantiate the SmartCard class and connect to the card
         card.connectCard();
         // Attempt to update the patient info
-//        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt, maPin);
-//        if (updated) {
-//            JOptionPane.showMessageDialog(this, "Patient information updated successfully.");
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Failed to update patient information.", "Error", JOptionPane.ERROR_MESSAGE);
-//        }
+        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt, maPin);
+        if (updated) {
+            this.dispose();
+           
+            JOptionPane.showMessageDialog(this, "Patient information updated successfully.");
+            owner.loadPatienInfo();
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to update patient information.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
         // Disconnect from the card
 
     }//GEN-LAST:event_jButton1ActionPerformed
