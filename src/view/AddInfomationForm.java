@@ -1,5 +1,6 @@
 package view;
 
+import Card.Patient;
 import Card.SmartCard;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -265,6 +266,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
         String gioiTinh = (String) jGioiTinh.getSelectedItem();
         String maPin = jMaPin.getText(); // Assuming this is needed for some authentication purposes
 
+<<<<<<< HEAD
         
         // Validate fields
         if (hoTen.isEmpty()) {
@@ -303,17 +305,33 @@ public class AddInfomationForm extends javax.swing.JDialog {
 
         
         // Instantiate the SmartCard class and connect to the card
+=======
+        // Update the patient instance
+        Patient patient = Patient.getInstance();
+        patient.setHoten(hoTen);
+        patient.setNgaysinh(ngaySinh);
+        patient.setQuequan(queQuan);
+        patient.setMabn(maBenhNhan);
+        patient.setSdt(sdt);
+        patient.setGioitinh(gioiTinh);
+
+        // Attempt to update the patient info on the smart card
+>>>>>>> b2b7cb48899597a3f39a0c1df7253e15e6bffaa5
         card.connectCard();
-        // Attempt to update the patient info
-        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt, maPin);
+        boolean updated = card.initPatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan, maPin);
         if (updated) {
-            JOptionPane.showMessageDialog(this, "Patient information updated successfully.");
+            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thành công.");
         } else {
-            JOptionPane.showMessageDialog(this, "Failed to update patient information.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+<<<<<<< HEAD
         // Disconnect from the card
     
+=======
+
+>>>>>>> b2b7cb48899597a3f39a0c1df7253e15e6bffaa5
     }//GEN-LAST:event_jButton1ActionPerformed
+//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnChooseImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseImgActionPerformed
 // Sử dụng JFileChooser để chọn file

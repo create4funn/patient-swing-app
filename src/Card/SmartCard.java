@@ -4,8 +4,6 @@ import java.awt.HeadlessException;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -91,7 +89,7 @@ public class SmartCard {
         ResponseAPDU response = sendCommandAPDU(command);
         if (response != null && response.getSW() == 0x9000) {
             byte[] data = response.getData();
-            return convertByteToStringArr(data, '.');
+            return HelpMethod.convertByteToStringArr(data, '.');
         } else {
             System.out.println("Failed to get patient info, SW: " + Integer.toHexString(response.getSW()));
             return null;
@@ -136,7 +134,7 @@ public class SmartCard {
             System.out.println();
 
             // Convert the byte array into an image
-            return convertByteArrayToImage(imageData);
+            return HelpMethod.convertByteArrayToImage(imageData);
         } else {
             // Print error message if operation failed
             System.out.println("Failed to get patient picture, SW: " + Integer.toHexString(response.getSW()));
@@ -144,7 +142,7 @@ public class SmartCard {
         }
     }
 
-    public boolean updatePatientInfo(String hoTen, String ngaySinh, String queQuan, String gioiTinh, String maBenhNhan, String sdt, String maPin) {
+    public boolean initPatientInfo(String hoTen, String ngaySinh, String queQuan, String gioiTinh, String sdt, String maBenhNhan, String maPin) {
         try {
             // Build the patient info string with delimiters in the reverse order (to match init_bn)
             StringBuilder dataBuilder = new StringBuilder();
@@ -152,21 +150,65 @@ public class SmartCard {
                     .append(ngaySinh).append(".") // ngaySinh
                     .append(queQuan).append(".") // queQuan
                     .append(gioiTinh).append(".") // gioiTinh
-                    .append(maBenhNhan).append(".") // maBenhNhan
-                    .append(sdt).append(".") // sdt
-                    .append(maPin).append(".");  // maPin (last field)
+                    .append(sdt).append(".") // maBenhNhan
+                    .append(maBenhNhan).append(".") // sdt
+                    .append(maPin);  // maPin (last field)
 
             // Convert the string to a byte array
-            byte[] dataBytes = ConvertStringToByteArr(dataBuilder.toString());
+            byte[] dataBytes = HelpMethod.ConvertStringToByteArr(dataBuilder.toString());
 
-            // Create the APDU command with the constructed byte array
-            byte[] command = new byte[5 + dataBytes.length]; // Header (5 bytes) + data
+            // Create the APDU command for Extended Length format
+            byte[] command = new byte[7 + dataBytes.length]; // Header (7 bytes: CLA, INS, P1, P2, 3-byte Lc) + data
             command[0] = (byte) 0x00; // CLA
             command[1] = (byte) 0x10; // INS for UPDATE_BN
             command[2] = (byte) 0x00; // P1
             command[3] = (byte) 0x00; // P2
-            command[4] = (byte) dataBytes.length; // Lc: length of the data
-            System.arraycopy(dataBytes, 0, command, 5, dataBytes.length); // Append data
+            command[4] = (byte) 0x00; // Extended Length indicator (Lc MSB)
+            command[5] = (byte) ((dataBytes.length >> 8) & 0xFF); // Lc (high byte)
+            command[6] = (byte) (dataBytes.length & 0xFF); // Lc (low byte)
+            System.arraycopy(dataBytes, 0, command, 7, dataBytes.length); // Append data
+
+            // Send the command APDU to the applet
+            ResponseAPDU response = sendCommandAPDU(command);
+
+            // Check the response status word (SW)
+            if (response != null && response.getSW() == 0x9000) {
+                System.out.println("Patient info updated successfully.");
+                return true;
+            } else {
+                System.out.println("Failed to update patient info, SW: " + Integer.toHexString(response.getSW()));
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Error updating patient info: " + e);
+            return false;
+        }
+    }
+
+    public boolean updatePatientInfoNoPin(String hoTen, String ngaySinh, String queQuan, String gioiTinh, String sdt, String maBenhNhan) {
+        try {
+            // Build the patient info string with delimiters in the reverse order (to match init_bn)
+            StringBuilder dataBuilder = new StringBuilder();
+            dataBuilder.append(hoTen).append(".") // hoTen
+                    .append(ngaySinh).append(".") // ngaySinh
+                    .append(queQuan).append(".") // queQuan
+                    .append(gioiTinh).append(".") // gioiTinh
+                    .append(sdt).append(".") // maBenhNhan
+                    .append(maBenhNhan); // sdt (last field)
+
+            // Convert the string to a byte array
+            byte[] dataBytes = HelpMethod.ConvertStringToByteArr(dataBuilder.toString());
+
+            // Create the APDU command for Extended Length format
+            byte[] command = new byte[7 + dataBytes.length]; // Header (7 bytes: CLA, INS, P1, P2, 3-byte Lc) + data
+            command[0] = (byte) 0x00; // CLA
+            command[1] = (byte) 0x20; // INS for UPDATE_BN
+            command[2] = (byte) 0x00; // P1
+            command[3] = (byte) 0x00; // P2
+            command[4] = (byte) 0x00; // Extended Length indicator (Lc MSB)
+            command[5] = (byte) ((dataBytes.length >> 8) & 0xFF); // Lc (high byte)
+            command[6] = (byte) (dataBytes.length & 0xFF); // Lc (low byte)
+            System.arraycopy(dataBytes, 0, command, 7, dataBytes.length); // Append data
 
             // Send the command APDU to the applet
             ResponseAPDU response = sendCommandAPDU(command);
@@ -188,7 +230,7 @@ public class SmartCard {
     public boolean updatePatientPin(String newPin) {
         try {
             // Convert the new PIN string to a byte array
-            byte[] pinBytes = ConvertStringToByteArr(newPin);
+            byte[] pinBytes = HelpMethod.ConvertStringToByteArr(newPin);
 
             // Create the APDU command for updating the PIN
             byte[] command = new byte[5 + pinBytes.length]; // Header (5 bytes) + PIN data
@@ -216,15 +258,15 @@ public class SmartCard {
         }
     }
 
+    // Example function calling the methods from HelpMethod
     public boolean updatePatientPicture(BufferedImage image) {
         try {
-            byte[] pictureBytes = convertImageToByteArray(image);
+            byte[] pictureBytes = HelpMethod.convertImageToByteArray(image);
             if (pictureBytes == null) {
                 System.out.println("Failed to convert image to byte array.");
                 return false;
             }
 
-            // Create extended APDU command
             byte[] command = new byte[7 + pictureBytes.length];
             command[0] = (byte) 0x00; // CLA
             command[1] = (byte) 0x22; // INS for UPDATE_PICTURE
@@ -235,17 +277,14 @@ public class SmartCard {
             command[6] = (byte) (pictureBytes.length & 0xFF); // Lc low byte
             System.arraycopy(pictureBytes, 0, command, 7, pictureBytes.length);
 
-            // Debug: Print the command APDU in hex
             System.out.print("Command APDU (hex): ");
             for (byte b : command) {
                 System.out.printf("%02X ", b);
             }
             System.out.println();
 
-            // Send the command APDU
             ResponseAPDU response = sendCommandAPDU(command);
 
-            // Check response
             if (response == null || response.getSW() != 0x9000) {
                 System.out.println("Failed to update picture, SW: "
                         + (response != null ? Integer.toHexString(response.getSW()) : "null"));
@@ -262,38 +301,31 @@ public class SmartCard {
 
     public boolean CheckPin(String userPin) {
         try {
-            // Convert the PIN string to a byte array
-            byte[] pinBytes = ConvertStringToByteArr(userPin);
+            byte[] pinBytes = HelpMethod.ConvertStringToByteArr(userPin);
 
-            // Create the APDU command with the PIN
-            byte[] command = new byte[5 + pinBytes.length]; // Header (5 bytes) + PIN data
-            command[0] = (byte) 0x00; // CLA
-            command[1] = (byte) 0x20; // INS for VERIFY_PIN
-            command[2] = (byte) 0x00; // P1
-            command[3] = (byte) 0x00; // P2
-            command[4] = (byte) pinBytes.length; // Lc: length of the PIN
-            System.arraycopy(pinBytes, 0, command, 5, pinBytes.length); // Append PIN data
+            byte[] command = new byte[5 + pinBytes.length];
+            command[0] = (byte) 0x00;
+            command[1] = (byte) 0x19;
+            command[2] = (byte) 0x00;
+            command[3] = (byte) 0x00;
+            command[4] = (byte) pinBytes.length;
+            System.arraycopy(pinBytes, 0, command, 5, pinBytes.length);
 
-            // Send the command APDU to the applet
             ResponseAPDU response = sendCommandAPDU(command);
 
-            // Check the response status word (SW) and data
             if (response != null) {
                 byte[] responseBytes = response.getBytes();
                 int sw = response.getSW();
 
-                // Check for correct PIN
                 if (responseBytes.length >= 3 && responseBytes[0] == (byte) 0x00 && sw == 0x9000) {
-                    isCardBlocked = false; // Card is not blocked
+                    isCardBlocked = false;
                     System.out.println("PIN verified successfully.");
                     return true;
-                } // Check for wrong PIN
-                else if (responseBytes.length >= 3 && responseBytes[0] == (byte) 0x01 && sw == 0x9000) {
+                } else if (responseBytes.length >= 3 && responseBytes[0] == (byte) 0x01 && sw == 0x9000) {
                     System.out.println("Incorrect PIN entered.");
                     return false;
-                } // Check if the card is blocked
-                else if (sw == 0x6983) {
-                    isCardBlocked = true; // Card is blocked
+                } else if (sw == 0x6983) {
+                    isCardBlocked = true;
                     System.out.println("Card is blocked.");
                     return false;
                 } else {
