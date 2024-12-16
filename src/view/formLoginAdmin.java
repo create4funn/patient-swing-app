@@ -185,8 +185,22 @@ public class formLoginAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPasswordActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        // TODO add your handling code here:
-        
+        // Fetch the entered username and password
+        String username = txtUserName.getText();
+        String password = new String(txtPassword.getPassword()); // Assuming txtPassword is a JPasswordField
+
+        // Check if the entered username and password match the admin credentials
+        if ("admin".equals(username) && "abc".equals(password)) {
+            // Successful login
+            javax.swing.JOptionPane.showMessageDialog(this, "Đăng nhập tài khoản admin thành công");
+            // Open the MenuAdmin form
+            MenuAdmin menuAdmin = new MenuAdmin(); // Assuming MenuAdmin is another JFrame class
+            menuAdmin.setVisible(true); // Show the MenuAdmin form
+            // For example, navigate to the admin dashboard
+        } else {
+            // Invalid login
+            javax.swing.JOptionPane.showMessageDialog(this, "Sai thông tin tài khoản hoặc mật khẩu. Vui lòng thử lại.", "Login Failed", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void txtPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyPressed

@@ -19,7 +19,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
     /**
      * Creates new form AddInfomationForm
      */
-    private final SmartCard card = new SmartCard();
+    SmartCard card = SmartCard.getInstance();
 
     public AddInfomationForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -266,8 +266,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
         String gioiTinh = (String) jGioiTinh.getSelectedItem();
         String maPin = jMaPin.getText(); // Assuming this is needed for some authentication purposes
 
-<<<<<<< HEAD
-        
         // Validate fields
         if (hoTen.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Họ tên không hợp lệ (không chứa ký tự đặc biệt, tối đa 40 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -281,13 +279,14 @@ public class AddInfomationForm extends javax.swing.JDialog {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ (không được là ngày tương lai).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         if (queQuan.isEmpty() || queQuan.length() > 150) {
             JOptionPane.showMessageDialog(this, "Địa chỉ không hợp lệ (tối đa 150 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (sdt.isEmpty() || !sdt.matches("\\d{0,10}") || sdt.length() > 10) {
             JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ (chỉ chứa số, tối đa 10 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
@@ -303,9 +302,15 @@ public class AddInfomationForm extends javax.swing.JDialog {
             return;
         }
 
-        
         // Instantiate the SmartCard class and connect to the card
-=======
+
+        // Attempt to update the patient info on the smart card
+        boolean updated = card.initPatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan, maPin);
+        if (updated) {
+            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thành công.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
         // Update the patient instance
         Patient patient = Patient.getInstance();
         patient.setHoten(hoTen);
@@ -314,22 +319,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
         patient.setMabn(maBenhNhan);
         patient.setSdt(sdt);
         patient.setGioitinh(gioiTinh);
-
-        // Attempt to update the patient info on the smart card
->>>>>>> b2b7cb48899597a3f39a0c1df7253e15e6bffaa5
-        card.connectCard();
-        boolean updated = card.initPatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan, maPin);
-        if (updated) {
-            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thành công.");
-        } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-<<<<<<< HEAD
         // Disconnect from the card
-    
-=======
-
->>>>>>> b2b7cb48899597a3f39a0c1df7253e15e6bffaa5
     }//GEN-LAST:event_jButton1ActionPerformed
 //GEN-LAST:event_jButton1ActionPerformed
 
@@ -341,22 +331,29 @@ public class AddInfomationForm extends javax.swing.JDialog {
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            long fileSizeInKB = selectedFile.length() / 1024;
-
-            if (fileSizeInKB > 30) {
-                JOptionPane.showMessageDialog(this, "Ảnh không được vượt quá 30KB.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            displayImage(selectedFile.getAbsolutePath());
 
             try {
                 // Read the image file into a BufferedImage
                 BufferedImage image = ImageIO.read(selectedFile);
 
                 // Convert the BufferedImage to a byte array
+                byte[] byteArray = card.convertImageToByteArray(image);
+
+                // Check if the byte array size exceeds 30 KB
+                if (byteArray == null || byteArray.length > 30 * 1000) { // 30 KB = 30 * 1024 bytes
+                    JOptionPane.showMessageDialog(this, "Ảnh không được vượt quá 30KB sau khi chuyển đổi.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Update the patient picture and display the image
                 card.updatePatientPicture(image);
-                // Print or use the byte array
+
+                // Update the patient instance
+                Patient patient = Patient.getInstance();
+                patient.setPicture(image);
+
+                // Display the image on the UI
+                displayImage();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -365,17 +362,29 @@ public class AddInfomationForm extends javax.swing.JDialog {
 
     }//GEN-LAST:event_btnChooseImgActionPerformed
 
-    private void displayImage(String imagePath) {
-        // Load ảnh và hiển thị
-        ImageIcon icon = new ImageIcon(imagePath);
+    private void displayImage() {
+        // Get the Patient instance
+        Patient patient = Patient.getInstance();
 
-        // Thay đổi kích thước ảnh nếu cần
+        // Retrieve the picture as a BufferedImage
+        BufferedImage image = patient.getPicture();
+
+        if (image == null) {
+            imgLabel.setText("Không có ảnh.");
+            imgLabel.setIcon(null); // Clear any existing icon
+            return;
+        }
+
+        // Convert the BufferedImage to an ImageIcon
+        ImageIcon icon = new ImageIcon(image);
+
+        // Resize the image to fit the JLabel
         Image img = icon.getImage();
         Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
         icon = new ImageIcon(scaledImg);
 
-        // Đặt ảnh vào JLabel
-        imgLabel.setText(null); // Xóa text cũ
+        // Set the icon to the JLabel
+        imgLabel.setText(null); // Clear any existing text
         imgLabel.setIcon(icon);
     }
 

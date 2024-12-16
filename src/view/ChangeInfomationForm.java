@@ -1,5 +1,6 @@
 package view;
 
+import Card.Patient;
 import Card.SmartCard;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -18,7 +19,8 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
     /**
      * Creates new form AddInfomationForm
      */
-    private final SmartCard card = new SmartCard();
+    SmartCard card = SmartCard.getInstance();
+    private BufferedImage tempImage; // Temporary variable to hold the new selected image
 
     private PatientForm owner;
     
@@ -30,7 +32,26 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
     }
 
     public void init(){
-        card.connectCard();
+        Patient patient = Patient.getInstance();
+        jhoTen.setText(patient.getHoten());
+        //jNgaySinh.set(patient.getNgaysinh());
+        jGioiTinh.setSelectedItem(patient.getGioitinh());
+        jQueQuan.setText(patient.getQuequan());
+        jSdt.setText(patient.getSdt());
+        jMaBenhNhan.setText(patient.getMabn());
+
+        BufferedImage image = patient.getPicture();
+        // Convert the BufferedImage to an ImageIcon
+        ImageIcon icon = new ImageIcon(image);
+
+        // Resize the image to fit the JLabel
+        Image img = icon.getImage();
+        Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
+        icon = new ImageIcon(scaledImg);
+
+        // Set the icon to the JLabel
+        imgLabel.setText(null); // Clear any existing text
+        imgLabel.setIcon(icon);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -253,9 +274,7 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
         String maBenhNhan = jMaBenhNhan.getText();
         String sdt = jSdt.getText();
         String gioiTinh = (String) jGioiTinh.getSelectedItem();
-       
 
-        
         // Validate fields
         if (hoTen.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Họ tên không hợp lệ (không chứa ký tự đặc biệt, tối đa 40 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -269,6 +288,7 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ (không được là ngày tương lai).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         if (queQuan.isEmpty() || queQuan.length() > 150) {
@@ -286,47 +306,62 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
             return;
         }
 
-        
 
-        // Instantiate the SmartCard class and connect to the card
-        card.connectCard();
         // Attempt to update the patient info
-        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt, maPin);
+        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt);
+
         if (updated) {
             this.dispose();
-           
+            // Update the patient instance
+            Patient patient = Patient.getInstance();
+            patient.setHoten(hoTen);
+            patient.setNgaysinh(ngaySinh);
+            patient.setQuequan(queQuan);
+            patient.setMabn(maBenhNhan);
+            patient.setSdt(sdt);
+            patient.setGioitinh(gioiTinh);
+            if(tempImage != null) {
+                card.updatePatientPicture(tempImage);
+                patient.setPicture(tempImage);
+            }
             JOptionPane.showMessageDialog(this, "Patient information updated successfully.");
             owner.loadPatienInfo();
         } else {
             JOptionPane.showMessageDialog(this, "Failed to update patient information.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        // Disconnect from the card
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnChooseImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseImgActionPerformed
-// Sử dụng JFileChooser để chọn file
+// Display the current image first
+        displayImage();
+
+        // Use JFileChooser to select a file
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Ảnh (JPG, PNG)", "jpg", "jpeg", "png"));
         int result = fileChooser.showOpenDialog(this);
 
-        if (result == JFileChooser.APPROVE_OPTION) {       
+        if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            long fileSizeInKB = selectedFile.length() / 1024;
-
-            if (fileSizeInKB > 30) {
-                JOptionPane.showMessageDialog(this, "Ảnh không được vượt quá 30KB.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            displayImage(selectedFile.getAbsolutePath());
 
             try {
                 // Read the image file into a BufferedImage
                 BufferedImage image = ImageIO.read(selectedFile);
 
                 // Convert the BufferedImage to a byte array
-                card.updatePatientPicture(image);
-                // Print or use the byte array
+                byte[] byteArray = card.convertImageToByteArray(image);
+
+                // Check if the byte array size exceeds 30 KB
+                if (byteArray == null || byteArray.length > 30 * 1000) { // 30 KB = 30 * 1024 bytes
+                    JOptionPane.showMessageDialog(this, "Ảnh không được vượt quá 30KB sau khi chuyển đổi.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Store the new image in the temporary variable
+                tempImage = image;
+
+                // Preview the selected image without updating the patient instance
+                displayChoosingImage(tempImage);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -335,17 +370,49 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
 
     }//GEN-LAST:event_btnChooseImgActionPerformed
 
-    private void displayImage(String imagePath) {
-        // Load ảnh và hiển thị
-        ImageIcon icon = new ImageIcon(imagePath);
+    private void displayImage() {
+        // Get the Patient instance
+        Patient patient = Patient.getInstance();
 
-        // Thay đổi kích thước ảnh nếu cần
+        // Retrieve the picture as a BufferedImage
+        BufferedImage image = patient.getPicture();
+
+        if (image == null) {
+            imgLabel.setText("Không có ảnh.");
+            imgLabel.setIcon(null); // Clear any existing icon
+            return;
+        }
+
+        // Convert the BufferedImage to an ImageIcon
+        ImageIcon icon = new ImageIcon(image);
+
+        // Resize the image to fit the JLabel
         Image img = icon.getImage();
         Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
         icon = new ImageIcon(scaledImg);
 
-        // Đặt ảnh vào JLabel
-        imgLabel.setText(null); // Xóa text cũ
+        // Set the icon to the JLabel
+        imgLabel.setText(null); // Clear any existing text
+        imgLabel.setIcon(icon);
+    }
+
+    private void displayChoosingImage(BufferedImage image) {
+        if (image == null) {
+            imgLabel.setText("Không có ảnh.");
+            imgLabel.setIcon(null); // Clear any existing icon
+            return;
+        }
+
+        // Convert the BufferedImage to an ImageIcon
+        ImageIcon icon = new ImageIcon(image);
+
+        // Resize the image to fit the JLabel
+        Image img = icon.getImage();
+        Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
+        icon = new ImageIcon(scaledImg);
+
+        // Set the icon to the JLabel
+        imgLabel.setText("Ảnh đang được chọn."); // Optional: Add a label or text to indicate preview
         imgLabel.setIcon(icon);
     }
 

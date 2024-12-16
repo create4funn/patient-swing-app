@@ -168,12 +168,13 @@ public class ChangePin extends javax.swing.JDialog {
         } else if (oldPass.equals(newPass)) {
             // Show error dialog if newPass matches oldPass
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Mật khẩu mới phải trùng với mật khẩu cũ",
+                    "Mật khẩu mới không được trùng với mật khẩu cũ",
                     "Error",
                     javax.swing.JOptionPane.ERROR_MESSAGE);
         } else {
             // Update PIN and show success dialog
             card.updatePatientPin(newPass);
+
             javax.swing.JOptionPane.showMessageDialog(this,
                     "Cập nhập mật khẩu thành công.",
                     "Success",

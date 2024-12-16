@@ -17,7 +17,7 @@ import javax.swing.UIManager;
 public class PatientForm extends javax.swing.JFrame {
 
     String[] patientInfo;
-    private SmartCard card = new SmartCard();
+    SmartCard card = SmartCard.getInstance();
 
     public PatientForm() {
         initComponents();
@@ -420,7 +420,7 @@ public class PatientForm extends javax.swing.JFrame {
 
     private void btnChangeInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeInfoActionPerformed
         // TODO add your handling code here:
-        AddInfomationForm a = new AddInfomationForm(this, rootPaneCheckingEnabled);
+        ChangeInfomationForm a = new ChangeInfomationForm(this, rootPaneCheckingEnabled);
         a.setVisible(true);
     }//GEN-LAST:event_btnChangeInfoActionPerformed
 
@@ -438,7 +438,6 @@ public class PatientForm extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         // TODO add your handling code here:
-<<<<<<< HEAD
 //        String[] patientInfo;
 //        patientInfo = card.getPatientInfo();
 //
@@ -448,7 +447,6 @@ public class PatientForm extends javax.swing.JFrame {
 //        jGioiTinh.setText(patientInfo[3]);
 //        jMaBenhNhan.setText(patientInfo[4]);
 //        jSdt.setText(patientInfo[5]);
-=======
         String[] patientInfo;
         patientInfo = card.getPatientInfo();
 
@@ -458,7 +456,6 @@ public class PatientForm extends javax.swing.JFrame {
         jGioiTinh.setText(patientInfo[3]);
         jSdt.setText(patientInfo[4]);
         jMaBenhNhan.setText(patientInfo[5]);
->>>>>>> b2b7cb48899597a3f39a0c1df7253e15e6bffaa5
 
     }//GEN-LAST:event_btnConnectActionPerformed
 

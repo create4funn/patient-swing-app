@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.smartcardio.Card;
@@ -30,8 +31,17 @@ public class SmartCard {
     private List<CardTerminal> terminals;
     private ResponseAPDU response;
     public static boolean isCardBlocked = false;
+    public static byte counter = 0;
+    private static SmartCard instance;
 
     public SmartCard() {
+    }
+
+    public static SmartCard getInstance() {
+        if (instance == null) {
+            instance = new SmartCard();
+        }
+        return instance;
     }
 
     public boolean connectCard() {
@@ -44,6 +54,7 @@ public class SmartCard {
             if (channel == null) {
                 return false;
             }
+
             response = channel.transmit(new CommandAPDU(0x00, (byte) 0xA4, 0x04, 0x00, AID_APPLET));
             String check = Integer.toHexString(response.getSW());
             if (check.equals("9000")) {
@@ -70,16 +81,34 @@ public class SmartCard {
         return false;
     }
 
-    // Method to send a command APDU to the applet
+    // Method to send a command APDU to the applet with debug prints
     public ResponseAPDU sendCommandAPDU(byte[] command) {
         try {
+            // Print the size of the data being sent
+            System.out.println("Sending APDU command. Data size: " + command.length + " bytes");
+
+            // Print the content of the command in hex format
+            System.out.println("APDU Command: " + bytesToHex(command));
+
             CommandAPDU commandAPDU = new CommandAPDU(command);
             response = channel.transmit(commandAPDU);
+
+            // Print the status word (SW) of the response
+            System.out.println("Response SW: " + Integer.toHexString(response.getSW()));
             return response;
         } catch (CardException e) {
             System.out.println("Error sending APDU: " + e);
             return null;
         }
+    }
+
+    // Utility method to convert a byte array to a hexadecimal string
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X ", b));
+        }
+        return sb.toString().trim();
     }
 
     // Method to get patient info from the applet
@@ -185,7 +214,7 @@ public class SmartCard {
         }
     }
 
-    public boolean updatePatientInfoNoPin(String hoTen, String ngaySinh, String queQuan, String gioiTinh, String sdt, String maBenhNhan) {
+    public boolean updatePatientInfo(String hoTen, String ngaySinh, String queQuan, String gioiTinh, String sdt, String maBenhNhan) {
         try {
             // Build the patient info string with delimiters in the reverse order (to match init_bn)
             StringBuilder dataBuilder = new StringBuilder();
@@ -321,7 +350,8 @@ public class SmartCard {
                     isCardBlocked = false;
                     System.out.println("PIN verified successfully.");
                     return true;
-                } else if (responseBytes.length >= 3 && responseBytes[0] == (byte) 0x01 && sw == 0x9000) {
+                } else if (responseBytes.length >= 3 && responseBytes[0] != (byte) 0x00 && sw == 0x9000) {
+                    counter = responseBytes[0];
                     System.out.println("Incorrect PIN entered.");
                     return false;
                 } else if (sw == 0x6983) {

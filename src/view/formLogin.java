@@ -22,7 +22,7 @@ public class formLogin extends javax.swing.JFrame {
     /**
      * Creates new form formLogin
      */
-    private SmartCard card = new SmartCard();
+    SmartCard card = SmartCard.getInstance();
 
     public formLogin() {
         initComponents();
@@ -210,11 +210,13 @@ public class formLogin extends javax.swing.JFrame {
                 // Check if the card is blocked
                 if (card.isCardBlocked) {
                     // Display a specific message for card blockage
-                    JOptionPane.showMessageDialog(this, "Wrong input more than 3 times. Card is blocked.");
+                    JOptionPane.showMessageDialog(this, "Nhập sai mã pin quá 3 lần, Thẻ đã bị khóa");
                 } else {
-                    // General login failure message
-                    JOptionPane.showMessageDialog(this, "Login failed. Incorrect PIN.");
-                }
+                    // Incorrect PIN entered
+                    JOptionPane.showMessageDialog(
+                            this,
+                            String.format("Nhập sai lần thứ %d, Vui lòng nhập lại.\nThẻ sẽ bị khóa nếu nhập sai quá 3 lần.", SmartCard.counter)
+                    );                }
             }
 
         } catch (Exception e) {
