@@ -42,8 +42,8 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
       
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         try {
-            Date ngaySinh = dateFormat.parse(patient.getNgaysinh()); // Chuyển đổi từ String sang Date
-            jNgaySinh.setDate(ngaySinh); // Gán giá trị Date vào JDateChooser
+            Date ngaySinh = dateFormat.parse(patient.getNgaysinh()); 
+            jNgaySinh.setDate(ngaySinh); 
         } catch (ParseException e) {
             e.printStackTrace();
             System.out.println("Ngày sinh không đúng định dạng");

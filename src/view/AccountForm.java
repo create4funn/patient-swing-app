@@ -5,9 +5,11 @@
 package view;
 
 import Card.SmartCard;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
+import javax.swing.table.DefaultTableModel;
 
 
 
@@ -19,14 +21,43 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
     private boolean isConnect = false;
     private SmartCard card = new SmartCard();
-    
+    private DefaultTableModel tblModel;
     public AccountForm() {
         initComponents();
         BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
         ui.setNorthPane(null);
-
+        initTable();
+        loadDataToTable();
     }
 
+    public final void initTable() {
+        tblModel = (DefaultTableModel) tblAccount.getModel();
+        String[] headerTbl = new String[]{"Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Trạng thái"};
+        tblModel.setColumnIdentifiers(headerTbl);
+        
+    }
+    
+    public void loadDataToTable() {
+
+        //ArrayList<Patient> listTk = ...;
+               
+//        tblModel.setRowCount(0);
+//        for (int i=0; i<listTk.size(); i++) {
+//
+//            tblModel.addRow(new Object[]{
+//                i+1, listTk.get(i).gethoten(), listTk.get(i).getMabn(), listTk.get(i).getSdt(),listTk.get(i).getGioitinh(), listTk.get(i).getTrangthai()
+//            });
+//        }
+    }
+    
+//    public TaiKhoan getSelected() {
+//        int i_row = tblTaiKhoan.getSelectedRow();
+//        String userName = tblTaiKhoan.getValueAt(i_row, 2).toString();
+//        TaiKhoan tk = TaiKhoanDAO.getInstance().selectById(userName);
+//        return tk;
+//    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,7 +69,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblAccount = new javax.swing.JTable();
         jToolBar1 = new javax.swing.JToolBar();
         btnConnect = new javax.swing.JButton();
         btnAddCard = new javax.swing.JButton();
@@ -55,7 +86,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         jPanel1.setBackground(new java.awt.Color(240, 250, 250));
         jPanel1.setPreferredSize(new java.awt.Dimension(713, 0));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblAccount.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -66,7 +97,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblAccount);
 
         jToolBar1.setBackground(new java.awt.Color(255, 255, 255));
         jToolBar1.setBorder(javax.swing.BorderFactory.createTitledBorder("Chức năng"));
@@ -141,16 +172,17 @@ public class AccountForm extends javax.swing.JInternalFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(jScrollPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(66, 66, 66)
+                        .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(jScrollPane1)))
                 .addGap(32, 32, 32))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(66, 66, 66)
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(127, 127, 127)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -167,7 +199,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1050, 726));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1100, 726));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -215,9 +247,9 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JTable tblAccount;
     // End of variables declaration//GEN-END:variables
 
   

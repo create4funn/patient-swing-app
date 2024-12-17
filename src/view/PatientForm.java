@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -18,12 +19,37 @@ public class PatientForm extends javax.swing.JFrame {
 
     String[] patientInfo;
     SmartCard card = SmartCard.getInstance();
-
+    private DefaultTableModel tblModel1;
+    private DefaultTableModel tblModel2;
+    
     public PatientForm() {
         initComponents();
         init();
+        initTable();
+        loadDataToTable();
     }
+    public final void initTable() {
+        tblModel1 = (DefaultTableModel) tblLichSu.getModel();
+        String[] headerTblLichSu = new String[]{"Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Trạng thái"};
+        tblModel1.setColumnIdentifiers(headerTblLichSu);
+        
+        tblModel2 = (DefaultTableModel) tblLichSu.getModel();
+        String[] headerTblHoaDon = new String[]{"Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Trạng thái"};
+        tblModel1.setColumnIdentifiers(headerTblHoaDon);
+    }
+        
+    public void loadDataToTable() {
 
+        //ArrayList<Patient> listTk = ...;
+               
+//        tblModel.setRowCount(0);
+//        for (int i=0; i<listTk.size(); i++) {
+//
+//            tblModel.addRow(new Object[]{
+//                i+1, listTk.get(i).gethoten(), listTk.get(i).getMabn(), listTk.get(i).getSdt(),listTk.get(i).getGioitinh(), listTk.get(i).getTrangthai()
+//            });
+//        }
+    }
     private void init() {
         // Retrieve the Patient instance
         Patient patient = Patient.getInstance();
@@ -100,11 +126,11 @@ public class PatientForm extends javax.swing.JFrame {
         jPicture = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        tblLichSu = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTable4 = new javax.swing.JTable();
+        tblHoaDon = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         jButton7 = new javax.swing.JButton();
@@ -292,7 +318,7 @@ public class PatientForm extends javax.swing.JFrame {
                 .addGap(15, 15, 15))
         );
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        tblLichSu.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -303,7 +329,7 @@ public class PatientForm extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane3.setViewportView(jTable3);
+        jScrollPane3.setViewportView(tblLichSu);
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel5.setText("Lịch sử khám bệnh");
@@ -327,7 +353,7 @@ public class PatientForm extends javax.swing.JFrame {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jTable4.setModel(new javax.swing.table.DefaultTableModel(
+        tblHoaDon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -338,7 +364,7 @@ public class PatientForm extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane4.setViewportView(jTable4);
+        jScrollPane4.setViewportView(tblHoaDon);
 
         jButton5.setBackground(new java.awt.Color(255, 0, 0));
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -502,13 +528,13 @@ public class PatientForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel jSdt;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTable jTable4;
     private javax.swing.JLabel jhoTen;
     private java.awt.Label label11;
     private java.awt.Label label12;
     private java.awt.Label label3;
     private java.awt.Label label6;
     private java.awt.Label label8;
+    private javax.swing.JTable tblHoaDon;
+    private javax.swing.JTable tblLichSu;
     // End of variables declaration//GEN-END:variables
 }
