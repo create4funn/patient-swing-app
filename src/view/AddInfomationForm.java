@@ -5,6 +5,7 @@ import Card.SmartCard;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -130,6 +131,8 @@ public class AddInfomationForm extends javax.swing.JDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 27, Short.MAX_VALUE)
         );
+
+        jNgaySinh.setDateFormatString("dd-MM-yyyy");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -259,7 +262,15 @@ public class AddInfomationForm extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Collect patient info from the UI components
         String hoTen = jhoTen.getText();
-        String ngaySinh = jNgaySinh.getDate()+"";
+//        String ngaySinh = jNgaySinh.getDate()+"";
+
+        // Chuyển đổi ngày từ JDateChooser sang định dạng "dd-MM-yyyy"
+        String ngaySinh = "";
+        if (jNgaySinh.getDate() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            ngaySinh = dateFormat.format(jNgaySinh.getDate());
+        }
+        
         String queQuan = jQueQuan.getText();
         String maBenhNhan = jMaBenhNhan.getText();
         String sdt = jSdt.getText();
@@ -320,7 +331,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
         patient.setSdt(sdt);
         patient.setGioitinh(gioiTinh);
         // Disconnect from the card
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }                                        
 //GEN-LAST:event_jButton1ActionPerformed
 
     private void btnChooseImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseImgActionPerformed

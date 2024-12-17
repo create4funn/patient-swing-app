@@ -5,6 +5,9 @@ import Card.SmartCard;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -34,7 +37,18 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
     public void init(){
         Patient patient = Patient.getInstance();
         jhoTen.setText(patient.getHoten());
-        //jNgaySinh.setDateFormatString(patient.getNgaysinh());
+        //jNgaySinh.set(patient.getNgaysinh());
+        // Chuyển đổi String sang Date để gán cho JDateChooser
+      
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            Date ngaySinh = dateFormat.parse(patient.getNgaysinh()); // Chuyển đổi từ String sang Date
+            jNgaySinh.setDate(ngaySinh); // Gán giá trị Date vào JDateChooser
+        } catch (ParseException e) {
+            e.printStackTrace();
+            System.out.println("Ngày sinh không đúng định dạng");
+        }
+
         jGioiTinh.setSelectedItem(patient.getGioitinh());
         jQueQuan.setText(patient.getQuequan());
         jSdt.setText(patient.getSdt());
@@ -147,6 +161,8 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 27, Short.MAX_VALUE)
         );
+
+        jNgaySinh.setDateFormatString("dd-MM-yyyy");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -309,7 +325,7 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
 
         // Attempt to update the patient info
         boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt);
-
+        
         if (updated) {
             this.dispose();
             // Update the patient instance
