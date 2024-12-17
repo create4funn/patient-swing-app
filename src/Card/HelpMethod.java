@@ -24,7 +24,6 @@ public class HelpMethod {
         return byteArray;
     }
 
-
     // Method to convert byte array to string array using a delimiter
     /* Mảng Byte sẽ được chuyển sang mảng String, thứ tự các giá trị trong mảng String như sau:
         String[0]: Hoten
@@ -63,6 +62,7 @@ public class HelpMethod {
 
         return result;
     }
+
 
 
     // Method to convert byte array to image
