@@ -308,21 +308,21 @@
             <Component class="javax.swing.JLabel" name="jhoTen">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="12" style="1"/>
+                  <Font name="Consolas" size="12" style="1"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jNgaySinh">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="12" style="1"/>
+                  <Font name="Consolas" size="12" style="1"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jQueQuan">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="12" style="1"/>
+                  <Font name="Consolas" size="12" style="1"/>
                 </Property>
               </Properties>
             </Component>
@@ -336,7 +336,7 @@
             <Component class="javax.swing.JLabel" name="jGioiTinh">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="12" style="1"/>
+                  <Font name="Consolas" size="12" style="1"/>
                 </Property>
               </Properties>
             </Component>

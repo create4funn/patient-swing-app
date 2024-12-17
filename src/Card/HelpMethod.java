@@ -14,27 +14,16 @@ public class HelpMethod {
         // Log the input string
         // System.out.println("Input String: " + input);
 
-        // Initialize a byte array to hold the hexadecimal representation of the input string
-        byte[] byteArray = new byte[input.length()];
+        // Convert string to byte array using UTF-8 encoding
+        byte[] byteArray = input.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         // System.out.println("Initialized byte array of length: " + byteArray.length);
 
-        // Convert each character to a byte
-        for (int i = 0; i < input.length(); i++) {
-            // Log the character and its index
-            // System.out.println("Processing character at index " + i + ": " + input.charAt(i));
-
-            // Convert the character to a byte and store it in the array
-            byteArray[i] = (byte) input.charAt(i);
-
-            // Log the converted byte value
-            // System.out.println("Converted byte: " + byteArray[i]);
-        }
-
-        // Log the resulting byte array as a string
+        // Debug print the resulting byte array
         // System.out.println("Resulting byte array: " + java.util.Arrays.toString(byteArray));
 
         return byteArray;
     }
+
 
     // Method to convert byte array to string array using a delimiter
     /* Mảng Byte sẽ được chuyển sang mảng String, thứ tự các giá trị trong mảng String như sau:
@@ -46,8 +35,8 @@ public class HelpMethod {
         String[5]: MaBenhNhan(SoBHYT)
      */
     public static String[] convertByteToStringArr(byte[] byteArray, char delimiter) {
-        // Convert byte array to string
-        String str = new String(byteArray);
+        // Convert byte array to string with UTF-8 decoding
+        String str = new String(byteArray, java.nio.charset.StandardCharsets.UTF_8);
         // System.out.println("Converted String: " + str); // Debug print
 
         // Manually split the string using the delimiter
@@ -74,6 +63,7 @@ public class HelpMethod {
 
         return result;
     }
+
 
     // Method to convert byte array to image
     public static BufferedImage convertByteArrayToImage(byte[] byteArray) {

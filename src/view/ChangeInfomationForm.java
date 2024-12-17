@@ -34,7 +34,7 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
     public void init(){
         Patient patient = Patient.getInstance();
         jhoTen.setText(patient.getHoten());
-        //jNgaySinh.set(patient.getNgaysinh());
+        //jNgaySinh.setDateFormatString(patient.getNgaysinh());
         jGioiTinh.setSelectedItem(patient.getGioitinh());
         jQueQuan.setText(patient.getQuequan());
         jSdt.setText(patient.getSdt());

@@ -163,15 +163,15 @@ public class PatientForm extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("1000000d");
 
-        jhoTen.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jhoTen.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
 
-        jNgaySinh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jNgaySinh.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
 
-        jQueQuan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jQueQuan.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
 
         jSdt.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
 
-        jGioiTinh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jGioiTinh.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
 
         jMaBenhNhan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
 
