@@ -132,7 +132,7 @@ public class SmartCard {
         ResponseAPDU response = sendCommandAPDU(command);
         if (response != null && response.getSW() == 0x9000) {
             byte[] data = response.getData();
-            return convertByteToStringArr(data, '.');
+            return HelpMethod.convertByteToStringArr(data, '.');
         } else {
             System.out.println("Failed to get patient info, SW: " + Integer.toHexString(response.getSW()));
             return null;
@@ -371,6 +371,20 @@ public class SmartCard {
             return false;
         }
     }
+
+    public String[] UnLockCard() {
+        byte[] command; // Example command, adjust as needed
+        command = new byte[]{(byte) 0x00, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        ResponseAPDU response = sendCommandAPDU(command);
+        if (response != null && response.getSW() == 0x9000) {
+            byte[] data = response.getData();
+            return HelpMethod.convertByteToStringArr(data, '.');
+        } else {
+            System.out.println("Failed to get patient info, SW: " + Integer.toHexString(response.getSW()));
+            return null;
+        }
+    }
+
 
     // Method to convert byte array to string array using a delimiter
     /* Mảng Byte sẽ được chuyển sang mảng String, thứ tự các giá trị trong mảng String như sau:

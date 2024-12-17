@@ -75,8 +75,8 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnAddCard = new javax.swing.JButton();
         btnChangeCard = new javax.swing.JButton();
         btnEditCard = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jKhoaThe = new javax.swing.JButton();
+        jMoKhoaThe = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
 
         setBorder(null);
@@ -147,23 +147,33 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnEditCard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(btnEditCard);
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Lock_icon (1).png"))); // NOI18N
-        jButton1.setText("Khóa");
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setMargin(new java.awt.Insets(2, 20, 2, 20));
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButton1);
+        jKhoaThe.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jKhoaThe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Lock_icon (1).png"))); // NOI18N
+        jKhoaThe.setText("Khóa");
+        jKhoaThe.setFocusable(false);
+        jKhoaThe.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jKhoaThe.setMargin(new java.awt.Insets(2, 20, 2, 20));
+        jKhoaThe.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jKhoaThe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jKhoaTheActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jKhoaThe);
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Unlock icon.png"))); // NOI18N
-        jButton2.setText("Mở khóa");
-        jButton2.setFocusable(false);
-        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setMargin(new java.awt.Insets(2, 20, 2, 20));
-        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButton2);
+        jMoKhoaThe.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMoKhoaThe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Unlock icon.png"))); // NOI18N
+        jMoKhoaThe.setText("Mở khóa");
+        jMoKhoaThe.setFocusable(false);
+        jMoKhoaThe.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jMoKhoaThe.setMargin(new java.awt.Insets(2, 20, 2, 20));
+        jMoKhoaThe.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jMoKhoaThe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMoKhoaTheActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jMoKhoaThe);
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jTextField1.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
@@ -233,18 +243,22 @@ public class AccountForm extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnConnectActionPerformed
 
+    private void jKhoaTheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jKhoaTheActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jKhoaTheActionPerformed
 
-
-   
-
+    private void jMoKhoaTheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMoKhoaTheActionPerformed
+        card.UnLockCard();
+        SmartCard.counter = 0;
+    }//GEN-LAST:event_jMoKhoaTheActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddCard;
     private javax.swing.JButton btnChangeCard;
     private javax.swing.JButton btnConnect;
     private javax.swing.JButton btnEditCard;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jKhoaThe;
+    private javax.swing.JButton jMoKhoaThe;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
