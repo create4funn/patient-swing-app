@@ -21,7 +21,8 @@ public class PatientForm extends javax.swing.JFrame {
     SmartCard card = SmartCard.getInstance();
     private DefaultTableModel tblModel1;
     private DefaultTableModel tblModel2;
-    
+    Patient patient = Patient.getInstance();
+
     public PatientForm() {
         initComponents();
         init();
@@ -52,7 +53,6 @@ public class PatientForm extends javax.swing.JFrame {
     }
     private void init() {
         // Retrieve the Patient instance
-        Patient patient = Patient.getInstance();
         // Set the values from the Patient instance to the UI components
         jhoTen.setText(patient.getHoten());
         jNgaySinh.setText(patient.getNgaysinh());
@@ -60,6 +60,7 @@ public class PatientForm extends javax.swing.JFrame {
         jGioiTinh.setText(patient.getGioitinh());
         jSdt.setText(patient.getSdt());
         jMaBenhNhan.setText(patient.getMabn());
+        jBalance.setText(String.valueOf(patient.getBalance()));
 
         // Get and display the patient picture
         BufferedImage picture = patient.getPicture();
@@ -81,9 +82,9 @@ public class PatientForm extends javax.swing.JFrame {
         jNgaySinh.setText(patientInfo[1]);
         jQueQuan.setText(patientInfo[2]);
         jGioiTinh.setText(patientInfo[3]);
-        jMaBenhNhan.setText(patientInfo[4]);
-        jSdt.setText(patientInfo[5]);
-
+        jSdt.setText(patientInfo[4]);
+        jMaBenhNhan.setText(patientInfo[5]);
+        jBalance.setText(String.valueOf(patient.getBalance()));
         // Get patient picture
         if (patientPicture != null) {
             Image scaledImage = patientPicture.getScaledInstance(jPicture.getWidth(), jPicture.getHeight(), Image.SCALE_SMOOTH);
@@ -113,8 +114,8 @@ public class PatientForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         btnChangeInfo = new javax.swing.JButton();
         btnChangePin = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jChargeCard = new javax.swing.JButton();
+        jBalance = new javax.swing.JLabel();
         jhoTen = new javax.swing.JLabel();
         jNgaySinh = new javax.swing.JLabel();
         jQueQuan = new javax.swing.JLabel();
@@ -176,30 +177,30 @@ public class PatientForm extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Nạp tiền");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        jChargeCard.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+        jChargeCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jChargeCard.setForeground(new java.awt.Color(255, 255, 255));
+        jChargeCard.setText("Nạp tiền");
+        jChargeCard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                jChargeCardActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("1000000d");
+        jBalance.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
+        jBalance.setText("0");
 
-        jhoTen.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        jhoTen.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jNgaySinh.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        jNgaySinh.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jQueQuan.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        jQueQuan.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jSdt.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jSdt.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jGioiTinh.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        jGioiTinh.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jMaBenhNhan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMaBenhNhan.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
         jButton1.setBackground(new java.awt.Color(255, 51, 51));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -254,7 +255,7 @@ public class PatientForm extends javax.swing.JFrame {
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jMaBenhNhan, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jGioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jBalance, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(0, 26, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
@@ -264,7 +265,7 @@ public class PatientForm extends javax.swing.JFrame {
                     .addComponent(btnConnect, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
                 .addGap(37, 37, 37)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jChargeCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnChangeInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(46, 46, 46))
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -304,14 +305,14 @@ public class PatientForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jBalance))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnChangeInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jChargeCard, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnChangePin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(32, 32, 32)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -456,11 +457,11 @@ public class PatientForm extends javax.swing.JFrame {
         a.setVisible(true);
     }//GEN-LAST:event_btnChangePinActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void jChargeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jChargeCardActionPerformed
         // TODO add your handling code here:
         InputMoney a = new InputMoney(this, rootPaneCheckingEnabled);
         a.setVisible(true);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jChargeCardActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         // TODO add your handling code here:
@@ -507,12 +508,12 @@ public class PatientForm extends javax.swing.JFrame {
     private javax.swing.JButton btnChangeInfo;
     private javax.swing.JButton btnChangePin;
     private javax.swing.JButton btnConnect;
+    private javax.swing.JLabel jBalance;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jChargeCard;
     private javax.swing.JLabel jGioiTinh;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

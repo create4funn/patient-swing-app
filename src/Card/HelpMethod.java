@@ -34,9 +34,13 @@ public class HelpMethod {
         String[5]: MaBenhNhan(SoBHYT)
      */
     public static String[] convertByteToStringArr(byte[] byteArray, char delimiter) {
+        // Check if the byte array is null
+        if (byteArray == null) {
+            return null;
+        }
+
         // Convert byte array to string with UTF-8 decoding
         String str = new String(byteArray, java.nio.charset.StandardCharsets.UTF_8);
-        // System.out.println("Converted String: " + str); // Debug print
 
         // Manually split the string using the delimiter
         List<String> parts = new ArrayList<>();
@@ -50,20 +54,11 @@ public class HelpMethod {
             }
         }
         // Add the last part
-        String[] result;
         parts.add(currentPart.toString());
-        result = parts.toArray(new String[0]);
 
-        // Debug print each element in the result array
-        // System.out.println("Split result length: " + result.length);
-        // for (int i = 0; i < result.length; i++) {
-        //     System.out.println("String[" + i + "]: " + result[i]);
-        // }
-
-        return result;
+        // Convert the list to an array and return
+        return parts.toArray(new String[0]);
     }
-
-
 
     // Method to convert byte array to image
     public static BufferedImage convertByteArrayToImage(byte[] byteArray) {

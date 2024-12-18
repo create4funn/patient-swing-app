@@ -1,5 +1,6 @@
 package view;
 
+import Card.HelpMethod;
 import Card.Patient;
 import Card.SmartCard;
 import java.awt.Image;
@@ -316,6 +317,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
         // Instantiate the SmartCard class and connect to the card
 
         // Attempt to update the patient info on the smart card
+        card.updatePatientBalance("0");
         boolean updated = card.initPatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan, maPin);
         if (updated) {
             JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thành công.");
@@ -348,7 +350,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
                 BufferedImage image = ImageIO.read(selectedFile);
 
                 // Convert the BufferedImage to a byte array
-                byte[] byteArray = card.convertImageToByteArray(image);
+                byte[] byteArray = HelpMethod.convertImageToByteArray(image);
 
                 // Check if the byte array size exceeds 30 KB
                 if (byteArray == null || byteArray.length > 30 * 1000) { // 30 KB = 30 * 1024 bytes

@@ -11,7 +11,7 @@ public class Patient {
     private String gioitinh;
     private String mapin;
     private String sdt;
-    private String balance;
+    private int balance;
     private BufferedImage picture; // Changed to BufferedImage
 
     // Private static instance of the class
@@ -86,12 +86,24 @@ public class Patient {
         this.mapin = mapin;
     }
 
-    public String getBalance() {
+    public int getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
-        this.balance = balance;
+    public void setBalance(int amount) {
+        try {
+                // Parse the current balance and the new amount as doubles
+                int currentBalance = this.balance;
+                int amountToAdd = amount;
+
+                // Perform the addition
+                int newBalance = currentBalance + amountToAdd;
+
+                // Update the balance as a string
+                this.balance = newBalance;
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid balance or amount: " + e.getMessage());
+        }
     }
 
     public BufferedImage getPicture() { // Updated getter for picture
