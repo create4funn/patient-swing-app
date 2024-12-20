@@ -286,15 +286,25 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Collect patient info from the UI components
         String hoTen = jhoTen.getText();
-        String ngaySinh = jNgaySinh.getDate()+"";
+        // Chuyển đổi ngày từ JDateChooser sang định dạng "dd-MM-yyyy"
+        String ngaySinh = "";
+        if (jNgaySinh.getDate() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            ngaySinh = dateFormat.format(jNgaySinh.getDate());
+        }
         String queQuan = jQueQuan.getText();
         String maBenhNhan = jMaBenhNhan.getText();
         String sdt = jSdt.getText();
         String gioiTinh = (String) jGioiTinh.getSelectedItem();
 
         // Validate fields
-        if (hoTen.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Họ tên không hợp lệ (không chứa ký tự đặc biệt, tối đa 40 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if (!hoTen.matches("^[A-Za-zAĂÂBCDĐEÊGHIKLMNOÔƠPQRSTUƯVXY\n" +
+                "aăâbcdđeêghiklmnoôơpqrstuưvxy\n" +
+                "ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝ\n" +
+                "àáâãèéêìíòóôõùúý\n" +
+                "ẰẮẲẴỀẾỂỄỈỊỎỐỒỔỖỚỜỞỠỤỦỨỪỬỮỲỴỶỸ\n" +
+                "ằắẳẵềếểễỉịỏốồổỗớờởỡụủứừửữỳỵỷỹ\\s]{1,40}$")) {
+            JOptionPane.showMessageDialog(this, "Họ tên không hợp lệ (chỉ chứa ký tự chữ và khoảng trắng, tối đa 40 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

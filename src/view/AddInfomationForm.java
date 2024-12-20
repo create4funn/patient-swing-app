@@ -263,7 +263,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Collect patient info from the UI components
         String hoTen = jhoTen.getText();
-//        String ngaySinh = jNgaySinh.getDate()+"";
 
         // Chuyển đổi ngày từ JDateChooser sang định dạng "dd-MM-yyyy"
         String ngaySinh = "";
@@ -271,7 +270,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             ngaySinh = dateFormat.format(jNgaySinh.getDate());
         }
-        
         String queQuan = jQueQuan.getText();
         String maBenhNhan = jMaBenhNhan.getText();
         String sdt = jSdt.getText();
@@ -279,18 +277,18 @@ public class AddInfomationForm extends javax.swing.JDialog {
         String maPin = jMaPin.getText(); // Assuming this is needed for some authentication purposes
 
         // Validate fields
-        if (hoTen.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Họ tên không hợp lệ (không chứa ký tự đặc biệt, tối đa 40 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if (!hoTen.matches("^[A-Za-zAĂÂBCDĐEÊGHIKLMNOÔƠPQRSTUƯVXY\n" +
+                "aăâbcdđeêghiklmnoôơpqrstuưvxy\n" +
+                "ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝ\n" +
+                "àáâãèéêìíòóôõùúý\n" +
+                "ẰẮẲẴỀẾỂỄỈỊỎỐỒỔỖỚỜỞỠỤỦỨỪỬỮỲỴỶỸ\n" +
+                "ằắẳẵềếểễỉịỏốồổỗớờởỡụủứừửữỳỵỷỹ\\s]{1,40}$")) {
+            JOptionPane.showMessageDialog(this, "Họ tên không hợp lệ (chỉ chứa ký tự chữ và khoảng trắng, tối đa 40 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        try {
-            if(jNgaySinh.getDate().after(new java.util.Date())){
-                JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ (không được là ngày tương lai).", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ (không được là ngày tương lai).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if (jNgaySinh.getDate() == null || jNgaySinh.getDate().after(new java.util.Date())) {
+            JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ (không được là ngày tương lai và không được bỏ trống).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -318,7 +316,8 @@ public class AddInfomationForm extends javax.swing.JDialog {
 
         // Attempt to update the patient info on the smart card
         card.updatePatientBalance("0");
-        boolean updated = card.initPatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan, maPin);
+        card.updatePatientPin(maPin);
+        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan);
         if (updated) {
             JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thành công.");
         } else {
