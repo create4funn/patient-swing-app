@@ -430,4 +430,14 @@ public class SmartCard {
         }
     }
 
+    public boolean VerifyCard(byte[] publicKey) {
+        try {
+            String randomData = HelpMethod.generateRandomString(20); // Doan du lieu ngau nhien de gui xuong card
+            byte[] dataToVerify = HelpMethod.ConvertStringToByteArr(randomData); // Chuyen du lieu sang dang byte[]
+            boolean isSuccess = HelpMethod.verifySignature(publicKey, dataToVerify); // Xac thuc the, neu dung tra ve true
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
 }
