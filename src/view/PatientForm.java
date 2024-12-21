@@ -1,14 +1,16 @@
 package view;
 
+import Card.Bill;
+import Card.MedicalHistory;
 import Card.Patient;
 import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,43 +18,91 @@ import javax.swing.table.DefaultTableModel;
  * @author DELL
  */
 public class PatientForm extends javax.swing.JFrame {
+    List<MedicalHistory> medicalHistories = new ArrayList<>();
+
 
     String[] patientInfo;
     SmartCard card = SmartCard.getInstance();
     private DefaultTableModel tblModel1;
     private DefaultTableModel tblModel2;
-    
+    Patient patient = Patient.getInstance();
+
     public PatientForm() {
         initComponents();
         init();
         initTable();
-        loadDataToTable();
+        loadMedicalHistoryData(medicalHistories);
     }
     public final void initTable() {
         tblModel1 = (DefaultTableModel) tblLichSu.getModel();
-        String[] headerTblLichSu = new String[]{"Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Trạng thái"};
+        String[] headerTblLichSu = new String[]{"STT", "Mã đơn khám", "Ngày khám", "Lý do khám", "Chi phí", "Trạng thái"};
         tblModel1.setColumnIdentifiers(headerTblLichSu);
         
-        tblModel2 = (DefaultTableModel) tblLichSu.getModel();
-        String[] headerTblHoaDon = new String[]{"Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Trạng thái"};
-        tblModel1.setColumnIdentifiers(headerTblHoaDon);
+        tblModel2 = (DefaultTableModel) tblHoaDon.getModel();
+        String[] headerTblHoaDon = new String[]{"STT", "Mã hóa đơn", "Ngày thanh toán", "Số tiền"};
+        tblModel2.setColumnIdentifiers(headerTblHoaDon);
     }
-        
-    public void loadDataToTable() {
 
-        //ArrayList<Patient> listTk = ...;
-               
-//        tblModel.setRowCount(0);
-//        for (int i=0; i<listTk.size(); i++) {
-//
-//            tblModel.addRow(new Object[]{
-//                i+1, listTk.get(i).gethoten(), listTk.get(i).getMabn(), listTk.get(i).getSdt(),listTk.get(i).getGioitinh(), listTk.get(i).getTrangthai()
-//            });
-//        }
+    public void loadMedicalHistoryData(List<MedicalHistory> medicalHistories) {
+        tblModel1.setRowCount(0); // Clear existing data
+        int index = 1; // Auto-increment index starts at 1
+
+        for (MedicalHistory history : medicalHistories) {
+            tblModel1.addRow(new Object[]{
+                    index++, // Auto-increment index
+                    history.getMedicalId(),
+                    history.getMedicalHistoryDate(),
+                    history.getMedicalDescription(),
+                    history.getMedicalCost(),
+                    history.getMedicalStatus()
+            });
+        }
     }
+
+    public void loadBillData(List<Bill> bills) {
+        tblModel2.setRowCount(0); // Clear existing data
+        int index = 1; // Auto-increment index starts at 1
+
+        for (Bill b : bills) {
+            tblModel2.addRow(new Object[]{
+                    index++, // Auto-increment index
+                    b.getBillId(),
+                    b.getPaymentDate(),
+                    b.getBillCost(),
+            });
+        }
+    }
+
+    // General helper method to get the MedicalId of the selected row from any table
+    public static String getSelectedMedicalId(JTable table, int medicalIdColumnIndex) {
+        int selectedRow = table.getSelectedRow();
+
+        if (selectedRow == -1) {
+            return null; // No row selected
+        }
+
+        Object medicalId = table.getValueAt(selectedRow, medicalIdColumnIndex);
+        System.out.println(medicalId);
+        return medicalId != null ? medicalId.toString() : ""; // Return the MedicalId or an empty string if null
+    }
+
+    // Specific method for tblLichSu (assuming MedicalId is in column 1)
+    public static String getSelectedMedicalIdLichSu(JTable tblLichSu) {
+        return getSelectedMedicalId(tblLichSu, 1); // Column index 1 (zero-based)
+    }
+
+    // Specific method for tblHoaDon (assuming MedicalId is in column 1)
+    public static String getSelectedMedicalIdHoaDon(JTable tblHoaDon) {
+        return getSelectedMedicalId(tblHoaDon, 1); // Column index 1 (zero-based)
+    }
+
     private void init() {
+        medicalHistories.add(new MedicalHistory("P001", "M001", "2024-12-19", "Khám sức khỏe định kỳ", "a","Đã thanh toán", "500000"));
+        medicalHistories.add(new MedicalHistory("P002", "M002", "2024-12-20", "Khám tim mạch","b","Chưa thanh toán", "700000"));
+        medicalHistories.add(new MedicalHistory("P003", "M003", "2024-12-21", "Khám mắt", "c","Đã thanh toán", "300000"));
+        medicalHistories.add(new MedicalHistory("P004", "M004", "2024-12-22", "Khám da liễu", "d","Chưa thanh toán", "400000"));
+        medicalHistories.add(new MedicalHistory("P005", "M005", "2024-12-23", "Khám tổng quát", "e","Đã thanh toán", "1200000"));
         // Retrieve the Patient instance
-        Patient patient = Patient.getInstance();
         // Set the values from the Patient instance to the UI components
         jhoTen.setText(patient.getHoten());
         jNgaySinh.setText(patient.getNgaysinh());
@@ -60,6 +110,7 @@ public class PatientForm extends javax.swing.JFrame {
         jGioiTinh.setText(patient.getGioitinh());
         jSdt.setText(patient.getSdt());
         jMaBenhNhan.setText(patient.getMabn());
+        jBalance.setText(String.valueOf(patient.getBalance()));
 
         // Get and display the patient picture
         BufferedImage picture = patient.getPicture();
@@ -81,9 +132,9 @@ public class PatientForm extends javax.swing.JFrame {
         jNgaySinh.setText(patientInfo[1]);
         jQueQuan.setText(patientInfo[2]);
         jGioiTinh.setText(patientInfo[3]);
-        jMaBenhNhan.setText(patientInfo[4]);
-        jSdt.setText(patientInfo[5]);
-
+        jSdt.setText(patientInfo[4]);
+        jMaBenhNhan.setText(patientInfo[5]);
+        jBalance.setText(String.valueOf(patient.getBalance()));
         // Get patient picture
         if (patientPicture != null) {
             Image scaledImage = patientPicture.getScaledInstance(jPicture.getWidth(), jPicture.getHeight(), Image.SCALE_SMOOTH);
@@ -113,8 +164,8 @@ public class PatientForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         btnChangeInfo = new javax.swing.JButton();
         btnChangePin = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jChargeCard = new javax.swing.JButton();
+        jBalance = new javax.swing.JLabel();
         jhoTen = new javax.swing.JLabel();
         jNgaySinh = new javax.swing.JLabel();
         jQueQuan = new javax.swing.JLabel();
@@ -131,9 +182,9 @@ public class PatientForm extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         tblHoaDon = new javax.swing.JTable();
-        jButton5 = new javax.swing.JButton();
+        jMakePayment = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
-        jButton7 = new javax.swing.JButton();
+        jDisplayInfo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -176,30 +227,30 @@ public class PatientForm extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Nạp tiền");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        jChargeCard.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+        jChargeCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jChargeCard.setForeground(new java.awt.Color(255, 255, 255));
+        jChargeCard.setText("Nạp tiền");
+        jChargeCard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                jChargeCardActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("1000000d");
+        jBalance.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
+        jBalance.setText("0");
 
-        jhoTen.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        jhoTen.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jNgaySinh.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        jNgaySinh.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jQueQuan.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        jQueQuan.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jSdt.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jSdt.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jGioiTinh.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        jGioiTinh.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
-        jMaBenhNhan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMaBenhNhan.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
         jButton1.setBackground(new java.awt.Color(255, 51, 51));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -254,7 +305,7 @@ public class PatientForm extends javax.swing.JFrame {
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jMaBenhNhan, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jGioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jBalance, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(0, 26, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
@@ -264,7 +315,7 @@ public class PatientForm extends javax.swing.JFrame {
                     .addComponent(btnConnect, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
                 .addGap(37, 37, 37)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jChargeCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnChangeInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(46, 46, 46))
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -304,14 +355,14 @@ public class PatientForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jBalance))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnChangeInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jChargeCard, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnChangePin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(32, 32, 32)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -366,18 +417,28 @@ public class PatientForm extends javax.swing.JFrame {
         ));
         jScrollPane4.setViewportView(tblHoaDon);
 
-        jButton5.setBackground(new java.awt.Color(255, 0, 0));
-        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 255, 255));
-        jButton5.setText("Thanh toán");
+        jMakePayment.setBackground(new java.awt.Color(255, 0, 0));
+        jMakePayment.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMakePayment.setForeground(new java.awt.Color(255, 255, 255));
+        jMakePayment.setText("Thanh toán");
+        jMakePayment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMakePaymentActionPerformed(evt);
+            }
+        });
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel11.setText("Hóa đơn");
 
-        jButton7.setBackground(new java.awt.Color(0, 153, 153));
-        jButton7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton7.setForeground(new java.awt.Color(255, 255, 255));
-        jButton7.setText("Xem đơn thuốc");
+        jDisplayInfo.setBackground(new java.awt.Color(0, 153, 153));
+        jDisplayInfo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jDisplayInfo.setForeground(new java.awt.Color(255, 255, 255));
+        jDisplayInfo.setText("Xem đơn thuốc");
+        jDisplayInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jDisplayInfoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -390,9 +451,9 @@ public class PatientForm extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton7)
+                .addComponent(jDisplayInfo)
                 .addGap(81, 81, 81)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jMakePayment, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(129, 129, 129))
         );
         jPanel4Layout.setVerticalGroup(
@@ -403,8 +464,8 @@ public class PatientForm extends javax.swing.JFrame {
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                    .addComponent(jMakePayment, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(jDisplayInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -445,34 +506,21 @@ public class PatientForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnChangeInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeInfoActionPerformed
-        // TODO add your handling code here:
         ChangeInfomationForm a = new ChangeInfomationForm(this, rootPaneCheckingEnabled);
         a.setVisible(true);
     }//GEN-LAST:event_btnChangeInfoActionPerformed
 
     private void btnChangePinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePinActionPerformed
-        // TODO add your handling code here:
         ChangePin a = new ChangePin(this, rootPaneCheckingEnabled);
         a.setVisible(true);
     }//GEN-LAST:event_btnChangePinActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+    private void jChargeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jChargeCardActionPerformed
         InputMoney a = new InputMoney(this, rootPaneCheckingEnabled);
         a.setVisible(true);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jChargeCardActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        // TODO add your handling code here:
-//        String[] patientInfo;
-//        patientInfo = card.getPatientInfo();
-//
-//        jhoTen.setText(patientInfo[0]);
-//        jNgaySinh.setText(patientInfo[1]);
-//        jQueQuan.setText(patientInfo[2]);
-//        jGioiTinh.setText(patientInfo[3]);
-//        jMaBenhNhan.setText(patientInfo[4]);
-//        jSdt.setText(patientInfo[5]);
         String[] patientInfo;
         patientInfo = card.getPatientInfo();
 
@@ -484,6 +532,116 @@ public class PatientForm extends javax.swing.JFrame {
         jMaBenhNhan.setText(patientInfo[5]);
 
     }//GEN-LAST:event_btnConnectActionPerformed
+
+    private void jDisplayInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDisplayInfoActionPerformed
+        // Determine the currently focused table
+        if (tblLichSu.getSelectedRow() != -1) {
+            // Fetch the MedicalId from tblLichSu
+            String medicalId = getSelectedMedicalIdLichSu(tblLichSu);
+
+            if (medicalId != null && !medicalId.isEmpty()) {
+                // Find the MedicalHistory corresponding to the selected MedicalId
+                for (MedicalHistory history : medicalHistories) {
+                    if (history.getMedicalId().equals(medicalId)) {
+                        // Display MedicalHistory details in a dialog
+                        JOptionPane.showMessageDialog(this,
+                                "Mã đơn khám: " + history.getMedicalId() + "\n" +
+                                        "Ngày khám: " + history.getMedicalHistoryDate() + "\n" +
+                                        "Lý do khám: " + history.getMedicalDescription() + "\n" +
+                                        "Chi phí: " + history.getMedicalCost() + "\n" +
+                                        "Trạng thái: " + history.getMedicalStatus(),
+                                "Thông tin Đơn Khám",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                        return; // Exit after displaying the info
+                    }
+                }
+            }
+        } else if (tblHoaDon.getSelectedRow() != -1) {
+            // Fetch the MedicalId from tblHoaDon
+            String medicalId = getSelectedMedicalIdHoaDon(tblHoaDon);
+
+            if (medicalId != null && !medicalId.isEmpty()) {
+                // Find the MedicalHistory corresponding to the selected MedicalId
+                for (MedicalHistory history : medicalHistories) {
+                    if (history.getMedicalId().equals(medicalId)) {
+                        // Display MedicalHistory details in a dialog
+                        JOptionPane.showMessageDialog(this,
+                                "Mã đơn khám: " + history.getMedicalId() + "\n" +
+                                        "Ngày khám: " + history.getMedicalHistoryDate() + "\n" +
+                                        "Lý do khám: " + history.getMedicalDescription() + "\n" +
+                                        "Chi phí: " + history.getMedicalCost() + "\n" +
+                                        "Trạng thái: " + history.getMedicalStatus(),
+                                "Thông tin Hóa Đơn",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                        return; // Exit after displaying the info
+                    }
+                }
+            }
+        } else {
+            // No table row selected
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một dòng trong bảng để xem thông tin.",
+                    "Thông báo",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
+    }//GEN-LAST:event_jDisplayInfoActionPerformed
+
+    private void jMakePaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMakePaymentActionPerformed
+        // Check if a row is selected in tblLichSu
+        if (tblLichSu.getSelectedRow() != -1) {
+            // Fetch MedicalId, status, and cost from the selected row in tblLichSu
+            String medicalId = getSelectedMedicalIdLichSu(tblLichSu);
+            String status = tblLichSu.getValueAt(tblLichSu.getSelectedRow(), 5).toString(); // Column index 5 for "Trạng thái"
+            int cost = Integer.parseInt(tblLichSu.getValueAt(tblLichSu.getSelectedRow(), 4).toString()); // Column index 4 for "Chi phí"
+
+            if ("Chưa thanh toán".equals(status)) {
+                // Prompt user to confirm payment
+                int response = JOptionPane.showConfirmDialog(this,
+                        "Thanh toán đơn khám cho mã đơn: " + medicalId,
+                        "Xác nhận thanh toán",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (response == JOptionPane.YES_OPTION) {
+                    // Check if the patient's balance is sufficient
+                    if (patient.getBalance() < cost) {
+                        JOptionPane.showMessageDialog(this,
+                                "Số dư hiện tại của bạn không đủ",
+                                "Thông báo",
+                                JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        // Deduct the cost from the patient's balance
+                        patient.setBalance(-cost);
+                        card.updatePatientBalance(String.valueOf(patient.getBalance()));
+                        loadPatienInfo();
+                        // Update the status in the table to "Đã thanh toán"
+                        tblLichSu.setValueAt("Đã thanh toán", tblLichSu.getSelectedRow(), 5);
+
+                        JOptionPane.showMessageDialog(this,
+                                "Thanh toán thành công cho mã đơn: " + medicalId,
+                                "Thông báo",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    // User chose "Không"
+                    // Simply dismiss the dialog, no action needed
+                }
+            } else {
+                // The selected row's status is not "Chưa thanh toán"
+                JOptionPane.showMessageDialog(this,
+                        "Đơn khám đã được thanh toán hoặc không thể thanh toán.",
+                        "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            // No row is selected in tblLichSu
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một dòng trong bảng lịch sử để thực hiện thanh toán.",
+                    "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
+        }    }//GEN-LAST:event_jMakePaymentActionPerformed
 
     /**
      * @param args the command line arguments
@@ -507,17 +665,17 @@ public class PatientForm extends javax.swing.JFrame {
     private javax.swing.JButton btnChangeInfo;
     private javax.swing.JButton btnChangePin;
     private javax.swing.JButton btnConnect;
+    private javax.swing.JLabel jBalance;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jChargeCard;
+    private javax.swing.JButton jDisplayInfo;
     private javax.swing.JLabel jGioiTinh;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jMaBenhNhan;
+    private javax.swing.JButton jMakePayment;
     private javax.swing.JLabel jNgaySinh;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

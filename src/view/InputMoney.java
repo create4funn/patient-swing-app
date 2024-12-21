@@ -1,16 +1,24 @@
 package view;
 
+import Card.Patient;
+import Card.SmartCard;
+
+import javax.swing.*;
+
 /**
  *
  * @author DELL
  */
 public class InputMoney extends javax.swing.JDialog {
 
+    SmartCard card = SmartCard.getInstance();
+    private PatientForm owner;
     /**
      * Creates new form InputMoney
      */
     public InputMoney(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        this.owner = (PatientForm) parent;
         initComponents();
     }
 
@@ -26,10 +34,10 @@ public class InputMoney extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jTextField2 = new javax.swing.JTextField();
+        jChargeCard = new javax.swing.JButton();
+        jInputMoney = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        jCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -41,19 +49,29 @@ public class InputMoney extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("VNÐ");
 
-        jButton1.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Nạp tiền");
+        jChargeCard.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+        jChargeCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jChargeCard.setForeground(new java.awt.Color(255, 255, 255));
+        jChargeCard.setText("Nạp tiền");
+        jChargeCard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jChargeCardActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 0, 0));
         jLabel3.setText("Nạp tiền");
 
-        jButton2.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Hủy");
+        jCancel.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jCancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jCancel.setForeground(new java.awt.Color(255, 255, 255));
+        jCancel.setText("Hủy");
+        jCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -61,9 +79,9 @@ public class InputMoney extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jChargeCard, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(57, 57, 57)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(78, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(39, 39, 39)
@@ -71,7 +89,7 @@ public class InputMoney extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jTextField2)
+                        .addComponent(jInputMoney)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
                         .addGap(87, 87, 87))
@@ -87,12 +105,12 @@ public class InputMoney extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jInputMoney, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(40, 40, 40)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jChargeCard, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18))
         );
 
@@ -109,6 +127,26 @@ public class InputMoney extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jChargeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jChargeCardActionPerformed
+        String inputMoney = jInputMoney.getText();
+        if (inputMoney.isEmpty() || !inputMoney.matches("\\d{0,10}") || inputMoney.length() > 10) {
+            JOptionPane.showMessageDialog(this, "Số tiền nạp không hợp lệ (chỉ chứa số, tối đa 1.000.000.000đ).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }else{
+            int inputMoneyInt = Integer.parseInt(inputMoney);
+            Patient patient = Patient.getInstance();
+            patient.setBalance(inputMoneyInt);
+            card.updatePatientBalance(String.valueOf(patient.getBalance()));
+            JOptionPane.showMessageDialog(this, "Đã nạp tiền thành công.");
+            owner.loadPatienInfo();
+        }
+
+    }//GEN-LAST:event_jChargeCardActionPerformed
+
+    private void jCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_jCancelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -153,12 +191,12 @@ public class InputMoney extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jCancel;
+    private javax.swing.JButton jChargeCard;
+    private javax.swing.JTextField jInputMoney;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }

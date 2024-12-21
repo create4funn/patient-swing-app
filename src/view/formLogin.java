@@ -192,6 +192,9 @@ public class formLogin extends javax.swing.JFrame {
                     return; // Exit if patient info retrieval failed
                 }
 
+                String[] patientBalance = card.getPatientBalance();
+                patient.setBalance(Integer.parseInt(patientBalance[0]));
+                System.out.println(patient.getBalance());
                 // Retrieve and set the patient picture
                 BufferedImage picture = card.GetPatientPicture();
                 if (picture != null) {
