@@ -33,8 +33,6 @@ public class MenuAdmin extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtTenNguoiDung = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        tabBenhNhan = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         tabKeDon = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         tabLichSu = new javax.swing.JPanel();
@@ -59,37 +57,6 @@ public class MenuAdmin extends javax.swing.JFrame {
         txtTenNguoiDung.setText("admin123");
         jPanel1.add(txtTenNguoiDung, new org.netbeans.lib.awtextra.AbsoluteConstraints(44, 60, 115, -1));
         jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 87, 122, 12));
-
-        tabBenhNhan.setBackground(new java.awt.Color(204, 204, 255));
-        tabBenhNhan.setPreferredSize(new java.awt.Dimension(135, 48));
-        tabBenhNhan.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabBenhNhanMouseClicked(evt);
-            }
-        });
-
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 24)); // NOI18N
-        jLabel1.setText("Bệnh nhân");
-        jLabel1.setAlignmentY(0.0F);
-
-        javax.swing.GroupLayout tabBenhNhanLayout = new javax.swing.GroupLayout(tabBenhNhan);
-        tabBenhNhan.setLayout(tabBenhNhanLayout);
-        tabBenhNhanLayout.setHorizontalGroup(
-            tabBenhNhanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tabBenhNhanLayout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addComponent(jLabel1)
-                .addContainerGap(50, Short.MAX_VALUE))
-        );
-        tabBenhNhanLayout.setVerticalGroup(
-            tabBenhNhanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabBenhNhanLayout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addContainerGap())
-        );
-
-        jPanel1.add(tabBenhNhan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 222, -1));
 
         tabKeDon.setBackground(new java.awt.Color(204, 204, 255));
         tabKeDon.setPreferredSize(new java.awt.Dimension(166, 47));
@@ -119,7 +86,7 @@ public class MenuAdmin extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.add(tabKeDon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 250, 222, -1));
+        jPanel1.add(tabKeDon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 222, -1));
 
         tabLichSu.setBackground(new java.awt.Color(204, 204, 255));
         tabLichSu.setPreferredSize(new java.awt.Dimension(166, 47));
@@ -149,7 +116,7 @@ public class MenuAdmin extends javax.swing.JFrame {
                 .addContainerGap(11, Short.MAX_VALUE))
         );
 
-        jPanel1.add(tabLichSu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 222, -1));
+        jPanel1.add(tabLichSu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 280, 222, -1));
 
         tabTaiKhoan.setBackground(new java.awt.Color(204, 204, 255));
         tabTaiKhoan.setPreferredSize(new java.awt.Dimension(168, 47));
@@ -179,7 +146,7 @@ public class MenuAdmin extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.add(tabTaiKhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 410, 222, -1));
+        jPanel1.add(tabTaiKhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 360, 222, -1));
 
         btnDangXuat.setBackground(new java.awt.Color(255, 51, 51));
         btnDangXuat.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -221,11 +188,6 @@ public class MenuAdmin extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tabBenhNhanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabBenhNhanMouseClicked
-
-        
-    }//GEN-LAST:event_tabBenhNhanMouseClicked
-
     private void tabKeDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabKeDonMouseClicked
 
         
@@ -244,7 +206,7 @@ public class MenuAdmin extends javax.swing.JFrame {
 
         tabTaiKhoan.setBackground(Color.WHITE);
         
-        tabBenhNhan.setBackground(new Color(204, 204, 255));
+    
         tabKeDon.setBackground(new Color(204, 204, 255));
         tabLichSu.setBackground(new Color(204, 204, 255));
         
@@ -309,7 +271,6 @@ public class MenuAdmin extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDangXuat;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
@@ -317,7 +278,6 @@ public class MenuAdmin extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JPanel tabBenhNhan;
     private javax.swing.JPanel tabKeDon;
     private javax.swing.JPanel tabLichSu;
     private javax.swing.JPanel tabTaiKhoan;
