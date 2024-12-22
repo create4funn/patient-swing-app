@@ -3,6 +3,11 @@ package view;
 import Card.HelpMethod;
 import Card.Patient;
 import Card.SmartCard;
+import entities.User;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import util.HibernateUtil;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -24,11 +29,11 @@ public class AddInfomationForm extends javax.swing.JDialog {
      */
     SmartCard card = SmartCard.getInstance();
     private AccountForm owner;
-    
+
     public AddInfomationForm(javax.swing.JInternalFrame parent, javax.swing.JFrame frame, boolean modal) {
         super(frame, modal);
         this.owner = (AccountForm) parent;
-        initComponents();       
+        initComponents();
         init();
     }
 
@@ -319,6 +324,28 @@ public class AddInfomationForm extends javax.swing.JDialog {
             return;
         }
 
+        // save
+        User user = new User();
+        user.setBalance(0);
+        user.setGioitinh(gioiTinh);
+        user.setMabn(maBenhNhan);
+        user.setHoten(hoTen);
+        user.setNgaysinh(ngaySinh);
+        user.setQuequan(queQuan);
+        user.setPicture(null);
+        user.setPublicKey(null);
+        user.setMapin(maPin);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        try{
+            session.save(user);
+            tx.commit();
+        }catch (Exception e){
+            tx.rollback();
+        }
+        session.close();
+
+
         // Instantiate the SmartCard class and connect to the card
 
         // Attempt to update the patient info on the smart card
@@ -330,6 +357,11 @@ public class AddInfomationForm extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        // TODO: Set public key
+
+
+
+
         // Update the patient instance
         Patient patient = Patient.getInstance();
         patient.setHoten(hoTen);
@@ -339,10 +371,10 @@ public class AddInfomationForm extends javax.swing.JDialog {
         patient.setSdt(sdt);
         patient.setGioitinh(gioiTinh);
         // Disconnect from the card
-        
+
         //Su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
         //owner.loadDataToTable();
-    }                                        
+    }
 //GEN-LAST:event_jButton1ActionPerformed
 
     private void btnChooseImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseImgActionPerformed
@@ -451,7 +483,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button btnChooseImg;
     private javax.swing.JLabel imgLabel;
