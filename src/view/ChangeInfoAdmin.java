@@ -3,15 +3,12 @@ package view;
 import Card.HelpMethod;
 import Card.Patient;
 import Card.SmartCard;
-import entities.User;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import util.HibernateUtil;
-
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -22,29 +19,60 @@ import javax.swing.JOptionPane;
  *
  * @author DELL
  */
-public class AddInfomationForm extends javax.swing.JDialog {
+public class ChangeInfoAdmin extends javax.swing.JDialog {
 
     /**
      * Creates new form AddInfomationForm
      */
     SmartCard card = SmartCard.getInstance();
-    private AccountForm owner;
+    private BufferedImage tempImage; // Temporary variable to hold the new selected image
 
-    public AddInfomationForm(javax.swing.JInternalFrame parent, javax.swing.JFrame frame, boolean modal) {
+    private AccountForm owner;
+    
+    public ChangeInfoAdmin(javax.swing.JInternalFrame parent, javax.swing.JFrame frame, boolean modal) {
         super(frame, modal);
         this.owner = (AccountForm) parent;
         initComponents();
         init();
     }
 
-    private AddInfomationForm(JFrame jFrame, boolean b) {
+    private ChangeInfoAdmin(JFrame jFrame, boolean b) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public void init() {
-        card.connectCard();
-    }
+    public void init(){
+        Patient patient = Patient.getInstance();
+        jhoTen.setText(patient.getHoten());
+        //jNgaySinh.set(patient.getNgaysinh());
+        // Chuyển đổi String sang Date để gán cho JDateChooser
+      
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            Date ngaySinh = dateFormat.parse(patient.getNgaysinh()); 
+            jNgaySinh.setDate(ngaySinh); 
+        } catch (ParseException e) {
+            e.printStackTrace();
+            System.out.println("Ngày sinh không đúng định dạng");
+        }
 
+        jGioiTinh.setSelectedItem(patient.getGioitinh());
+        jQueQuan.setText(patient.getQuequan());
+        jSdt.setText(patient.getSdt());
+        jMaBenhNhan.setText(patient.getMabn());
+
+        BufferedImage image = patient.getPicture();
+        // Convert the BufferedImage to an ImageIcon
+        ImageIcon icon = new ImageIcon(image);
+
+        // Resize the image to fit the JLabel
+        Image img = icon.getImage();
+        Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
+        icon = new ImageIcon(scaledImg);
+
+        // Set the icon to the JLabel
+        imgLabel.setText(null); // Clear any existing text
+        imgLabel.setIcon(icon);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -55,6 +83,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jPanel1 = new javax.swing.JPanel();
         btnChooseImg = new java.awt.Button();
         label3 = new java.awt.Label();
@@ -70,13 +99,11 @@ public class AddInfomationForm extends javax.swing.JDialog {
         jGioiTinh = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jMaPin = new javax.swing.JPasswordField();
         imgLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jNgaySinh = new com.toedter.calendar.JDateChooser();
-        jPanel4 = new javax.swing.JPanel();
-        label1 = new java.awt.Label();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -127,9 +154,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton2.setText("Hủy");
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel2.setText("Mã pin:");
-
         imgLabel.setBackground(new java.awt.Color(255, 204, 204));
         imgLabel.setForeground(new java.awt.Color(255, 255, 255));
         imgLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -145,51 +169,49 @@ public class AddInfomationForm extends javax.swing.JDialog {
             .addGap(0, 27, Short.MAX_VALUE)
         );
 
-        jNgaySinh.setDateFormatString("dd-MM-yyyy");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                    .addContainerGap()
-                                    .addComponent(imgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(24, 24, 24))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(48, 48, 48)
-                                    .addComponent(btnChooseImg, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(51, 51, 51)))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(label12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(label8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(label6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(label4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(label11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGap(22, 22, 22)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jQueQuan, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
-                                .addComponent(jSdt, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
-                                .addComponent(jMaBenhNhan, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
-                                .addComponent(jhoTen)
-                                .addComponent(jGioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jMaPin)
-                                .addComponent(jNgaySinh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(55, 55, 55)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(imgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(24, 24, 24))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(48, 48, 48)
+                                        .addComponent(btnChooseImg, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(51, 51, 51)))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(label12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(label8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(label6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(label4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(label11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(23, 23, 23)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(55, 55, 55))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(22, 22, 22)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jQueQuan, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                                    .addComponent(jSdt, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                                    .addComponent(jMaBenhNhan, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                                    .addComponent(jhoTen)
+                                    .addComponent(jGioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jNgaySinh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,48 +248,41 @@ public class AddInfomationForm extends javax.swing.JDialog {
                                 .addComponent(label12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
-                                .addComponent(jMaBenhNhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jMaPin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(35, 35, 35)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jMaBenhNhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(btnChooseImg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 50, 520, 410));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, -1, 390));
 
-        jPanel4.setBackground(new java.awt.Color(51, 51, 255));
+        jPanel5.setBackground(new java.awt.Color(51, 51, 255));
 
-        label1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        label1.setForeground(new java.awt.Color(255, 255, 255));
-        label1.setText("Khởi tạo thông tin");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Cập nhật thông tin");
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(176, 176, 176)
-                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(180, Short.MAX_VALUE))
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(166, 166, 166)
+                .addComponent(jLabel1)
+                .addContainerGap(194, Short.MAX_VALUE))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addComponent(jLabel1)
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 50));
+        getContentPane().add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 50));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -275,7 +290,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Collect patient info from the UI components
         String hoTen = jhoTen.getText();
-
         // Chuyển đổi ngày từ JDateChooser sang định dạng "dd-MM-yyyy"
         String ngaySinh = "";
         if (jNgaySinh.getDate() != null) {
@@ -286,7 +300,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
         String maBenhNhan = jMaBenhNhan.getText();
         String sdt = jSdt.getText();
         String gioiTinh = (String) jGioiTinh.getSelectedItem();
-        String maPin = jMaPin.getText(); // Assuming this is needed for some authentication purposes
 
         // Validate fields
         if (!hoTen.matches("^[A-Za-zAĂÂBCDĐEÊGHIKLMNOÔƠPQRSTUƯVXY\n" +
@@ -299,8 +312,13 @@ public class AddInfomationForm extends javax.swing.JDialog {
             return;
         }
 
-        if (jNgaySinh.getDate() == null || jNgaySinh.getDate().after(new java.util.Date())) {
-            JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ (không được là ngày tương lai và không được bỏ trống).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        try {
+            if(jNgaySinh.getDate().after(new java.util.Date())){
+                JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ (không được là ngày tương lai).", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ (không được là ngày tương lai).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -308,7 +326,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Địa chỉ không hợp lệ (tối đa 150 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+        
         if (sdt.isEmpty() || !sdt.matches("\\d{0,10}") || sdt.length() > 10) {
             JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ (chỉ chứa số, tối đa 10 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
@@ -319,66 +337,40 @@ public class AddInfomationForm extends javax.swing.JDialog {
             return;
         }
 
-        if (maPin.isEmpty() || !maPin.matches("\\d{3,8}")) {
-            JOptionPane.showMessageDialog(this, "Mã PIN không hợp lệ (chỉ chứa số, từ 3 đến 8 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
-        // save
-        User user = new User();
-        user.setBalance(0);
-        user.setGioitinh(gioiTinh);
-        user.setMabn(maBenhNhan);
-        user.setHoten(hoTen);
-        user.setNgaysinh(ngaySinh);
-        user.setQuequan(queQuan);
-        user.setPicture(null);
-        user.setPublicKey(null);
-        user.setMapin(maPin);
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
-        try{
-            session.save(user);
-            tx.commit();
-        }catch (Exception e){
-            tx.rollback();
-        }
-        session.close();
-
-
-        // Instantiate the SmartCard class and connect to the card
-
-        // Attempt to update the patient info on the smart card
-        card.updatePatientBalance("0");
-        card.updatePatientPin(maPin);
-        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan);
+        // Attempt to update the patient info
+        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt);
+        
         if (updated) {
-            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thành công.");
+            this.dispose();
+            // Update the patient instance
+            Patient patient = Patient.getInstance();
+            patient.setHoten(hoTen);
+            patient.setNgaysinh(ngaySinh);
+            patient.setQuequan(queQuan);
+            patient.setMabn(maBenhNhan);
+            patient.setSdt(sdt);
+            patient.setGioitinh(gioiTinh);
+            if(tempImage != null) {
+                card.updatePatientPicture(tempImage);
+                patient.setPicture(tempImage);
+            }
+            JOptionPane.showMessageDialog(this, "Cập nhập thông tin bệnh nhân thành công.");
+            
+            //su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
+            //owner.loadDataToTable();
+            
         } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Failed to update patient information.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        // TODO: Set public key
 
-
-
-
-        // Update the patient instance
-        Patient patient = Patient.getInstance();
-        patient.setHoten(hoTen);
-        patient.setNgaysinh(ngaySinh);
-        patient.setQuequan(queQuan);
-        patient.setMabn(maBenhNhan);
-        patient.setSdt(sdt);
-        patient.setGioitinh(gioiTinh);
-        // Disconnect from the card
-
-        //Su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
-        //owner.loadDataToTable();
-    }
-//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnChooseImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseImgActionPerformed
-// Sử dụng JFileChooser để chọn file
+// Display the current image first
+        displayImage();
+
+        // Use JFileChooser to select a file
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Ảnh (JPG, PNG)", "jpg", "jpeg", "png"));
         int result = fileChooser.showOpenDialog(this);
@@ -399,15 +391,11 @@ public class AddInfomationForm extends javax.swing.JDialog {
                     return;
                 }
 
-                // Update the patient picture and display the image
-                card.updatePatientPicture(image);
+                // Store the new image in the temporary variable
+                tempImage = image;
 
-                // Update the patient instance
-                Patient patient = Patient.getInstance();
-                patient.setPicture(image);
-
-                // Display the image on the UI
-                displayImage();
+                // Preview the selected image without updating the patient instance
+                displayChoosingImage(tempImage);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -442,6 +430,26 @@ public class AddInfomationForm extends javax.swing.JDialog {
         imgLabel.setIcon(icon);
     }
 
+    private void displayChoosingImage(BufferedImage image) {
+        if (image == null) {
+            imgLabel.setText("Không có ảnh.");
+            imgLabel.setIcon(null); // Clear any existing icon
+            return;
+        }
+
+        // Convert the BufferedImage to an ImageIcon
+        ImageIcon icon = new ImageIcon(image);
+
+        // Resize the image to fit the JLabel
+        Image img = icon.getImage();
+        Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
+        icon = new ImageIcon(scaledImg);
+
+        // Set the icon to the JLabel
+        imgLabel.setText("Ảnh đang được chọn."); // Optional: Add a label or text to indicate preview
+        imgLabel.setIcon(icon);
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -459,20 +467,23 @@ public class AddInfomationForm extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddInfomationForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChangeInfoAdmin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddInfomationForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChangeInfoAdmin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddInfomationForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChangeInfoAdmin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddInfomationForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChangeInfoAdmin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AddInfomationForm dialog = new AddInfomationForm(new javax.swing.JFrame(), true);
+                ChangeInfoAdmin dialog = new ChangeInfoAdmin(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -483,24 +494,24 @@ public class AddInfomationForm extends javax.swing.JDialog {
             }
         });
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button btnChooseImg;
     private javax.swing.JLabel imgLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JComboBox<String> jGioiTinh;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField jMaBenhNhan;
-    private javax.swing.JPasswordField jMaPin;
     private com.toedter.calendar.JDateChooser jNgaySinh;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JTextField jQueQuan;
     private javax.swing.JTextField jSdt;
     private javax.swing.JTextField jhoTen;
-    private java.awt.Label label1;
     private java.awt.Label label11;
     private java.awt.Label label12;
     private java.awt.Label label3;
