@@ -5,7 +5,14 @@
 package view;
 
 import Card.SmartCard;
+import entities.User;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import util.HibernateUtil;
+
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -32,32 +39,39 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
     public final void initTable() {
         tblModel = (DefaultTableModel) tblAccount.getModel();
-        String[] headerTbl = new String[]{"Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Trạng thái"};
+        String[] headerTbl = new String[]{"STT","Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Ngày Sinh","Balance"};
         tblModel.setColumnIdentifiers(headerTbl);
-        
-    }
-    
-    public void loadDataToTable() {
 
-        //ArrayList<Patient> listTk = ...;
-               
-//        tblModel.setRowCount(0);
-//        for (int i=0; i<listTk.size(); i++) {
-//
-//            tblModel.addRow(new Object[]{
-//                i+1, listTk.get(i).gethoten(), listTk.get(i).getMabn(), listTk.get(i).getSdt(),listTk.get(i).getGioitinh(), listTk.get(i).getTrangthai()
-//            });
-//        }
     }
-    
+
+    public void loadDataToTable() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try{
+            Query<User> userQuery =  session.createQuery("FROM User",User.class);
+            List<User> userList = userQuery.getResultList();
+            int  i = 0;
+            tblModel.setRowCount(0);
+            for (User user : userList) {
+                tblModel.addRow(new Object[]{
+                        i+1, user.getHoten(), user.getMabn(), user.getSdt(),user.getGioitinh(), user.getNgaysinh(),user.getBalance()
+                });
+            }
+            transaction.commit();
+        }catch (Exception e){
+            transaction.rollback();
+        }
+        session.close();
+    }
+
 //    public TaiKhoan getSelected() {
 //        int i_row = tblTaiKhoan.getSelectedRow();
 //        String userName = tblTaiKhoan.getValueAt(i_row, 2).toString();
 //        TaiKhoan tk = TaiKhoanDAO.getInstance().selectById(userName);
 //        return tk;
 //    }
-    
-    
+
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -222,7 +236,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         }else{
             JOptionPane.showMessageDialog(this, "Chưa connect đến applet");
         }
-        
+
     }//GEN-LAST:event_btnAddCardActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
@@ -266,5 +280,5 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private javax.swing.JTable tblAccount;
     // End of variables declaration//GEN-END:variables
 
-  
+
 }

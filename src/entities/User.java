@@ -1,6 +1,7 @@
 package entities;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 
 @Entity
 @Table(name = "user")
@@ -14,12 +15,12 @@ public class User {
     private String mabn;
     private String gioitinh;
     private String mapin;
-    private String balance;
+    private String sdt;
+    private int balance;
+    private String publicKey;
     private byte[] picture; // Updated to byte[] to store binary image data
 
-    public User(Integer id, byte[] picture, String balance, String mapin, String gioitinh, String mabn, String quequan, String ngaysinh, String hoten) {
-        this.id = id;
-        this.picture = picture;
+    public User(int balance, String mapin, String gioitinh, String mabn, String quequan, String ngaysinh, String hoten,String sdt) {
         this.balance = balance;
         this.mapin = mapin;
         this.gioitinh = gioitinh;
@@ -27,6 +28,7 @@ public class User {
         this.quequan = quequan;
         this.ngaysinh = ngaysinh;
         this.hoten = hoten;
+        this.sdt = sdt;
     }
 
     public User() {
@@ -80,11 +82,11 @@ public class User {
         this.mapin = mapin;
     }
 
-    public String getBalance() {
+    public int getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
     }
 
@@ -104,5 +106,19 @@ public class User {
         this.id = id;
     }
 
+    public String getPublicKey() {
+        return publicKey;
+    }
 
+    public String getSdt() {
+        return sdt;
+    }
+
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
 }
