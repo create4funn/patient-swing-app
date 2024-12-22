@@ -17,6 +17,10 @@ public class MenuAdmin extends javax.swing.JFrame {
      */
     public MenuAdmin() {
         initComponents();
+        PrescribeForm a = new PrescribeForm();
+        
+        jPanel2.removeAll();
+        jPanel2.add(a).setVisible(true);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
@@ -203,7 +207,7 @@ public class MenuAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_tabKeDonMouseClicked
 
     private void tabLichSuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabLichSuMouseClicked
-        PrescribeForm a = new PrescribeForm();
+        HistoryForm a = new HistoryForm();
         
         jPanel2.removeAll();
         jPanel2.add(a).setVisible(true);
@@ -217,7 +221,7 @@ public class MenuAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_tabLichSuMouseClicked
 
     private void tabTaiKhoanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabTaiKhoanMouseClicked
-        HistoryForm a = new HistoryForm();
+        AccountForm a = new AccountForm();
         
         jPanel2.removeAll();
         jPanel2.add(a).setVisible(true);
