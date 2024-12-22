@@ -11,14 +11,21 @@ import javax.swing.UIManager;
  *
  * @author DELL
  */
-public class formLoginAdmin extends javax.swing.JFrame {
+public class formLoginAdmin2 extends javax.swing.JFrame {
 
     /**
      * Creates new form formLogin
      */
-    public formLoginAdmin() {
+    
+    private AccountForm acccountForm;
+    public formLoginAdmin2(AccountForm acccountForm) {
         initComponents();
+        this.acccountForm = acccountForm;
         setLocationRelativeTo(null);
+    }
+
+    private formLoginAdmin2() {
+        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     
@@ -33,7 +40,6 @@ public class formLoginAdmin extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtUserName = new javax.swing.JTextField();
         jSeparator3 = new javax.swing.JSeparator();
@@ -47,10 +53,6 @@ public class formLoginAdmin extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(13, 36, 51));
         jPanel1.setAlignmentX(0.0F);
         jPanel1.setAlignmentY(0.0F);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("LOGIN");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -100,7 +102,7 @@ public class formLoginAdmin extends javax.swing.JFrame {
 
         btnLogin.setBackground(new java.awt.Color(255, 153, 153));
         btnLogin.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btnLogin.setText("Đăng nhập");
+        btnLogin.setText("Xác nhận");
         btnLogin.setAlignmentX(0.5F);
         btnLogin.setBorder(null);
         btnLogin.setBorderPainted(false);
@@ -130,9 +132,6 @@ public class formLoginAdmin extends javax.swing.JFrame {
                                 .addGap(6, 6, 6)
                                 .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(115, 115, 115)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(65, 65, 65)
                         .addComponent(txtUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -143,9 +142,7 @@ public class formLoginAdmin extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addComponent(jLabel1)
-                .addGap(42, 42, 42)
+                .addGap(51, 51, 51)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(txtUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -192,11 +189,8 @@ public class formLoginAdmin extends javax.swing.JFrame {
         // Check if the entered username and password match the admin credentials
         if ("admin".equals(username) && "abc".equals(password)) {
             // Successful login
-            javax.swing.JOptionPane.showMessageDialog(this, "Đăng nhập tài khoản admin thành công");
-            // Open the MenuAdmin form
-            MenuAdmin menuAdmin = new MenuAdmin(); // Assuming MenuAdmin is another JFrame class
-            menuAdmin.setVisible(true); // Show the MenuAdmin form
-            // For example, navigate to the admin dashboard
+            acccountForm.deleteAccount();
+  
         } else {
             // Invalid login
             javax.swing.JOptionPane.showMessageDialog(this, "Sai thông tin tài khoản hoặc mật khẩu. Vui lòng thử lại.", "Login Failed", javax.swing.JOptionPane.ERROR_MESSAGE);
@@ -222,14 +216,13 @@ public class formLoginAdmin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new formLoginAdmin().setVisible(true);
+                new formLoginAdmin2().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogin;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;

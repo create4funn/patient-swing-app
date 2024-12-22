@@ -189,26 +189,44 @@ public class MenuAdmin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tabKeDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabKeDonMouseClicked
+        PrescribeForm a = new PrescribeForm();
+        
+        jPanel2.removeAll();
+        jPanel2.add(a).setVisible(true);
 
+        tabTaiKhoan.setBackground(new Color(204, 204, 255));
+        
+    
+        tabKeDon.setBackground(Color.WHITE);
+        tabLichSu.setBackground(new Color(204, 204, 255));
         
     }//GEN-LAST:event_tabKeDonMouseClicked
 
     private void tabLichSuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabLichSuMouseClicked
+        PrescribeForm a = new PrescribeForm();
+        
+        jPanel2.removeAll();
+        jPanel2.add(a).setVisible(true);
 
+        tabTaiKhoan.setBackground(new Color(204, 204, 255));
+        
+    
+        tabKeDon.setBackground(Color.WHITE);
+        tabLichSu.setBackground(new Color(204, 204, 255));
         
     }//GEN-LAST:event_tabLichSuMouseClicked
 
     private void tabTaiKhoanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabTaiKhoanMouseClicked
-        AccountForm sf = new AccountForm();
+        HistoryForm a = new HistoryForm();
         
         jPanel2.removeAll();
-        jPanel2.add(sf).setVisible(true);
+        jPanel2.add(a).setVisible(true);
 
-        tabTaiKhoan.setBackground(Color.WHITE);
+        tabLichSu.setBackground(Color.WHITE);
         
     
         tabKeDon.setBackground(new Color(204, 204, 255));
-        tabLichSu.setBackground(new Color(204, 204, 255));
+        tabTaiKhoan.setBackground(new Color(204, 204, 255));
         
         
     }//GEN-LAST:event_tabTaiKhoanMouseClicked

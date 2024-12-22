@@ -137,6 +137,11 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnChangeCard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnChangeCard.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnChangeCard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnChangeCard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChangeCardActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnChangeCard);
 
         btnEditCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -145,6 +150,11 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnEditCard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnEditCard.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnEditCard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEditCard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditCardActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnEditCard);
 
         jKhoaThe.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -217,7 +227,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private void btnAddCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCardActionPerformed
         // TODO add your handling code here:
         if (isConnect) {
-            AddInfomationForm a = new AddInfomationForm((JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
+            AddInfomationForm a = new AddInfomationForm(this, (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
             a.setVisible(true);
         }else{
             JOptionPane.showMessageDialog(this, "Chưa connect đến applet");
@@ -252,6 +262,23 @@ public class AccountForm extends javax.swing.JInternalFrame {
         SmartCard.counter = 0;
     }//GEN-LAST:event_jMoKhoaTheActionPerformed
 
+    private void btnChangeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeCardActionPerformed
+        // TODO add your handling code here:
+        ChangeInfoAdmin a = new ChangeInfoAdmin(this, (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
+        a.setVisible(true);
+    }//GEN-LAST:event_btnChangeCardActionPerformed
+
+    private void btnEditCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCardActionPerformed
+        // TODO add your handling code here:
+        formLoginAdmin a = new formLoginAdmin();
+        a.setVisible(true);
+    }//GEN-LAST:event_btnEditCardActionPerformed
+
+    public void deleteAccount(){
+        //do something
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddCard;
     private javax.swing.JButton btnChangeCard;
