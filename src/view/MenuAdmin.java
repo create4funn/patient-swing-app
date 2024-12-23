@@ -215,8 +215,8 @@ public class MenuAdmin extends javax.swing.JFrame {
         tabTaiKhoan.setBackground(new Color(204, 204, 255));
         
     
-        tabKeDon.setBackground(Color.WHITE);
-        tabLichSu.setBackground(new Color(204, 204, 255));
+        tabLichSu.setBackground(Color.WHITE);
+        tabTaiKhoan.setBackground(new Color(204, 204, 255));
         
     }//GEN-LAST:event_tabLichSuMouseClicked
 
@@ -226,11 +226,11 @@ public class MenuAdmin extends javax.swing.JFrame {
         jPanel2.removeAll();
         jPanel2.add(a).setVisible(true);
 
-        tabLichSu.setBackground(Color.WHITE);
+        tabTaiKhoan.setBackground(Color.WHITE);
         
     
         tabKeDon.setBackground(new Color(204, 204, 255));
-        tabTaiKhoan.setBackground(new Color(204, 204, 255));
+        tabLichSu.setBackground(new Color(204, 204, 255));
         
         
     }//GEN-LAST:event_tabTaiKhoanMouseClicked
