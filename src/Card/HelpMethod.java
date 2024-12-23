@@ -4,9 +4,11 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -130,4 +132,27 @@ public class HelpMethod {
         rsaSign.initVerify(publicKey);
         return rsaSign.verify(dataToVerify);
     }
-}
+
+    public static PublicKey ReconstructedPublicKey(BigInteger modulus, BigInteger exponent) {
+        try {
+            RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PublicKey publicKey = keyFactory.generatePublic(spec);
+
+            // Print the public key
+            System.out.println("Reconstructed Public Key: " + publicKey.toString());
+
+            return publicKey;
+        } catch (Exception e) {
+            System.out.println("Failed to reconstruct public key: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static byte[] encodePublicKey(BigInteger modulus, BigInteger exponent) throws Exception {
+        RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
+        KeyFactory factory = KeyFactory.getInstance("RSA");
+        PublicKey publicKey = factory.generatePublic(spec);
+        return publicKey.getEncoded();
+        }
+    }

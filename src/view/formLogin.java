@@ -170,7 +170,6 @@ public class formLogin extends javax.swing.JFrame {
 
             // Check the PIN using the SmartCard class
             boolean isPinValid = card.CheckPin(userPin);
-
             if (isPinValid) {
                 // Login successful
                 JOptionPane.showMessageDialog(this, "Kết nối thành công");
@@ -211,7 +210,7 @@ public class formLogin extends javax.swing.JFrame {
                 this.dispose();
             } else {
                 // Check if the card is blocked
-                if (card.isCardBlocked) {
+                if (SmartCard.isCardBlocked) {
                     // Display a specific message for card blockage
                     JOptionPane.showMessageDialog(this, "Nhập sai mã pin quá 3 lần, Thẻ đã bị khóa");
                 } else {
@@ -239,7 +238,7 @@ public class formLogin extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());

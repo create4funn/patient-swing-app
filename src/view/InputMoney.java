@@ -12,7 +12,7 @@ import javax.swing.*;
 public class InputMoney extends javax.swing.JDialog {
 
     SmartCard card = SmartCard.getInstance();
-    private PatientForm owner;
+    private final PatientForm owner;
     /**
      * Creates new form InputMoney
      */
@@ -132,7 +132,6 @@ public class InputMoney extends javax.swing.JDialog {
         String inputMoney = jInputMoney.getText();
         if (inputMoney.isEmpty() || !inputMoney.matches("\\d{0,10}") || inputMoney.length() > 10) {
             JOptionPane.showMessageDialog(this, "Số tiền nạp không hợp lệ (chỉ chứa số, tối đa 1.000.000.000đ).", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
         }else{
             int inputMoneyInt = Integer.parseInt(inputMoney);
             Patient patient = Patient.getInstance();
@@ -151,7 +150,7 @@ public class InputMoney extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

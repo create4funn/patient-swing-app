@@ -11,6 +11,7 @@ import util.HibernateUtil;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -331,14 +332,17 @@ public class AddInfomationForm extends javax.swing.JDialog {
         user.setMabn(maBenhNhan);
         user.setHoten(hoTen);
         user.setNgaysinh(ngaySinh);
+        user.setSdt(sdt);
         user.setQuequan(queQuan);
         user.setPicture(null);
         user.setPublicKey(null);
         user.setMapin(maPin);
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
+        int idCard = 0;
         try{
-            session.save(user);
+            Serializable id = session.save(user);
+            idCard = (int) id;
             tx.commit();
         }catch (Exception e){
             tx.rollback();
@@ -445,7 +449,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

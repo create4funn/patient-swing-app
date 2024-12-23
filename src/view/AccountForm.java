@@ -27,7 +27,7 @@ import javax.swing.table.DefaultTableModel;
 public class AccountForm extends javax.swing.JInternalFrame {
 
     private boolean isConnect = false;
-    private SmartCard card = new SmartCard();
+    private final SmartCard card = new SmartCard();
     private DefaultTableModel tblModel;
     public AccountForm() {
         initComponents();
