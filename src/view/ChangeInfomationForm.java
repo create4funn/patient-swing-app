@@ -26,7 +26,7 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
     SmartCard card = SmartCard.getInstance();
     private BufferedImage tempImage; // Temporary variable to hold the new selected image
 
-    private PatientForm owner;
+    private final PatientForm owner;
     
     public ChangeInfomationForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -446,7 +446,7 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

@@ -19,8 +19,8 @@ import javax.swing.table.DefaultTableModel;
  */
 public class PrescribeForm extends javax.swing.JInternalFrame {
 
-    private boolean isConnect = false;
-    private SmartCard card = new SmartCard();
+    private final boolean isConnect = false;
+    private final SmartCard card = new SmartCard();
     private DefaultTableModel tblModel;
     public PrescribeForm() {
         initComponents();
