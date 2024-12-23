@@ -212,7 +212,7 @@ public class MenuAdmin extends javax.swing.JFrame {
         jPanel2.removeAll();
         jPanel2.add(a).setVisible(true);
 
-        tabTaiKhoan.setBackground(new Color(204, 204, 255));
+        tabKeDon.setBackground(new Color(204, 204, 255));
         
     
         tabLichSu.setBackground(Color.WHITE);
