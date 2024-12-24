@@ -24,7 +24,7 @@ public class formLoginAdmin2 extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
-    private formLoginAdmin2() {
+    public formLoginAdmin2() {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -189,8 +189,7 @@ public class formLoginAdmin2 extends javax.swing.JFrame {
         // Check if the entered username and password match the admin credentials
         if ("admin".equals(username) && "abc".equals(password)) {
             // Successful login
-            acccountForm.deleteAccount();
-  
+
         } else {
             // Invalid login
             javax.swing.JOptionPane.showMessageDialog(this, "Sai thông tin tài khoản hoặc mật khẩu. Vui lòng thử lại.", "Login Failed", javax.swing.JOptionPane.ERROR_MESSAGE);

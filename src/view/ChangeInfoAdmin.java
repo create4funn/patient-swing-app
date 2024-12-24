@@ -358,7 +358,7 @@ public class ChangeInfoAdmin extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Cập nhập thông tin bệnh nhân thành công.");
             
             //su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
-            //owner.loadDataToTable();
+            owner.loadDataToTable();
             
         } else {
             JOptionPane.showMessageDialog(this, "Failed to update patient information.", "Error", JOptionPane.ERROR_MESSAGE);

@@ -2,16 +2,11 @@ package Card;
 
 import java.awt.HeadlessException;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
 import javax.smartcardio.CardException;
@@ -39,6 +34,7 @@ public class SmartCard {
     public static byte[] publicKey;
     public static PublicKey pubKey;
     private static SmartCard instance;
+    public static boolean unknownIssue = false;
     private static String sign;
 
     public SmartCard() {
@@ -253,6 +249,20 @@ public class SmartCard {
     }
 
     // Method to get patient info from the applet
+    public String[] getPatientCardId() {
+        byte[] command; // Example command, adjust as needed
+        command = new byte[]{(byte) 0x00, (byte) 0x27, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        ResponseAPDU response = sendCommandAPDU(command);
+        if (response != null && response.getSW() == 0x9000) {
+            byte[] data = response.getData();
+            return HelpMethod.convertByteToStringArr(data, '.');
+        } else {
+            System.out.println("Failed to get patient info, SW: " + Integer.toHexString(response.getSW()));
+            return null;
+        }
+    }
+
+    // Method to get patient info from the applet
     public String[] getPatientPin() {
         byte[] command; // Example command, adjust as needed
         command = new byte[]{(byte) 0x00, (byte) 0x12, (byte) 0x00, (byte) 0x00, (byte) 0x00};
@@ -384,6 +394,37 @@ public class SmartCard {
         }
     }
 
+    public boolean updateCardId(String newCardId) {
+        try {
+            // Convert the new PIN string to a byte array
+            byte[] cardBytes = HelpMethod.ConvertStringToByteArr(newCardId);
+
+            // Create the APDU command for updating the PIN
+            byte[] command = new byte[5 + cardBytes.length]; // Header (5 bytes) + PIN data
+            command[0] = (byte) 0x00; // CLA
+            command[1] = (byte) 0x26; // INS for UPDATE_PIN
+            command[2] = (byte) 0x00; // P1
+            command[3] = (byte) 0x00; // P2
+            command[4] = (byte) cardBytes.length; // Lc: length of the new PIN
+            System.arraycopy(cardBytes, 0, command, 5, cardBytes.length); // Append PIN data
+
+            // Send the command APDU to the applet
+            ResponseAPDU response = sendCommandAPDU(command);
+
+            // Check the response status word (SW)
+            if (response != null && response.getSW() == 0x9000) {
+                System.out.println("Patient CardId updated successfully.");
+                return true;
+            } else {
+                System.out.println("Failed to update PIN, SW: " + Integer.toHexString(response.getSW()));
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Error updating PIN: " + e);
+            return false;
+        }
+    }
+
     public boolean updatePatientBalance(String Balance) {
         try {
             // Convert the new PIN string to a byte array
@@ -487,6 +528,7 @@ public class SmartCard {
                     System.out.println("Card is blocked.");
                     return false;
                 } else {
+                    unknownIssue = true;
                     System.out.println("Unexpected response. SW: " + Integer.toHexString(sw));
                     return false;
                 }
@@ -500,16 +542,42 @@ public class SmartCard {
         }
     }
 
-    public String[] UnLockCard() {
+    public boolean ClearCard() {
+        byte[] command; // Example command, adjust as needed
+        command = new byte[]{(byte) 0x00, (byte) 0x18, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        ResponseAPDU response = sendCommandAPDU(command);
+        if (response != null && response.getSW() == 0x9000) {
+            System.out.println("Succeed to called clear card, SW: " + Integer.toHexString(response.getSW()));
+            return true;
+        } else {
+            System.out.println("Failed to called clear card, SW: " + Integer.toHexString(response.getSW()));
+            return false;
+        }
+    }
+
+    public boolean UnLockCard() {
         byte[] command; // Example command, adjust as needed
         command = new byte[]{(byte) 0x00, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x00};
         ResponseAPDU response = sendCommandAPDU(command);
         if (response != null && response.getSW() == 0x9000) {
-            byte[] data = response.getData();
-            return HelpMethod.convertByteToStringArr(data, '.');
+            System.out.println("Succeed to called unblock card, SW: " + Integer.toHexString(response.getSW()));
+            return true;
         } else {
-            System.out.println("Failed to get patient info, SW: " + Integer.toHexString(response.getSW()));
-            return null;
+            System.out.println("Failed to called unblock card, SW: " + Integer.toHexString(response.getSW()));
+            return false;
+        }
+    }
+
+    public boolean LockCard() {
+        byte[] command; // Example command, adjust as needed
+        command = new byte[]{(byte) 0x00, (byte) 0x28, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        ResponseAPDU response = sendCommandAPDU(command);
+        if (response != null && response.getSW() == 0x9000) {
+            System.out.println("Succeed to called block card, SW: " + Integer.toHexString(response.getSW()));
+            return true;
+        } else {
+            System.out.println("Failed to called block card, SW: " + Integer.toHexString(response.getSW()));
+            return false;
         }
     }
 

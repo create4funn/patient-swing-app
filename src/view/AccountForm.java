@@ -13,8 +13,7 @@ import util.HibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
 
@@ -39,7 +38,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
     public final void initTable() {
         tblModel = (DefaultTableModel) tblAccount.getModel();
-        String[] headerTbl = new String[]{"STT","Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Ngày Sinh","Balance"};
+        String[] headerTbl = new String[]{"STT","Tên","BHYT", "SÐT", "Giới tính", "Ngày Sinh","Balance"};
         tblModel.setColumnIdentifiers(headerTbl);
 
     }
@@ -50,11 +49,11 @@ public class AccountForm extends javax.swing.JInternalFrame {
         try{
             Query<User> userQuery =  session.createQuery("FROM User",User.class);
             List<User> userList = userQuery.getResultList();
-            int  i = 0;
+            int  i = 1;
             tblModel.setRowCount(0);
             for (User user : userList) {
                 tblModel.addRow(new Object[]{
-                        i+1, user.getHoten(), user.getMabn(), user.getSdt(),user.getGioitinh(), user.getNgaysinh(),user.getBalance()
+                        i++, user.getHoten(), user.getMabn(), user.getSdt(),user.getGioitinh(), user.getNgaysinh(),user.getBalance()
                 });
             }
             transaction.commit();
@@ -70,8 +69,6 @@ public class AccountForm extends javax.swing.JInternalFrame {
 //        TaiKhoan tk = TaiKhoanDAO.getInstance().selectById(userName);
 //        return tk;
 //    }
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -239,7 +236,6 @@ public class AccountForm extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCardActionPerformed
-        // TODO add your handling code here:
         if (isConnect) {
             AddInfomationForm a = new AddInfomationForm(this, (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
             a.setVisible(true);
@@ -268,31 +264,106 @@ public class AccountForm extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void jKhoaTheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jKhoaTheActionPerformed
-        // TODO add your handling code here:
+        if(card.LockCard()) {
+            SmartCard.counter = 4;
+            SmartCard.isCardBlocked = true;
+            JOptionPane.showMessageDialog(this, "Thẻ đã được khóa thành công."); // Display success message for locking the card
+        }
     }//GEN-LAST:event_jKhoaTheActionPerformed
 
     private void jMoKhoaTheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMoKhoaTheActionPerformed
-        card.UnLockCard();
-        SmartCard.counter = 0;
+        if(card.UnLockCard()) {
+            SmartCard.counter = 0;
+            SmartCard.isCardBlocked = false;
+            JOptionPane.showMessageDialog(this, "Thẻ đã được mở khóa thành công."); // Display success message for unlocking the card
+        }
     }//GEN-LAST:event_jMoKhoaTheActionPerformed
 
     private void btnChangeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeCardActionPerformed
-        // TODO add your handling code here:
         ChangeInfoAdmin a = new ChangeInfoAdmin(this, (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
         a.setVisible(true);
     }//GEN-LAST:event_btnChangeCardActionPerformed
 
     private void btnEditCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCardActionPerformed
-        // TODO add your handling code here:
-        formLoginAdmin a = new formLoginAdmin();
-        a.setVisible(true);
+        // Prompt the user to enter the admin username and password
+        JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        Object[] message = {
+                "Username:", usernameField,
+                "Password:", passwordField
+        };
+
+        int option = JOptionPane.showConfirmDialog(
+                null,
+                message,
+                "Xác thực tài khoản admin",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (option == JOptionPane.OK_OPTION) {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+
+            // Check if both fields are filled
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "tên đăng nhập hoặc mật khẩu không được để trống.",
+                        "Xác thực thất bại",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            // Verify the username and password
+            if (verifyAdminCredentials(username, password)) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Xác thực thành công. Tiến hành xóa tài khoản.",
+                        "Xác thực thành công",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+                // Check if the card information is successfully cleared
+                if (card.ClearCard()) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Xóa thông tin thẻ thành công.",
+                            "Thành công",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Xóa thông tin thẻ thất bại.",
+                            "Thất bại",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Sai tên đăng nhập hoặc mật khẩu, vui lòng thử lại.",
+                        "Xác thực thất bại",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        } else {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Hủy xóa tài khoản.",
+                    "Hủy tiến trình",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
     }//GEN-LAST:event_btnEditCardActionPerformed
 
-    public void deleteAccount(){
-        //do something
+    private boolean verifyAdminCredentials(String username, String password) {
+        // Replace this logic with your actual admin username/password verification
+        return "admin".equals(username) && "abc".equals(password);
     }
-    
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddCard;
     private javax.swing.JButton btnChangeCard;

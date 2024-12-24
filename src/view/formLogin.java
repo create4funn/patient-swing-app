@@ -168,8 +168,21 @@ public class formLogin extends javax.swing.JFrame {
                 return;
             }
 
+
             // Check the PIN using the SmartCard class
             boolean isPinValid = card.CheckPin(userPin);
+
+            // Check if the card is already blocked
+            if (SmartCard.isCardBlocked) {
+                JOptionPane.showMessageDialog(this, "Thẻ đã bị khóa do nhập sai mã pin quá 3 lần hoặc lý do khác.");
+                return; // Exit immediately
+            }
+
+            if(SmartCard.unknownIssue){
+                JOptionPane.showMessageDialog(this, "Lỗi không xác định.");
+                return; // Exit immediately
+            }
+
             if (isPinValid) {
                 // Login successful
                 JOptionPane.showMessageDialog(this, "Kết nối thành công");
@@ -193,7 +206,10 @@ public class formLogin extends javax.swing.JFrame {
 
                 String[] patientBalance = card.getPatientBalance();
                 patient.setBalance(Integer.parseInt(patientBalance[0]));
+                String[] patientCardId = card.getPatientCardId();
+                patient.setCardId(patientCardId[0]);
                 System.out.println(patient.getBalance());
+                System.out.println(patient.getCardId());
                 // Retrieve and set the patient picture
                 BufferedImage picture = card.GetPatientPicture();
                 if (picture != null) {
@@ -209,16 +225,11 @@ public class formLogin extends javax.swing.JFrame {
                 // Dispose of the current JFrame (login form)
                 this.dispose();
             } else {
-                // Check if the card is blocked
-                if (SmartCard.isCardBlocked) {
-                    // Display a specific message for card blockage
-                    JOptionPane.showMessageDialog(this, "Nhập sai mã pin quá 3 lần, Thẻ đã bị khóa");
-                } else {
-                    // Incorrect PIN entered
-                    JOptionPane.showMessageDialog(
-                            this,
-                            String.format("Nhập sai lần thứ %d, Vui lòng nhập lại.\nThẻ sẽ bị khóa nếu nhập sai quá 3 lần.", SmartCard.counter)
-                    );                }
+                // Incorrect PIN entered
+                JOptionPane.showMessageDialog(
+                        this,
+                        String.format("Nhập sai lần thứ %d, Vui lòng nhập lại.\nThẻ sẽ bị khóa nếu nhập sai quá 3 lần.", SmartCard.counter)
+                );
             }
 
         } catch (Exception e) {

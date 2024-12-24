@@ -355,6 +355,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
         // Attempt to update the patient info on the smart card
         card.updatePatientBalance("0");
         card.updatePatientPin(maPin);
+        card.updateCardId(String.valueOf(idCard));
         boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan);
         if (updated) {
             JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thành công.");

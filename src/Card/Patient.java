@@ -13,6 +13,7 @@ public class Patient {
     private String sdt;
     private int balance;
     private BufferedImage picture; // Changed to BufferedImage
+    private String cardId;
 
     // Private static instance of the class
     private static Patient instance;
@@ -113,4 +114,13 @@ public class Patient {
     public void setPicture(BufferedImage picture) { // Updated setter for picture
         this.picture = picture;
     }
+
+    public String getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(String cardId) {
+        this.cardId = cardId;
+    }
+
 }

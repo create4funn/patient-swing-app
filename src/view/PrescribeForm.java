@@ -32,7 +32,7 @@ public class PrescribeForm extends javax.swing.JInternalFrame {
 
     public final void initTable() {
         tblModel = (DefaultTableModel) tblKeDon.getModel();
-        String[] headerTbl = new String[]{"Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Trạng thái"};
+        String[] headerTbl = new String[]{"Tên","BHYT", "SÐT", "Giới tính", "Trạng thái"};
         tblModel.setColumnIdentifiers(headerTbl);
         
     }
