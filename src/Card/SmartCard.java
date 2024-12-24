@@ -2,9 +2,6 @@ package Card;
 
 import java.awt.HeadlessException;
 import java.awt.image.BufferedImage;
-import java.math.BigInteger;
-import java.security.PublicKey;
-import java.security.Signature;
 import java.util.Arrays;
 import java.util.List;
 import javax.smartcardio.Card;
@@ -32,10 +29,8 @@ public class SmartCard {
     public static boolean isCardBlocked = false;
     public static byte counter = 0;
     public static byte[] publicKey;
-    public static PublicKey pubKey;
     private static SmartCard instance;
     public static boolean unknownIssue = false;
-    private static String sign;
 
     public SmartCard() {
     }
@@ -114,88 +109,6 @@ public class SmartCard {
         return sb.toString().trim();
     }
 
-    public byte[] getSignature(String data) {
-        try {
-            byte[] dataToSign = HelpMethod.ConvertStringToByteArr(data);
-            // Create the APDU command for signing the data
-            byte[] command = new byte[5 + dataToSign.length]; // Header (5 bytes) + data to sign
-            command[0] = (byte) 0x00; // CLA
-            command[1] = (byte) 0x25; // INS for SIGN_DATA
-            command[2] = (byte) 0x00; // P1
-            command[3] = (byte) 0x00; // P2
-            command[4] = (byte) dataToSign.length; // Lc: length of the data to sign
-            System.arraycopy(dataToSign, 0, command, 5, dataToSign.length); // Append data to sign
-
-            // Send the command APDU to the applet
-            ResponseAPDU response = sendCommandAPDU(command);
-
-            // Check if the response is valid
-            if (response != null && response.getSW() == 0x9000) {
-                byte[] signedData = response.getData();
-                System.out.println("Signed data (bytes): " + Arrays.toString(signedData));
-                return signedData;
-            } else {
-                System.out.println("Failed to get signature, SW: " + Integer.toHexString(response.getSW()));
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public PublicKey getPatientPublicKeyByPublicKey() {
-        byte[] command = {(byte) 0x00, (byte) 0x24, (byte) 0x00, (byte) 0x00, (byte) 0x00};
-        ResponseAPDU response = sendCommandAPDU(command);
-
-        // Check if the response is valid
-        if (response != null && response.getSW() == 0x9000) {
-            byte[] data = response.getData();
-
-            // Print out the raw response data for debugging
-            System.out.println("Raw response data (bytes): " + Arrays.toString(data));
-
-            // Check that the data length matches the expected length (128 bytes modulus + exponent)
-            if (data.length > 128) {
-                try {
-                    // Extract modulus (128 bytes)
-                    byte[] modulusBytes = Arrays.copyOfRange(data, 0, 128);
-
-                    // Extract exponent (remaining bytes after modulus)
-                    byte[] exponentBytes = Arrays.copyOfRange(data, 128, data.length);
-
-                    // Convert the modulus and exponent to BigInteger
-                    BigInteger modulus = new BigInteger(1, modulusBytes);
-                    BigInteger exponent = new BigInteger(1, exponentBytes);
-
-                    // Print out the BigInteger values for debugging
-                    System.out.println("Modulus (BigInteger): " + modulus.toString(16));
-                    System.out.println("Exponent (BigInteger): " + exponent.toString(16));
-
-                    // Reconstruct the public key
-                    PublicKey publicKey = HelpMethod.ReconstructedPublicKey(modulus, exponent);
-
-                    // Print out the reconstructed public key for debugging
-                    if (publicKey != null) {
-                        System.out.println("Reconstructed Public Key: " + publicKey);
-                    }
-
-                    return publicKey;
-                } catch (Exception e) {
-                    System.out.println("Error while reconstructing public key: " + e.getMessage());
-                    e.printStackTrace();  // Print full stack trace for better insight
-                    return null;
-                }
-            } else {
-                System.out.println("Error: Invalid data format received! (Expected at least 131 bytes, got " + data.length + ")");
-                return null;
-            }
-        } else {
-            System.out.println("Failed to get patient public key, SW: " + Integer.toHexString(response.getSW()));
-            return null;
-        }
-    }
-
     public byte[] getPatientPublicKey() {
         byte[] command = {(byte) 0x00, (byte) 0x24, (byte) 0x00, (byte) 0x00, (byte) 0x00};
         ResponseAPDU response = sendCommandAPDU(command);
@@ -203,31 +116,9 @@ public class SmartCard {
         if (response != null && response.getSW() == 0x9000) {
             byte[] data = response.getData();
             System.out.println("Raw response data (bytes): " + Arrays.toString(data));
+            System.out.println("Raw response data length (bytes): " + data.length);
+            return data;
 
-            if (data.length > 128) {
-                try {
-                    byte[] modulusBytes = Arrays.copyOfRange(data, 0, 128);
-                    byte[] exponentBytes = Arrays.copyOfRange(data, 128, data.length);
-
-                    BigInteger modulus = new BigInteger(1, modulusBytes);
-                    BigInteger exponent = new BigInteger(1, exponentBytes);
-
-                    System.out.println("Modulus (BigInteger): " + modulus.toString(16));
-                    System.out.println("Exponent (BigInteger): " + exponent.toString(16));
-
-                    byte[] encodedPublicKey = HelpMethod.encodePublicKey(modulus, exponent);
-                    System.out.println("Encoded Public Key (bytes): " + Arrays.toString(encodedPublicKey));
-
-                    return encodedPublicKey;
-                } catch (Exception e) {
-                    System.out.println("Error while reconstructing public key: " + e.getMessage());
-                    e.printStackTrace();
-                    return null;
-                }
-            } else {
-                System.out.println("Error: Invalid data format received! (Expected at least 131 bytes, got " + data.length + ")");
-                return null;
-            }
         } else {
             System.out.println("Failed to get patient public key, SW: " + Integer.toHexString(response.getSW()));
             return null;
@@ -581,33 +472,31 @@ public class SmartCard {
         }
     }
 
-    public boolean VerifyCard(byte[] publicKey, byte[] dataToVerify) {
+    public boolean VerifyCard(byte[] publicKey) {
         try {
-            // String randomData = HelpMethod.generateRandomString(20); // Generate random data to send to the card
-            // byte[] dataToVerify = HelpMethod.ConvertStringToByteArr(randomData); // Convert data to byte array
-            // Verify the card, return true if successful
-            boolean isSuccess = HelpMethod.verifySignature(publicKey, dataToVerify);
-            if (isSuccess) {
-                System.out.println("Verification successful: The public key and private key are a matching pair.");
+            String randomData = HelpMethod.generateRandomString(20);
+            byte[] dataToVerify = HelpMethod.ConvertStringToByteArr(randomData);
+            byte[] command = new byte[5 + dataToVerify.length];
+            command[0] = (byte) 0x00;
+            command[1] = (byte) 0x25;
+            command[2] = (byte) 0x00;
+            command[3] = (byte) 0x00;
+            command[4] = (byte) dataToVerify.length;
+            System.arraycopy(dataToVerify, 0, command, 5, dataToVerify.length);
+            System.out.println("PublicKey in Verify: " + Arrays.toString(publicKey));
+            System.out.println("PublicKey Length: " + publicKey.length);
+            ResponseAPDU res = sendCommandAPDU(command);
+            if (res != null && res.getSW() == 0x9000) {
+                byte[] signedData = res.getData();
+                return HelpMethod.verifySignature(publicKey, dataToVerify, signedData);
             } else {
-                System.out.println("Verification failed: The public key and private key do not match.");
+                System.out.println("Failed to verified card, SW: " + Integer.toHexString(res.getSW()));
+                return false;
             }
-            return isSuccess; // Return the result of the verification
         } catch (Exception e) {
-            e.printStackTrace(); // Print the stack trace for debugging
-            return false; // Return false if an exception occurs
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
-    public boolean verifySignatureUsingPublicKey(PublicKey publicKey, byte[] dataToVerify) throws Exception {
-        Signature rsaSign = Signature.getInstance("MD5withRSA");
-        rsaSign.initVerify(publicKey);
-        boolean verify = rsaSign.verify(dataToVerify);
-        if (verify) {
-            System.out.println("Verification successful: The public key and private key are a matching pair.");
-        } else {
-            System.out.println("Verification failed: The public key and private key do not match.");
-        }
-        return verify;
-    }
 }

@@ -19,6 +19,7 @@ import javax.swing.JFileChooser;
 public class TestSendAndReceivePicture extends javax.swing.JFrame {
 
     SmartCard card = new SmartCard();
+    byte[] testPublicKey;
     /**
      * Creates new form TestSendAndReceivePicture
      */
@@ -113,28 +114,14 @@ public class TestSendAndReceivePicture extends javax.swing.JFrame {
 //        }
 
         // Print or use the byte array
-        //SmartCard.publicKey = card.getPatientPublicKey();
-        SmartCard.pubKey = card.getPatientPublicKeyByPublicKey();
-        System.out.println("Public key (bytes): " + SmartCard.pubKey.toString());
+        testPublicKey = card.getPatientPublicKey();
+        //SmartCard.pubKey = card.getPatientPublicKeyByPublicKey();
+        System.out.println("Public key (bytes): " + Arrays.toString(SmartCard.publicKey));
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         //card.GetPatientPicture();
-        String randomData = "Kien"; // Generate random data to send to the card
-        byte[] signature = card.getSignature(randomData); // Get the signature of the random data from the card
-
-//        // Print the public key for debugging
-//        System.out.println("Currently public key length: " + SmartCard.publicKey.length);
-//        System.out.println("Public key (bytes): " + Arrays.toString(SmartCard.publicKey));
-
-        boolean isVerified = false; // Verify the signature using the public key
-        try {
-            isVerified = card.verifySignatureUsingPublicKey(SmartCard.pubKey, signature);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        if (isVerified) {
+        if(card.VerifyCard(testPublicKey)){
             System.out.println("Verification successful: The public key and private key are a matching pair.");
         } else {
             System.out.println("Verification failed: The public key and private key do not match.");

@@ -248,10 +248,28 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         if (!isConnect) {
             if (card.connectCard()) {
-                isConnect = true;
-                btnConnect.setText("Ngắt kết nối");
+                SmartCard.publicKey = card.getPatientPublicKey();
+                if (SmartCard.publicKey != null) {
+                    boolean isVerify = card.VerifyCard(SmartCard.publicKey);
+                    if (isVerify) {
+                        isConnect = true;
+                        btnConnect.setText("Ngắt kết nối");
+                        JOptionPane.showMessageDialog(this, "Kết nối và xác thực thành công");
+                    } else {
+                        System.err.println("Xác thực thất bại");
+                        JOptionPane.showMessageDialog(this, "Xác thực thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        isConnect = false;
+                        btnConnect.setText("Kết nối");
+                    }
+                } else {
+                    System.err.println("Không thể lấy khóa công khai");
+                    JOptionPane.showMessageDialog(this, "Không thể lấy khóa công khai từ thẻ", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    isConnect = false;
+                    btnConnect.setText("Kết nối");
+                }
             } else {
-                JOptionPane.showMessageDialog(this, "Chưa connect được đến applet");
+                System.err.println("Kết nối thất bại: Không thể kết nối đến applet");
+                JOptionPane.showMessageDialog(this, "Chưa connect được đến applet", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 isConnect = false;
                 btnConnect.setText("Kết nối");
             }
@@ -259,6 +277,10 @@ public class AccountForm extends javax.swing.JInternalFrame {
             if (card.disconnect()) {
                 isConnect = false;
                 btnConnect.setText("Kết nối");
+                JOptionPane.showMessageDialog(this, "Đã ngắt kết nối thành công");
+            } else {
+                System.err.println("Ngắt kết nối thất bại: Không thể ngắt kết nối thẻ");
+                JOptionPane.showMessageDialog(this, "Ngắt kết nối thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_btnConnectActionPerformed

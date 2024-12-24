@@ -342,7 +342,6 @@ public class ChangeInfoAdmin extends javax.swing.JDialog {
         boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt);
         
         if (updated) {
-            this.dispose();
             // Update the patient instance
             Patient patient = Patient.getInstance();
             patient.setHoten(hoTen);
@@ -358,6 +357,7 @@ public class ChangeInfoAdmin extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Cập nhập thông tin bệnh nhân thành công.");
             
             //su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
+            this.dispose();
             owner.loadDataToTable();
             
         } else {

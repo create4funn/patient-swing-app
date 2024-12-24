@@ -5,18 +5,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.RSAPublicKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Random;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import java.util.*;
 
 public class HelpMethod {
 
@@ -93,28 +87,7 @@ public class HelpMethod {
             return null;
         }
     }
-    
-    public static SecretKey generateRandomKey() throws Exception {
-        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(128);
-        return keyGen.generateKey();
-    }
-    
-    public static String encrypt(String plainText, SecretKey secretKey) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
-        return Base64.getEncoder().encodeToString(encryptedBytes);
-    }
 
-    public static String decrypt(String encryptedText, SecretKey secretKey) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        byte[] decodedBytes = Base64.getDecoder().decode(encryptedText);
-        byte[] decryptedBytes = cipher.doFinal(decodedBytes);
-        return new String(decryptedBytes);
-    }
-    
     public static String generateRandomString(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
@@ -125,34 +98,20 @@ public class HelpMethod {
         }
         return sb.toString();
     }
-    
-    public static boolean verifySignature(byte[] publicKeyBytes, byte[] dataToVerify) throws Exception {
+
+    public static boolean verifySignature(byte[] publicKeyBytes, byte[] dataToVerify, byte[] signedData) throws Exception {
+        short expLen = ByteBuffer.wrap(new byte[]{publicKeyBytes[publicKeyBytes.length - 2], publicKeyBytes[publicKeyBytes.length - 1]}).getShort();
+        short modLen = ByteBuffer.wrap(new byte[]{publicKeyBytes[publicKeyBytes.length - 4], publicKeyBytes[publicKeyBytes.length - 3]}).getShort();
+        byte[] modulusBytes = Arrays.copyOfRange(publicKeyBytes, 0, modLen);
+        byte[] exponentBytes = Arrays.copyOfRange(publicKeyBytes, modLen, modLen + expLen);
+        BigInteger modulus = new BigInteger(1, modulusBytes);
+        BigInteger exponent = new BigInteger(1, exponentBytes);
+        RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, exponent);
+        PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(publicKeySpec);
         Signature rsaSign = Signature.getInstance("MD5withRSA");
-        PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKeyBytes));
         rsaSign.initVerify(publicKey);
-        return rsaSign.verify(dataToVerify);
+        rsaSign.update(dataToVerify);
+        return rsaSign.verify(signedData);
     }
 
-    public static PublicKey ReconstructedPublicKey(BigInteger modulus, BigInteger exponent) {
-        try {
-            RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PublicKey publicKey = keyFactory.generatePublic(spec);
-
-            // Print the public key
-            System.out.println("Reconstructed Public Key: " + publicKey.toString());
-
-            return publicKey;
-        } catch (Exception e) {
-            System.out.println("Failed to reconstruct public key: " + e.getMessage());
-            return null;
-        }
-    }
-
-    public static byte[] encodePublicKey(BigInteger modulus, BigInteger exponent) throws Exception {
-        RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
-        KeyFactory factory = KeyFactory.getInstance("RSA");
-        PublicKey publicKey = factory.generatePublic(spec);
-        return publicKey.getEncoded();
-        }
     }

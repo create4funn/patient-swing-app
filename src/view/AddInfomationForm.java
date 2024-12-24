@@ -349,9 +349,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
         }
         session.close();
 
-
-        // Instantiate the SmartCard class and connect to the card
-
         // Attempt to update the patient info on the smart card
         card.updatePatientBalance("0");
         card.updatePatientPin(maPin);
@@ -378,7 +375,8 @@ public class AddInfomationForm extends javax.swing.JDialog {
         // Disconnect from the card
 
         //Su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
-        //owner.loadDataToTable();
+        this.dispose();
+        owner.loadDataToTable();
     }
 //GEN-LAST:event_jButton1ActionPerformed
 
