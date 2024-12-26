@@ -134,7 +134,7 @@
                       <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="btnChangePin" max="32767" attributes="0"/>
-                          <Component id="btnConnect" pref="96" max="32767" attributes="0"/>
+                          <Component id="btnHistoryTopUp" pref="96" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -193,7 +193,7 @@
                       <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnChangeInfo" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                          <Component id="btnConnect" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                          <Component id="btnHistoryTopUp" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -361,7 +361,7 @@
                 <Property name="text" type="java.lang.String" value="&#x110;&#x103;ng xu&#x1ea5;t"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btnConnect">
+            <Component class="javax.swing.JButton" name="btnHistoryTopUp">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="99" green="99" red="ff" type="rgb"/>
@@ -372,10 +372,10 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="L&#xe0;m m&#x1edb;i"/>
+                <Property name="text" type="java.lang.String" value="L&#x1ecb;ch s&#x1eed; n&#x1ea1;p"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnConnectActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnHistoryTopUpActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jPicture">

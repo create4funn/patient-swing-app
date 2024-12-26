@@ -98,7 +98,8 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
         jToolBar1 = new javax.swing.JToolBar();
         btnAdd = new javax.swing.JButton();
         btnChange = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
 
         setBorder(null);
@@ -152,18 +153,27 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
         });
         jToolBar1.add(btnChange);
 
-        btnEdit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_delete_40px.png"))); // NOI18N
-        btnEdit.setText("Xóa");
-        btnEdit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnEdit.setMargin(new java.awt.Insets(2, 20, 2, 20));
-        btnEdit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+        btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_delete_40px.png"))); // NOI18N
+        btnDelete.setText("Xóa");
+        btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDelete.setMargin(new java.awt.Insets(2, 20, 2, 20));
+        btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
             }
         });
-        jToolBar1.add(btnEdit);
+        jToolBar1.add(btnDelete);
+
+        btnRefresh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/reload.png"))); // NOI18N
+        btnRefresh.setText("Làm mới");
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setMargin(new java.awt.Insets(2, 20, 2, 20));
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(btnRefresh);
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jTextField1.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
@@ -212,39 +222,17 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_btnChangeActionPerformed
 
-    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO: Xóa lịch khám
-//        if (tblLichKham.getSelectedRow() != -1) {
-//            // Fetch the MedicalId from tblLichSu
-//            String medicalId = getSelectedMedicalIdLichSu(tblLichSu);
-//
-//            if (medicalId != null && !medicalId.isEmpty()) {
-//                // Find the MedicalHistory corresponding to the selected MedicalId
-//                for (MedicalHistory history : medicalHistories) {
-//                    if (history.getMedicalId().equals(medicalId)) {
-//                        // Display MedicalHistory details in a dialog
-//                        JOptionPane.showMessageDialog(this,
-//                                "Mã đơn khám: " + history.getMedicalId() + "\n" +
-//                                        "Ngày khám: " + history.getMedicalHistoryDate() + "\n" +
-//                                        "Lý do khám: " + history.getMedicalDescription() + "\n" +
-//                                        "Chi phí: " + history.getMedicalCost() + "\n" +
-//                                        "Trạng thái: " + history.getMedicalStatus(),
-//                                "Thông tin Đơn Khám",
-//                                JOptionPane.INFORMATION_MESSAGE
-//                        );
-//                        return; // Exit after displaying the info
-//                    }
-//                }
-//            }
-//        }
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
 
-    }//GEN-LAST:event_btnEditActionPerformed
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnChange;
-    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;

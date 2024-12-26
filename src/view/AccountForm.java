@@ -88,9 +88,10 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnConnect = new javax.swing.JButton();
         btnAddCard = new javax.swing.JButton();
         btnChangeCard = new javax.swing.JButton();
-        btnEditCard = new javax.swing.JButton();
+        btnDeleteCard = new javax.swing.JButton();
         jKhoaThe = new javax.swing.JButton();
         jMoKhoaThe = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
 
         setBorder(null);
@@ -158,18 +159,18 @@ public class AccountForm extends javax.swing.JInternalFrame {
         });
         jToolBar1.add(btnChangeCard);
 
-        btnEditCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnEditCard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_delete_40px.png"))); // NOI18N
-        btnEditCard.setText("Xóa");
-        btnEditCard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnEditCard.setMargin(new java.awt.Insets(2, 20, 2, 20));
-        btnEditCard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnEditCard.addActionListener(new java.awt.event.ActionListener() {
+        btnDeleteCard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnDeleteCard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_delete_40px.png"))); // NOI18N
+        btnDeleteCard.setText("Xóa");
+        btnDeleteCard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDeleteCard.setMargin(new java.awt.Insets(2, 20, 2, 20));
+        btnDeleteCard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnDeleteCard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditCardActionPerformed(evt);
+                btnDeleteCardActionPerformed(evt);
             }
         });
-        jToolBar1.add(btnEditCard);
+        jToolBar1.add(btnDeleteCard);
 
         jKhoaThe.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jKhoaThe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Lock_icon (1).png"))); // NOI18N
@@ -199,6 +200,15 @@ public class AccountForm extends javax.swing.JInternalFrame {
         });
         jToolBar1.add(jMoKhoaThe);
 
+        btnRefresh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/reload.png"))); // NOI18N
+        btnRefresh.setText("Làm mới");
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setMargin(new java.awt.Insets(2, 20, 2, 20));
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(btnRefresh);
+
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jTextField1.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -210,7 +220,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(66, 66, 66)
                         .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(38, 38, 38)
@@ -309,7 +319,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         a.setVisible(true);
     }//GEN-LAST:event_btnChangeCardActionPerformed
 
-    private void btnEditCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCardActionPerformed
+    private void btnDeleteCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCardActionPerformed
         // Prompt the user to enter the admin username and password
         // TODO: Xóa tài khoản
         JTextField usernameField = new JTextField();
@@ -383,7 +393,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                     JOptionPane.WARNING_MESSAGE
             );
         }
-    }//GEN-LAST:event_btnEditCardActionPerformed
+    }//GEN-LAST:event_btnDeleteCardActionPerformed
 
     private boolean verifyAdminCredentials(String username, String password) {
         // Replace this logic with your actual admin username/password verification
@@ -394,7 +404,8 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnAddCard;
     private javax.swing.JButton btnChangeCard;
     private javax.swing.JButton btnConnect;
-    private javax.swing.JButton btnEditCard;
+    private javax.swing.JButton btnDeleteCard;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton jKhoaThe;
     private javax.swing.JButton jMoKhoaThe;
     private javax.swing.JPanel jPanel1;
