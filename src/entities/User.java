@@ -121,4 +121,9 @@ public class User {
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
+
+    @Override
+    public String toString() {
+        return "Họ tên: " + this.getHoten() + "; Mã bệnh nhân: " + this.getMabn();
+    }
 }

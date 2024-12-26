@@ -1,6 +1,8 @@
 package view;
 
+import Card.Patient;
 import Card.SmartCard;
+import util.HibernateService;
 
 /**
  *
@@ -9,6 +11,7 @@ import Card.SmartCard;
 public class ChangePin extends javax.swing.JDialog {
 
     SmartCard card = new SmartCard();
+    private Patient patient;
     /**
      * Creates new form ChangPassword
      */
@@ -16,6 +19,7 @@ public class ChangePin extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         init();
+        patient = Patient.getInstance();
     }
 
     private void init(){
@@ -151,7 +155,7 @@ public class ChangePin extends javax.swing.JDialog {
     String oldPass = jOldPass.getText();
     String reOldPass = jReOldPass.getText();
     String newPass = jNewPass.getText();
-
+        // TODO : update ma pin
 // Validate inputs
         if (!oldPass.equals(reOldPass)) {
             // Show error dialog for mismatched passwords
@@ -174,11 +178,13 @@ public class ChangePin extends javax.swing.JDialog {
         } else {
             // Update PIN and show success dialog
             card.updatePatientPin(newPass);
-
             javax.swing.JOptionPane.showMessageDialog(this,
                     "Cập nhập mật khẩu thành công.",
                     "Success",
                     javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            // update database
+            HibernateService.updatePinCode(patient.getId(), newPass);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -193,7 +199,7 @@ public class ChangePin extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

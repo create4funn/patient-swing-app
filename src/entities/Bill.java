@@ -1,7 +1,6 @@
 package entities;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 
 @Entity
 @Table(name = "bill")
@@ -9,19 +8,21 @@ public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer MedicalHistoryId;
-    private BigInteger cost;
-    private String PaymentDate;
-    private Integer paytientId;
+    private Integer appointmentId;
+    private String appointmentCode;
+    private int cost;
+    private String code;
+    private String paymentDate;
+    private Integer patientId;
 
-    public Bill(Integer id, Integer medicalHistoryId, BigInteger cost, String paymentDate) {
+
+    public Bill(Integer id, Integer appointmentId, int cost, String paymentDate, Integer patientId) {
         this.id = id;
-        MedicalHistoryId = medicalHistoryId;
+        this.appointmentId = appointmentId;
         this.cost = cost;
-        PaymentDate = paymentDate;
+        this.paymentDate = paymentDate;
+        this.patientId = patientId;
     }
-
-
 
     public Bill() {
     }
@@ -34,42 +35,56 @@ public class Bill {
         this.id = id;
     }
 
-    public Integer getMedicalHistoryId() {
-        return MedicalHistoryId;
+    public Integer getAppointmentId() {
+        return appointmentId;
     }
 
-    public void setMedicalHistoryId(Integer medicalHistoryId) {
-        MedicalHistoryId = medicalHistoryId;
+    public void setAppointmentId(Integer appointmentId) {
+        this.appointmentId = appointmentId;
     }
 
-    public BigInteger getCost() {
+    public int getCost() {
         return cost;
     }
 
-    public void setCost(BigInteger cost) {
+    public void setCost(int cost) {
         this.cost = cost;
     }
 
     public String getPaymentDate() {
-        return PaymentDate;
+        return paymentDate;
     }
 
     public void setPaymentDate(String paymentDate) {
-        PaymentDate = paymentDate;
+        paymentDate = paymentDate;
     }
 
-    public Integer getPaytientId() {
-        return paytientId;
+    public Integer getPatientId() {
+        return patientId;
     }
 
-    public void setPaytientId(Integer paytientId) {
-        this.paytientId = paytientId;
+    public void setPatientId(Integer patientId) {
+        this.patientId = patientId;
     }
 
-    public Bill(Integer medicalHistoryId, BigInteger cost, String paymentDate, Integer paytientId) {
-        MedicalHistoryId = medicalHistoryId;
-        this.cost = cost;
-        PaymentDate = paymentDate;
-        this.paytientId = paytientId;
+    public void generateBillCode() {
+        this.code = String.format("HD%03d", this.id);
     }
+
+    public String getAppointmentCode() {
+        return appointmentCode;
+    }
+
+    public void setAppointmentCode(String appointmentCode) {
+        this.appointmentCode = appointmentCode;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
 }

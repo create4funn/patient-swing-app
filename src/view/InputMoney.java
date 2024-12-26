@@ -2,6 +2,7 @@ package view;
 
 import Card.Patient;
 import Card.SmartCard;
+import util.HibernateService;
 
 import javax.swing.*;
 
@@ -129,6 +130,7 @@ public class InputMoney extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jChargeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jChargeCardActionPerformed
+        // TODO: Nạp tiền
         String inputMoney = jInputMoney.getText();
         if (inputMoney.isEmpty() || !inputMoney.matches("\\d{0,10}") || inputMoney.length() > 10) {
             JOptionPane.showMessageDialog(this, "Số tiền nạp không hợp lệ (chỉ chứa số, tối đa 1.000.000.000đ).", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -138,6 +140,10 @@ public class InputMoney extends javax.swing.JDialog {
             patient.setBalance(inputMoneyInt);
             card.updatePatientBalance(String.valueOf(patient.getBalance()));
             JOptionPane.showMessageDialog(this, "Đã nạp tiền thành công.");
+            this.dispose();
+            // database
+            HibernateService.updateBalance(patient.getId(),Integer.valueOf(inputMoneyInt));
+            //
             owner.loadPatienInfo();
         }
 
@@ -154,7 +160,7 @@ public class InputMoney extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

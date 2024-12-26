@@ -30,10 +30,12 @@ public class AddInfomationForm extends javax.swing.JDialog {
      */
     SmartCard card = SmartCard.getInstance();
     private AccountForm owner;
+    private Patient patient;
 
     public AddInfomationForm(javax.swing.JInternalFrame parent, javax.swing.JFrame frame, boolean modal) {
         super(frame, modal);
         this.owner = (AccountForm) parent;
+        patient = Patient.getInstance();
         initComponents();
         init();
     }
@@ -276,7 +278,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Collect patient info from the UI components
         String hoTen = jhoTen.getText();
-
         // Chuyển đổi ngày từ JDateChooser sang định dạng "dd-MM-yyyy"
         String ngaySinh = "";
         if (jNgaySinh.getDate() != null) {
@@ -360,18 +361,16 @@ public class AddInfomationForm extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
         // TODO: Set public key
-
-
-
-
         // Update the patient instance
-        Patient patient = Patient.getInstance();
+        patient.setId(idCard == 0 ? patient.getId() : idCard) ;
         patient.setHoten(hoTen);
         patient.setNgaysinh(ngaySinh);
         patient.setQuequan(queQuan);
         patient.setMabn(maBenhNhan);
         patient.setSdt(sdt);
         patient.setGioitinh(gioiTinh);
+        patient.setBalance(0);
+        patient.setMapin(maPin);
         // Disconnect from the card
 
         //Su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
@@ -406,7 +405,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
                 card.updatePatientPicture(image);
 
                 // Update the patient instance
-                Patient patient = Patient.getInstance();
                 patient.setPicture(image);
 
                 // Display the image on the UI
@@ -420,9 +418,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
     }//GEN-LAST:event_btnChooseImgActionPerformed
 
     private void displayImage() {
-        // Get the Patient instance
-        Patient patient = Patient.getInstance();
-
         // Retrieve the picture as a BufferedImage
         BufferedImage image = patient.getPicture();
 

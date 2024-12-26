@@ -3,6 +3,14 @@ package view;
 import Card.HelpMethod;
 import Card.Patient;
 import Card.SmartCard;
+import entities.User;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import util.HibernateService;
+import util.HibernateUtil;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,9 +33,9 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
      */
     SmartCard card = SmartCard.getInstance();
     private BufferedImage tempImage; // Temporary variable to hold the new selected image
-
+    private Patient patient;
     private final PatientForm owner;
-    
+
     public ChangeInfomationForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         this.owner = (PatientForm) parent;
@@ -36,15 +44,15 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
     }
 
     public void init(){
-        Patient patient = Patient.getInstance();
+         patient = Patient.getInstance();
         jhoTen.setText(patient.getHoten());
         //jNgaySinh.set(patient.getNgaysinh());
         // Chuyển đổi String sang Date để gán cho JDateChooser
-      
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         try {
-            Date ngaySinh = dateFormat.parse(patient.getNgaysinh()); 
-            jNgaySinh.setDate(ngaySinh); 
+            Date ngaySinh = dateFormat.parse(patient.getNgaysinh());
+            jNgaySinh.setDate(ngaySinh);
         } catch (ParseException e) {
             e.printStackTrace();
             System.out.println("Ngày sinh không đúng định dạng");
@@ -54,19 +62,34 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
         jQueQuan.setText(patient.getQuequan());
         jSdt.setText(patient.getSdt());
         jMaBenhNhan.setText(patient.getMabn());
+        try{
+            BufferedImage image = patient.getPicture();
+            // Convert the BufferedImage to an ImageIcon
+            ImageIcon icon = new ImageIcon(image);
 
-        BufferedImage image = patient.getPicture();
-        // Convert the BufferedImage to an ImageIcon
-        ImageIcon icon = new ImageIcon(image);
+            // Resize the image to fit the JLabel
+            Image img = icon.getImage();
+            Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
+            icon = new ImageIcon(scaledImg);
 
-        // Resize the image to fit the JLabel
-        Image img = icon.getImage();
-        Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
-        icon = new ImageIcon(scaledImg);
-
-        // Set the icon to the JLabel
-        imgLabel.setText(null); // Clear any existing text
-        imgLabel.setIcon(icon);
+            // Set the icon to the JLabel
+            imgLabel.setText(null); // Clear any existing text
+            imgLabel.setIcon(icon);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+//        BufferedImage image = patient.getPicture();
+//        // Convert the BufferedImage to an ImageIcon
+//        ImageIcon icon = new ImageIcon(image);
+//
+//        // Resize the image to fit the JLabel
+//        Image img = icon.getImage();
+//        Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
+//        icon = new ImageIcon(scaledImg);
+//
+//        // Set the icon to the JLabel
+//        imgLabel.setText(null); // Clear any existing text
+//        imgLabel.setIcon(icon);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -322,7 +345,7 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Địa chỉ không hợp lệ (tối đa 150 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (sdt.isEmpty() || !sdt.matches("\\d{0,10}") || sdt.length() > 10) {
             JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ (chỉ chứa số, tối đa 10 ký tự).", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
@@ -333,14 +356,15 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
             return;
         }
 
-
         // Attempt to update the patient info
         boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt);
-        
+
         if (updated) {
+            // save database
+            HibernateService.updateInformation(patient.getId(),hoTen,ngaySinh,maBenhNhan,sdt,gioiTinh,queQuan);
+            //
             this.dispose();
             // Update the patient instance
-            Patient patient = Patient.getInstance();
             patient.setHoten(hoTen);
             patient.setNgaysinh(ngaySinh);
             patient.setQuequan(queQuan);

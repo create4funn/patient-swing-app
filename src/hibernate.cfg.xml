@@ -17,7 +17,7 @@
 
         <mapping class="entities.User"/>
         <mapping class="entities.Bill"/>
-        <mapping class="entities.MedicalHistory"/>
+        <mapping class="entities.Appointment"/>
 
     </session-factory>
 </hibernate-configuration>

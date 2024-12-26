@@ -28,6 +28,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private boolean isConnect = false;
     private final SmartCard card = new SmartCard();
     private DefaultTableModel tblModel;
+    private List<User> userList = new ArrayList<>();
     public AccountForm() {
         initComponents();
         BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
@@ -48,7 +49,13 @@ public class AccountForm extends javax.swing.JInternalFrame {
         Transaction transaction = session.beginTransaction();
         try{
             Query<User> userQuery =  session.createQuery("FROM User",User.class);
-            List<User> userList = userQuery.getResultList();
+             userList = userQuery.getResultList();
+            transaction.commit();
+        }catch (Exception e){
+            transaction.rollback();
+        }
+        session.close();
+        if(!this.userList.isEmpty()){
             int  i = 1;
             tblModel.setRowCount(0);
             for (User user : userList) {
@@ -56,11 +63,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                         i++, user.getHoten(), user.getMabn(), user.getSdt(),user.getGioitinh(), user.getNgaysinh(),user.getBalance()
                 });
             }
-            transaction.commit();
-        }catch (Exception e){
-            transaction.rollback();
         }
-        session.close();
     }
 
 //    public TaiKhoan getSelected() {
@@ -121,7 +124,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConnect.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+        btnConnect.addActionListener(new java.awt.event.ActionListener() { 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConnectActionPerformed(evt);
             }
@@ -198,7 +201,6 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jTextField1.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -302,12 +304,14 @@ public class AccountForm extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jMoKhoaTheActionPerformed
 
     private void btnChangeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeCardActionPerformed
+        // TODO: SuaỬ thông tin
         ChangeInfoAdmin a = new ChangeInfoAdmin(this, (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
         a.setVisible(true);
     }//GEN-LAST:event_btnChangeCardActionPerformed
 
     private void btnEditCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCardActionPerformed
         // Prompt the user to enter the admin username and password
+        // TODO: Xóa tài khoản
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
         Object[] message = {

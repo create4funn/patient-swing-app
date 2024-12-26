@@ -1,25 +1,31 @@
 package view;
 
-import Card.Bill;
 import Card.MedicalHistory;
 import Card.Patient;
 import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
+import constant.Constant;
+import entities.Appointment;
+import entities.Bill;
+import util.HibernateService;
+
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
  * @author DELL
  */
 public class PatientForm extends javax.swing.JFrame {
-    List<MedicalHistory> medicalHistories = new ArrayList<>();
-
+    List<Appointment> appointments = new ArrayList<>();
+    List<Bill> bills = new ArrayList<>();
+    private Appointment selectedAppointment;
 
     String[] patientInfo;
     SmartCard card = SmartCard.getInstance();
@@ -31,77 +37,87 @@ public class PatientForm extends javax.swing.JFrame {
         initComponents();
         init();
         initTable();
-        loadMedicalHistoryData(medicalHistories);
+        loadAppointments();
+        loadBillData();
     }
+
     public final void initTable() {
         tblModel1 = (DefaultTableModel) tblLichSu.getModel();
-        String[] headerTblLichSu = new String[]{"STT", "Mã đơn khám", "Ngày khám", "Lý do khám", "Chi phí", "Trạng thái"};
+        String[] headerTblLichSu = new String[]{"STT", "Mã đơn khám", "Ngày khám", "Tên bệnh", "Chi phí", "Trạng thái", "Id", "Description"};
         tblModel1.setColumnIdentifiers(headerTblLichSu);
-        
+        tblLichSu.getColumnModel().getColumn(6).setMinWidth(0);
+        tblLichSu.getColumnModel().getColumn(6).setMaxWidth(0);
+        tblLichSu.getColumnModel().getColumn(6).setWidth(0);
+        tblLichSu.getColumnModel().getColumn(7).setMinWidth(0);
+        tblLichSu.getColumnModel().getColumn(7).setMaxWidth(0);
+        tblLichSu.getColumnModel().getColumn(7).setWidth(0);
+
         tblModel2 = (DefaultTableModel) tblHoaDon.getModel();
-        String[] headerTblHoaDon = new String[]{"STT", "Mã hóa đơn", "Ngày thanh toán", "Số tiền"};
+        String[] headerTblHoaDon = new String[]{"STT", "Mã hóa đơn", "Ngày thanh toán", "Số tiền", "Id"};
         tblModel2.setColumnIdentifiers(headerTblHoaDon);
+        tblHoaDon.getColumnModel().getColumn(4).setMinWidth(0); // Ẩn cột ID
+        tblHoaDon.getColumnModel().getColumn(4).setMaxWidth(0); // Ẩn cột ID
+        tblHoaDon.getColumnModel().getColumn(4).setWidth(0);
     }
 
-    public void loadMedicalHistoryData(List<MedicalHistory> medicalHistories) {
+    public void loadAppointments() {
         tblModel1.setRowCount(0); // Clear existing data
         int index = 1; // Auto-increment index starts at 1
-
-        for (MedicalHistory history : medicalHistories) {
+        appointments = HibernateService.loadAppointmentData(patient.getId());
+        for (Appointment appointment : appointments) {
             tblModel1.addRow(new Object[]{
                     index++, // Auto-increment index
-                    history.getMedicalId(),
-                    history.getMedicalHistoryDate(),
-                    history.getMedicalDescription(),
-                    history.getMedicalCost(),
-                    history.getMedicalStatus()
+                    appointment.getCode(),
+                    appointment.getDate(),
+                    appointment.getName(),
+                    appointment.getCost(),
+                    appointment.getStatus() ? "Đã thanh toán" : "Chưa thanh toán",
+                    appointment.getId(),
+                    appointment.getDescription()
             });
         }
+        selectedAppointment = new Appointment();
     }
 
-    public void loadBillData(List<Bill> bills) {
+    public void loadBillData() {
         tblModel2.setRowCount(0); // Clear existing data
         int index = 1; // Auto-increment index starts at 1
-
+        bills = HibernateService.loadBillData(patient.getId());
         for (Bill b : bills) {
             tblModel2.addRow(new Object[]{
                     index++, // Auto-increment index
-                    b.getBillId(),
+                    b.getCode(),
                     b.getPaymentDate(),
-                    b.getBillCost(),
+                    b.getCost(),
             });
         }
     }
 
     // General helper method to get the MedicalId of the selected row from any table
-    public static String getSelectedMedicalId(JTable table, int medicalIdColumnIndex) {
-        int selectedRow = table.getSelectedRow();
+    public List<Appointment> getSelectedAppointment() {
+        int[] selectedRows = tblLichSu.getSelectedRows();
+        List<Appointment> appointments = new ArrayList<>();
+        for (int row : selectedRows) {
+            Appointment appointment = new Appointment();
+            appointment.setCode(getValueByRow(tblLichSu, row, 1, String.class));
+            appointment.setDate(getValueByRow(tblLichSu, row, 2, String.class));
+            appointment.setName(getValueByRow(tblLichSu, row, 3, String.class));
+            appointment.setCost(getValueByRow(tblLichSu, row, 4, Integer.class) == null ? 0 : getValueByRow(tblLichSu, row, 4, Integer.class));
 
-        if (selectedRow == -1) {
-            return null; // No row selected
+            appointment.setStatus(Objects.equals(getValueByRow(tblLichSu, row, 5, String.class),Constant.CHUA_THANH_TOAN) ? false : true);
+            appointment.setId(getValueByRow(tblLichSu, row,6, Integer.class) == null ? 0 : getValueByRow(tblLichSu, row, 6, Integer.class));
+            appointment.setName(getValueByRow(tblLichSu, row, 7,String.class));
+            appointments.add(appointment);
         }
-
-        Object medicalId = table.getValueAt(selectedRow, medicalIdColumnIndex);
-        System.out.println(medicalId);
-        return medicalId != null ? medicalId.toString() : ""; // Return the MedicalId or an empty string if null
+        return appointments;
     }
 
-    // Specific method for tblLichSu (assuming MedicalId is in column 1)
-    public static String getSelectedMedicalIdLichSu(JTable tblLichSu) {
-        return getSelectedMedicalId(tblLichSu, 1); // Column index 1 (zero-based)
+    public Boolean getAppointmentStatus(String status) {
+        return Objects.equals(status, Constant.DA_THANH_TOAN);
     }
 
-    // Specific method for tblHoaDon (assuming MedicalId is in column 1)
-    public static String getSelectedMedicalIdHoaDon(JTable tblHoaDon) {
-        return getSelectedMedicalId(tblHoaDon, 1); // Column index 1 (zero-based)
-    }
 
     private void init() {
-        medicalHistories.add(new MedicalHistory("P001", "M001", "2024-12-19", "Khám sức khỏe định kỳ", "a","Đã thanh toán", "500000"));
-        medicalHistories.add(new MedicalHistory("P002", "M002", "2024-12-20", "Khám tim mạch","b","Chưa thanh toán", "700000"));
-        medicalHistories.add(new MedicalHistory("P003", "M003", "2024-12-21", "Khám mắt", "c","Đã thanh toán", "300000"));
-        medicalHistories.add(new MedicalHistory("P004", "M004", "2024-12-22", "Khám da liễu", "d","Chưa thanh toán", "400000"));
-        medicalHistories.add(new MedicalHistory("P005", "M005", "2024-12-23", "Khám tổng quát", "e","Đã thanh toán", "1200000"));
         // Retrieve the Patient instance
         // Set the values from the Patient instance to the UI components
         jhoTen.setText(patient.getHoten());
@@ -123,7 +139,7 @@ public class PatientForm extends javax.swing.JFrame {
         }
     }
 
-    public void loadPatienInfo(){
+    public void loadPatienInfo() {
         String[] patientInfo;
         patientInfo = card.getPatientInfo();
         BufferedImage patientPicture = card.GetPatientPicture();
@@ -144,6 +160,7 @@ public class PatientForm extends javax.swing.JFrame {
             System.out.println("Failed to retrieve patient picture.");
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -270,115 +287,115 @@ public class PatientForm extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(24, 24, 24)
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addGap(24, 24, 24)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(jLabel3)
+                                                                                        .addComponent(label6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                .addGap(18, 18, 18)
+                                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(jNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addComponent(jQueQuan, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                        .addComponent(label8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(label11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(label12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(18, 18, 18)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jhoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jPicture, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                .addGap(3, 3, 3))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGap(97, 97, 97)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jSdt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jMaBenhNhan, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jGioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jBalance, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addGap(0, 26, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(btnChangePin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnConnect, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
+                                .addGap(37, 37, 37)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel3)
-                                            .addComponent(label6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jQueQuan, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(label8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(label11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(label12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jhoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jPicture, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(3, 3, 3))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(97, 97, 97)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSdt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jMaBenhNhan, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jGioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jBalance, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addGap(0, 26, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(btnChangePin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnConnect, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
-                .addGap(37, 37, 37)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jChargeCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnChangeInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(46, 46, 46))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(93, 93, 93)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(jChargeCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnChangeInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(46, 46, 46))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(93, 93, 93)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPicture, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jhoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jQueQuan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSdt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(label8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jGioiTinh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(label12, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMaBenhNhan, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jBalance))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnChangeInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jChargeCard, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnChangePin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPicture, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jhoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(14, 14, 14)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(label6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jQueQuan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jSdt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(label8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(label11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jGioiTinh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(label12, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jMaBenhNhan, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jBalance))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnChangeInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(26, 26, 26)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jChargeCard, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnChangePin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(32, 32, 32)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(15, 15, 15))
         );
 
         tblLichSu.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
+                new Object[][]{
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null}
+                },
+                new String[]{
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }
         ));
         jScrollPane3.setViewportView(tblLichSu);
 
@@ -388,32 +405,32 @@ public class PatientForm extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(355, 355, 355)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(394, Short.MAX_VALUE))
+                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(355, 355, 355)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(394, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
+                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         tblHoaDon.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
+                new Object[][]{
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null}
+                },
+                new String[]{
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }
         ));
         jScrollPane4.setViewportView(tblHoaDon);
 
@@ -443,63 +460,63 @@ public class PatientForm extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(384, 384, 384)
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jDisplayInfo)
-                .addGap(81, 81, 81)
-                .addComponent(jMakePayment, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(129, 129, 129))
+                jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane4)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(384, 384, 384)
+                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jDisplayInfo)
+                                .addGap(81, 81, 81)
+                                .addComponent(jMakePayment, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(129, 129, 129))
         );
         jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jMakePayment, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                    .addComponent(jDisplayInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
-                .addContainerGap())
+                jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jMakePayment, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                                        .addComponent(jDisplayInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -535,50 +552,45 @@ public class PatientForm extends javax.swing.JFrame {
 
     private void jDisplayInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDisplayInfoActionPerformed
         // Determine the currently focused table
-        if (tblLichSu.getSelectedRow() != -1) {
+        if (tblLichSu.getSelectedRow() > 0) {
             // Fetch the MedicalId from tblLichSu
-            String medicalId = getSelectedMedicalIdLichSu(tblLichSu);
+            Appointment appointment = getSelectedAppointment().get(0);
 
-            if (medicalId != null && !medicalId.isEmpty()) {
-                // Find the MedicalHistory corresponding to the selected MedicalId
-                for (MedicalHistory history : medicalHistories) {
-                    if (history.getMedicalId().equals(medicalId)) {
-                        // Display MedicalHistory details in a dialog
-                        JOptionPane.showMessageDialog(this,
-                                "Mã đơn khám: " + history.getMedicalId() + "\n" +
-                                        "Ngày khám: " + history.getMedicalHistoryDate() + "\n" +
-                                        "Lý do khám: " + history.getMedicalDescription() + "\n" +
-                                        "Chi phí: " + history.getMedicalCost() + "\n" +
-                                        "Trạng thái: " + history.getMedicalStatus(),
-                                "Thông tin Đơn Khám",
-                                JOptionPane.INFORMATION_MESSAGE
-                        );
-                        return; // Exit after displaying the info
-                    }
-                }
+            if (appointment != null) {
+                String status = appointment.getStatus() ? Constant.DA_THANH_TOAN : Constant.CHUA_THANH_TOAN;
+                JOptionPane.showMessageDialog(this,
+                        "Mã đơn khám: " + appointment.getCode() + "\n" +
+                                "Tên bệnh: " + appointment.getName() + "\n" +
+                                "Ngày khám: " + appointment.getDate() + "\n" +
+                                "Mô tả: " + appointment.getDescription() + "\n" +
+                                "Trạng thái: " + status,
+                        "Thông tin Đơn Khám",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                return;
             }
         } else if (tblHoaDon.getSelectedRow() != -1) {
             // Fetch the MedicalId from tblHoaDon
-            String medicalId = getSelectedMedicalIdHoaDon(tblHoaDon);
-
-            if (medicalId != null && !medicalId.isEmpty()) {
-                // Find the MedicalHistory corresponding to the selected MedicalId
-                for (MedicalHistory history : medicalHistories) {
-                    if (history.getMedicalId().equals(medicalId)) {
-                        // Display MedicalHistory details in a dialog
-                        JOptionPane.showMessageDialog(this,
-                                "Mã đơn khám: " + history.getMedicalId() + "\n" +
-                                        "Ngày khám: " + history.getMedicalHistoryDate() + "\n" +
-                                        "Lý do khám: " + history.getMedicalDescription() + "\n" +
-                                        "Chi phí: " + history.getMedicalCost() + "\n" +
-                                        "Trạng thái: " + history.getMedicalStatus(),
-                                "Thông tin Hóa Đơn",
-                                JOptionPane.INFORMATION_MESSAGE
-                        );
-                        return; // Exit after displaying the info
-                    }
-                }
-            }
+//            String medicalId = getSelectedMedicalIdHoaDon(tblHoaDon);
+//
+//            if (medicalId != null && !medicalId.isEmpty()) {
+//                // Find the MedicalHistory corresponding to the selected MedicalId
+//                for (MedicalHistory history : medicalHistories) {
+//                    if (history.getMedicalId().equals(medicalId)) {
+//                        // Display MedicalHistory details in a dialog
+//                        JOptionPane.showMessageDialog(this,
+//                                "Mã đơn khám: " + history.getMedicalId() + "\n" +
+//                                        "Ngày khám: " + history.getMedicalHistoryDate() + "\n" +
+//                                        "Lý do khám: " + history.getMedicalDescription() + "\n" +
+//                                        "Chi phí: " + history.getMedicalCost() + "\n" +
+//                                        "Trạng thái: " + history.getMedicalStatus(),
+//                                "Thông tin Hóa Đơn",
+//                                JOptionPane.INFORMATION_MESSAGE
+//                        );
+//                        return; // Exit after displaying the info
+//                    }
+//                }
+//            }
         } else {
             // No table row selected
             JOptionPane.showMessageDialog(this,
@@ -589,18 +601,73 @@ public class PatientForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jDisplayInfoActionPerformed
 
+    public <T> T getValueByRow(JTable table, int row, int column, Class<T> type) {
+        Object value = table.getValueAt(row, column);
+        if (value != null && type.isInstance(value)) {
+            return (T) value;
+        }
+        return null;
+    }
+
+
     private void jMakePaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMakePaymentActionPerformed
+        // TODO: Xử lý thanh toán
         // Check if a row is selected in tblLichSu
         if (tblLichSu.getSelectedRow() != -1) {
             // Fetch MedicalId, status, and cost from the selected row in tblLichSu
-            String medicalId = getSelectedMedicalIdLichSu(tblLichSu);
-            String status = tblLichSu.getValueAt(tblLichSu.getSelectedRow(), 5).toString(); // Column index 5 for "Trạng thái"
-            int cost = Integer.parseInt(tblLichSu.getValueAt(tblLichSu.getSelectedRow(), 4).toString()); // Column index 4 for "Chi phí"
-
-            if ("Chưa thanh toán".equals(status)) {
-                // Prompt user to confirm payment
+            List<Appointment> appointmentList = this.getSelectedAppointment();
+            for (Appointment appointment : appointmentList) {
+                if (appointment.getStatus()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Đơn khám đã được thanh toán hoặc không thể thanh toán.",
+                            "Thông báo",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }             // Prompt user to confirm payment
+            if (appointmentList.size() == 1) {
+                Appointment appointment = appointmentList.get(0);
                 int response = JOptionPane.showConfirmDialog(this,
-                        "Thanh toán đơn khám cho mã đơn: " + medicalId,
+                        "Thanh toán đơn khám cho mã đơn: " + appointment.getCode(),
+                        "Xác nhận thanh toán",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (response == JOptionPane.YES_OPTION) {
+                    // Check if the patient's balance is sufficient
+                    if (patient.getBalance() < appointment.getCost()) {
+                        JOptionPane.showMessageDialog(this,
+                                "Số dư hiện tại của bạn không đủ",
+                                "Thông báo",
+                                JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        // Deduct the cost from the patient's balance
+                        patient.setBalance(-appointment.getCost());
+                        card.updatePatientBalance(String.valueOf(patient.getBalance()));
+                        loadPatienInfo();
+                        // Update the status in the table to "Đã thanh toán"
+                        // Update
+                        if (HibernateService.updateBalance(patient.getId(), patient.getBalance())) {
+                            Bill bill = new Bill();
+                            bill.setAppointmentId(appointment.getId());
+                            bill.setPatientId(patient.getId());
+                            bill.setAppointmentCode(appointment.getCode());
+                            bill.setCost(appointment.getCost());
+                            HibernateService.saveBillAndUpdateAppointment(bill,List.of(appointment.getId()));
+                            JOptionPane.showMessageDialog(this,
+                                    "Thanh toán thành công cho mã đơn: " + appointment.getCode(),
+                                    "Thông báo",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                            this.loadAppointments();
+                            this.loadBillData();
+                        }
+                    }
+                }
+            } else {
+                String codes = appointmentList.stream().map(Appointment::getCode).collect(Collectors.joining(", "));
+                int cost = appointmentList.stream().mapToInt(Appointment::getCost).sum();
+                List<Integer> appointmentIds = appointmentList.stream().map(Appointment::getId).collect(Collectors.toList());
+                int response = JOptionPane.showConfirmDialog(this,
+                        "Thanh toán đơn khám cho danh sách mã đơn: " + codes,
                         "Xác nhận thanh toán",
                         JOptionPane.YES_NO_OPTION);
 
@@ -617,31 +684,34 @@ public class PatientForm extends javax.swing.JFrame {
                         card.updatePatientBalance(String.valueOf(patient.getBalance()));
                         loadPatienInfo();
                         // Update the status in the table to "Đã thanh toán"
-                        tblLichSu.setValueAt("Đã thanh toán", tblLichSu.getSelectedRow(), 5);
-
-                        JOptionPane.showMessageDialog(this,
-                                "Thanh toán thành công cho mã đơn: " + medicalId,
-                                "Thông báo",
-                                JOptionPane.INFORMATION_MESSAGE);
+                        // Update
+                        if (HibernateService.updateBalance(patient.getId(), patient.getBalance())) {
+                            Bill bill = new Bill();
+                            bill.setAppointmentId(null);
+                            bill.setPatientId(patient.getId());
+                            bill.setAppointmentCode(codes);
+                            bill.setCost(cost);
+                            HibernateService.saveBillAndUpdateAppointment(bill,appointmentIds);
+                            JOptionPane.showMessageDialog(this,
+                                    "Thanh toán thành công cho mã đơn: " + codes,
+                                    "Thông báo",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                            this.loadAppointments();
+                            this.loadBillData();
+                        }
                     }
-                } else {
-                    // User chose "Không"
-                    // Simply dismiss the dialog, no action needed
                 }
-            } else {
-                // The selected row's status is not "Chưa thanh toán"
-                JOptionPane.showMessageDialog(this,
-                        "Đơn khám đã được thanh toán hoặc không thể thanh toán.",
-                        "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
+
             }
+
         } else {
             // No row is selected in tblLichSu
             JOptionPane.showMessageDialog(this,
                     "Vui lòng chọn một dòng trong bảng lịch sử để thực hiện thanh toán.",
                     "Thông báo",
                     JOptionPane.WARNING_MESSAGE);
-        }    }//GEN-LAST:event_jMakePaymentActionPerformed
+        }
+    }//GEN-LAST:event_jMakePaymentActionPerformed
 
     /**
      * @param args the command line arguments

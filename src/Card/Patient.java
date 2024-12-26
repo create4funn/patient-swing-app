@@ -3,7 +3,7 @@ package Card;
 import java.awt.image.BufferedImage; // Import for BufferedImage
 
 public class Patient {
-
+    private int id;
     private String hoten;
     private String ngaysinh;
     private String quequan;
@@ -16,7 +16,7 @@ public class Patient {
     private String cardId;
 
     // Private static instance of the class
-    private static Patient instance;
+    private static volatile  Patient instance;
 
     // Private constructor to prevent instantiation
     private Patient() {
@@ -30,7 +30,30 @@ public class Patient {
         return instance;
     }
 
-    // Getters and setters for fields
+    public void setBalance(int amount) {
+        try {
+                // Parse the current balance and the new amount as doubles
+                int currentBalance = this.balance;
+                int amountToAdd = amount;
+
+                // Perform the addition
+                int newBalance = currentBalance + amountToAdd;
+
+                // Update the balance as a string
+                this.balance = newBalance;
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid balance or amount: " + e.getMessage());
+        }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getHoten() {
         return hoten;
     }
@@ -45,14 +68,6 @@ public class Patient {
 
     public void setNgaysinh(String ngaysinh) {
         this.ngaysinh = ngaysinh;
-    }
-
-    public String getSdt() {
-        return sdt;
-    }
-
-    public void setSdt(String sdt) {
-        this.sdt = sdt;
     }
 
     public String getQuequan() {
@@ -87,31 +102,23 @@ public class Patient {
         this.mapin = mapin;
     }
 
+    public String getSdt() {
+        return sdt;
+    }
+
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
+    }
+
     public int getBalance() {
         return balance;
     }
 
-    public void setBalance(int amount) {
-        try {
-                // Parse the current balance and the new amount as doubles
-                int currentBalance = this.balance;
-                int amountToAdd = amount;
-
-                // Perform the addition
-                int newBalance = currentBalance + amountToAdd;
-
-                // Update the balance as a string
-                this.balance = newBalance;
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid balance or amount: " + e.getMessage());
-        }
-    }
-
-    public BufferedImage getPicture() { // Updated getter for picture
+    public BufferedImage getPicture() {
         return picture;
     }
 
-    public void setPicture(BufferedImage picture) { // Updated setter for picture
+    public void setPicture(BufferedImage picture) {
         this.picture = picture;
     }
 
@@ -122,5 +129,4 @@ public class Patient {
     public void setCardId(String cardId) {
         this.cardId = cardId;
     }
-
 }

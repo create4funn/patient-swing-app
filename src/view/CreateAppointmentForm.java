@@ -4,17 +4,22 @@
  */
 package view;
 
+import Card.MedicalHistory;
 import Card.SmartCard;
-import java.util.ArrayList;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import entities.Appointment;
+import entities.User;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import util.HibernateUtil;
+
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
-
+import java.util.List;
 
 
 /**
- *
  * @author Robot
  */
 public class CreateAppointmentForm extends javax.swing.JInternalFrame {
@@ -22,6 +27,8 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
     private final boolean isConnect = false;
     private final SmartCard card = new SmartCard();
     private DefaultTableModel tblModel;
+    private List<Appointment> appointmentList;
+
     public CreateAppointmentForm() {
         initComponents();
         BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
@@ -32,32 +39,50 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
 
     public final void initTable() {
         tblModel = (DefaultTableModel) tblLichKham.getModel();
-        String[] headerTbl = new String[]{"Tên","Mã bệnh nhân", "SÐT", "Giới tính", "Trạng thái"};
+        String[] headerTbl = new String[]{"STT", "Tên bệnh", "Ngày khám", "Tên bệnh nhân", "Mô tả ", "Giá tiền", "Trạng thái","Id"};
         tblModel.setColumnIdentifiers(headerTbl);
-        
-    }
-    
-    public void loadDataToTable() {
+        tblLichKham.getColumnModel().getColumn(7).setMinWidth(0);
+        tblLichKham.getColumnModel().getColumn(7).setMaxWidth(0);
+        tblLichKham.getColumnModel().getColumn(7).setWidth(0);
 
-        //ArrayList<Patient> listTk = ...;
-               
-//        tblModel.setRowCount(0);
-//        for (int i=0; i<listTk.size(); i++) {
-//
-//            tblModel.addRow(new Object[]{
-//                i+1, listTk.get(i).gethoten(), listTk.get(i).getMabn(), listTk.get(i).getSdt(),listTk.get(i).getGioitinh(), listTk.get(i).getTrangthai()
-//            });
-//        }
     }
-    
+
+    public void loadDataToTable() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            Query<Appointment> appointmentQuery = session.createQuery("FROM Appointment", Appointment.class);
+            appointmentList = appointmentQuery.getResultList();
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        }
+        session.close();
+        if (!this.appointmentList.isEmpty()) {
+            int i = 1;
+            tblModel.setRowCount(0);
+            for (Appointment appointment : appointmentList) {
+                tblModel.addRow(new Object[]{
+                        i++, appointment.getName(),
+                        appointment.getDate(),
+                        appointment.getPatientName(),
+                        appointment.getDescription(),
+                        appointment.getCost(),
+                        appointment.getStatus() ? "Đã thanh toán" : "Chưa thanh toán",
+                        appointment.getId(),
+                });
+            }
+        }
+    }
+
 //    public TaiKhoan getSelected() {
 //        int i_row = tblTaiKhoan.getSelectedRow();
 //        String userName = tblTaiKhoan.getValueAt(i_row, 2).toString();
 //        TaiKhoan tk = TaiKhoanDAO.getInstance().selectById(userName);
 //        return tk;
 //    }
-    
-    
+
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -84,15 +109,15 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(713, 0));
 
         tblLichKham.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
+                new Object[][]{
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null}
+                },
+                new String[]{
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }
         ));
         jScrollPane1.setViewportView(tblLichKham);
 
@@ -146,28 +171,28 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1040, Short.MAX_VALUE)
-                .addGap(32, 32, 32))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(110, 110, 110)
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(98, 98, 98))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(38, 38, 38)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1040, Short.MAX_VALUE)
+                                .addGap(32, 32, 32))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(110, 110, 110)
+                                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(98, 98, 98))
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(59, 59, 59)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(41, 41, 41)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(59, 59, 59)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1110, 726));
@@ -183,16 +208,39 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
 
     private void btnChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeActionPerformed
         // TODO add your handling code here:
-        
+        // TODO: Sửa thông tin lịch khám
+
     }//GEN-LAST:event_btnChangeActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
-        
+        // TODO: Xóa lịch khám
+//        if (tblLichKham.getSelectedRow() != -1) {
+//            // Fetch the MedicalId from tblLichSu
+//            String medicalId = getSelectedMedicalIdLichSu(tblLichSu);
+//
+//            if (medicalId != null && !medicalId.isEmpty()) {
+//                // Find the MedicalHistory corresponding to the selected MedicalId
+//                for (MedicalHistory history : medicalHistories) {
+//                    if (history.getMedicalId().equals(medicalId)) {
+//                        // Display MedicalHistory details in a dialog
+//                        JOptionPane.showMessageDialog(this,
+//                                "Mã đơn khám: " + history.getMedicalId() + "\n" +
+//                                        "Ngày khám: " + history.getMedicalHistoryDate() + "\n" +
+//                                        "Lý do khám: " + history.getMedicalDescription() + "\n" +
+//                                        "Chi phí: " + history.getMedicalCost() + "\n" +
+//                                        "Trạng thái: " + history.getMedicalStatus(),
+//                                "Thông tin Đơn Khám",
+//                                JOptionPane.INFORMATION_MESSAGE
+//                        );
+//                        return; // Exit after displaying the info
+//                    }
+//                }
+//            }
+//        }
+
     }//GEN-LAST:event_btnEditActionPerformed
 
-    
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnChange;
@@ -204,5 +252,5 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
     private javax.swing.JTable tblLichKham;
     // End of variables declaration//GEN-END:variables
 
-  
+
 }

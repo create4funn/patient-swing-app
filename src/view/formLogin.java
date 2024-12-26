@@ -162,7 +162,7 @@ public class formLogin extends javax.swing.JFrame {
         String userPin = txtPassword.getText();
 
         try {
-            // Initialize the SmartCard instance and attempt to connect to the card
+            // Initialize the SmartCard instance and                                                 attempt to connect to the card
             if (!card.connectCard()) {
                 JOptionPane.showMessageDialog(this, "Chưa kết nối được đến thẻ.");
                 return;
@@ -208,6 +208,7 @@ public class formLogin extends javax.swing.JFrame {
                 patient.setBalance(Integer.parseInt(patientBalance[0]));
                 String[] patientCardId = card.getPatientCardId();
                 patient.setCardId(patientCardId[0]);
+                patient.setId(Integer.valueOf(patientCardId[0]));
                 System.out.println(patient.getBalance());
                 System.out.println(patient.getCardId());
                 // Retrieve and set the patient picture
@@ -253,13 +254,6 @@ public class formLogin extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
-            Session session = HibernateUtil.getSessionFactory().openSession();
-            Transaction transaction = session.beginTransaction();
-            User user = new User();
-            user.setHoten("hoang");
-            session.save(user);
-            transaction.commit();
-            session.close();
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
