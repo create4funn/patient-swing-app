@@ -360,7 +360,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "Cập nhật tài khoản bệnh nhân thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        // TODO: Set public key
         // Update the patient instance
         patient.setId(idCard == 0 ? patient.getId() : idCard) ;
         patient.setHoten(hoTen);

@@ -11,7 +11,7 @@ import util.HibernateService;
 public class ChangePin extends javax.swing.JDialog {
 
     SmartCard card = new SmartCard();
-    private Patient patient;
+    private final Patient patient;
     /**
      * Creates new form ChangPassword
      */

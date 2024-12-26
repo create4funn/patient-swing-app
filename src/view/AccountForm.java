@@ -304,14 +304,12 @@ public class AccountForm extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jMoKhoaTheActionPerformed
 
     private void btnChangeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeCardActionPerformed
-        // TODO: SuaỬ thông tin
         ChangeInfoAdmin a = new ChangeInfoAdmin(this, (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
         a.setVisible(true);
     }//GEN-LAST:event_btnChangeCardActionPerformed
 
     private void btnEditCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCardActionPerformed
         // Prompt the user to enter the admin username and password
-        // TODO: Xóa tài khoản
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
         Object[] message = {
