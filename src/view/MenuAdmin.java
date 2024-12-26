@@ -39,7 +39,7 @@ public class MenuAdmin extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         tabLichKham = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        tabLichSu = new javax.swing.JPanel();
+        tabHoaDon = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         tabTaiKhoan = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -94,35 +94,35 @@ public class MenuAdmin extends javax.swing.JFrame {
 
         jPanel1.add(tabLichKham, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 222, -1));
 
-        tabLichSu.setBackground(new java.awt.Color(204, 204, 255));
-        tabLichSu.setPreferredSize(new java.awt.Dimension(166, 47));
-        tabLichSu.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabHoaDon.setBackground(new java.awt.Color(204, 204, 255));
+        tabHoaDon.setPreferredSize(new java.awt.Dimension(166, 47));
+        tabHoaDon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabLichSuMouseClicked(evt);
+                tabHoaDonMouseClicked(evt);
             }
         });
 
         jLabel3.setFont(new java.awt.Font("Verdana", 0, 24)); // NOI18N
-        jLabel3.setText("Lịch sử");
+        jLabel3.setText("Hóa đơn");
 
-        javax.swing.GroupLayout tabLichSuLayout = new javax.swing.GroupLayout(tabLichSu);
-        tabLichSu.setLayout(tabLichSuLayout);
-        tabLichSuLayout.setHorizontalGroup(
-            tabLichSuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tabLichSuLayout.createSequentialGroup()
+        javax.swing.GroupLayout tabHoaDonLayout = new javax.swing.GroupLayout(tabHoaDon);
+        tabHoaDon.setLayout(tabHoaDonLayout);
+        tabHoaDonLayout.setHorizontalGroup(
+            tabHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabHoaDonLayout.createSequentialGroup()
                 .addGap(54, 54, 54)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(57, Short.MAX_VALUE))
         );
-        tabLichSuLayout.setVerticalGroup(
-            tabLichSuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tabLichSuLayout.createSequentialGroup()
+        tabHoaDonLayout.setVerticalGroup(
+            tabHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabHoaDonLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addContainerGap(11, Short.MAX_VALUE))
         );
 
-        jPanel1.add(tabLichSu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 310, 222, -1));
+        jPanel1.add(tabHoaDon, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 310, 222, -1));
 
         tabTaiKhoan.setBackground(new java.awt.Color(204, 204, 255));
         tabTaiKhoan.setPreferredSize(new java.awt.Dimension(168, 47));
@@ -233,22 +233,22 @@ public class MenuAdmin extends javax.swing.JFrame {
         tabTaiKhoan.setBackground(new Color(204, 204, 255));        
         tabKeDon.setBackground(new Color(204, 204, 255));
         tabLichKham.setBackground(Color.WHITE);
-        tabLichSu.setBackground(new Color(204, 204, 255));
+        tabHoaDon.setBackground(new Color(204, 204, 255));
         
     }//GEN-LAST:event_tabLichKhamMouseClicked
 
-    private void tabLichSuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabLichSuMouseClicked
-        HistoryForm a = new HistoryForm();
+    private void tabHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabHoaDonMouseClicked
+        BillForm a = new BillForm();
         
         jPanel2.removeAll();
         jPanel2.add(a).setVisible(true);
 
         tabTaiKhoan.setBackground(new Color(204, 204, 255));       
         tabKeDon.setBackground(new Color(204, 204, 255));
-        tabLichSu.setBackground(Color.WHITE);
+        tabHoaDon.setBackground(Color.WHITE);
         tabLichKham.setBackground(new Color(204, 204, 255));
         
-    }//GEN-LAST:event_tabLichSuMouseClicked
+    }//GEN-LAST:event_tabHoaDonMouseClicked
 
     private void tabTaiKhoanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabTaiKhoanMouseClicked
         AccountForm a = new AccountForm();
@@ -260,7 +260,7 @@ public class MenuAdmin extends javax.swing.JFrame {
         
         tabKeDon.setBackground(new Color(204, 204, 255));
         tabTaiKhoan.setBackground(Color.WHITE);
-        tabLichSu.setBackground(new Color(204, 204, 255));
+        tabHoaDon.setBackground(new Color(204, 204, 255));
         
     }//GEN-LAST:event_tabTaiKhoanMouseClicked
 
@@ -289,7 +289,7 @@ public class MenuAdmin extends javax.swing.JFrame {
         tabTaiKhoan.setBackground(new Color(204, 204, 255));       
         tabLichKham.setBackground(new Color(204, 204, 255));
         tabKeDon.setBackground(Color.WHITE);
-        tabLichSu.setBackground(new Color(204, 204, 255));
+        tabHoaDon.setBackground(new Color(204, 204, 255));
     }//GEN-LAST:event_tabKeDonMouseClicked
 
     /**
@@ -343,9 +343,9 @@ public class MenuAdmin extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPanel tabHoaDon;
     private javax.swing.JPanel tabKeDon;
     private javax.swing.JPanel tabLichKham;
-    private javax.swing.JPanel tabLichSu;
     private javax.swing.JPanel tabTaiKhoan;
     private javax.swing.JLabel txtTenNguoiDung;
     // End of variables declaration//GEN-END:variables
