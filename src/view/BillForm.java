@@ -5,16 +5,20 @@
 package view;
 
 import Card.SmartCard;
+import entities.Bill;
+import entities.User;
+import util.HibernateService;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
 
 
-
 /**
- *
  * @author Robot
  */
 public class BillForm extends javax.swing.JInternalFrame {
@@ -22,6 +26,9 @@ public class BillForm extends javax.swing.JInternalFrame {
     private final boolean isConnect = false;
     private final SmartCard card = new SmartCard();
     private DefaultTableModel tblModel;
+    private List<Bill> bills;
+    private int sum = 0;
+
     public BillForm() {
         initComponents();
         BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
@@ -32,32 +39,37 @@ public class BillForm extends javax.swing.JInternalFrame {
 
     public final void initTable() {
         tblModel = (DefaultTableModel) tblKeDon.getModel();
-        String[] headerTbl = new String[]{"Tên","BHYT", "SÐT", "Giới tính", "Trạng thái"};
+        String[] headerTbl = new String[]{"STT", "Mã hóa đơn", "Tên bệnh nhân", "Mã khám", "Ngày thanh toán", "Giá tiền"};
         tblModel.setColumnIdentifiers(headerTbl);
-        
-    }
-    
-    public void loadDataToTable() {
 
-        //ArrayList<Patient> listTk = ...;
-               
-//        tblModel.setRowCount(0);
-//        for (int i=0; i<listTk.size(); i++) {
-//
-//            tblModel.addRow(new Object[]{
-//                i+1, listTk.get(i).gethoten(), listTk.get(i).getMabn(), listTk.get(i).getSdt(),listTk.get(i).getGioitinh(), listTk.get(i).getTrangthai()
-//            });
-//        }
     }
-    
+
+    public void loadDataToTable() {
+        this.bills = HibernateService.loadBillDataForAdmin("", "", "");
+        updateTableData();
+    }
+
+    private void updateTableData() {
+        if (!this.bills.isEmpty()) {
+            int i = 1;
+            tblModel.setRowCount(0);
+            for (Bill bill : bills) {
+                tblModel.addRow(new Object[]{
+                        i++, bill.getCode(), bill.getPatientName(), bill.getAppointmentCode(), bill.getPaymentDate(), bill.getCost()
+                });
+                sum+=bill.getCost();
+            }
+            txtDoanhThu.setText(String.valueOf(sum));
+        }
+    }
 //    public TaiKhoan getSelected() {
 //        int i_row = tblTaiKhoan.getSelectedRow();
 //        String userName = tblTaiKhoan.getValueAt(i_row, 2).toString();
 //        TaiKhoan tk = TaiKhoanDAO.getInstance().selectById(userName);
 //        return tk;
 //    }
-    
-    
+
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,8 +83,6 @@ public class BillForm extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblKeDon = new javax.swing.JTable();
         jToolBar1 = new javax.swing.JToolBar();
-        btnAdd = new javax.swing.JButton();
-        btnChange = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
@@ -109,33 +119,6 @@ public class BillForm extends javax.swing.JInternalFrame {
         jToolBar1.setBorder(javax.swing.BorderFactory.createTitledBorder("Chức năng"));
         jToolBar1.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jToolBar1.setRollover(true);
-
-        btnAdd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_add_40px.png"))); // NOI18N
-        btnAdd.setText("Thêm");
-        btnAdd.setFocusable(false);
-        btnAdd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnAdd.setMargin(new java.awt.Insets(2, 20, 2, 20));
-        btnAdd.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(btnAdd);
-
-        btnChange.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnChange.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_edit_40px.png"))); // NOI18N
-        btnChange.setText("Sửa");
-        btnChange.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnChange.setMargin(new java.awt.Insets(2, 20, 2, 20));
-        btnChange.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnChange.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnChangeActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(btnChange);
 
         btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_delete_40px.png"))); // NOI18N
@@ -204,7 +187,7 @@ public class BillForm extends javax.swing.JInternalFrame {
         btnDanhSachNap.setBackground(new java.awt.Color(255, 51, 51));
         btnDanhSachNap.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnDanhSachNap.setForeground(new java.awt.Color(255, 255, 255));
-        btnDanhSachNap.setText("Danh sách nạp tiền");
+        btnDanhSachNap.setText("Biến động số dư");
         btnDanhSachNap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDanhSachNapActionPerformed(evt);
@@ -263,35 +246,31 @@ public class BillForm extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
-        
-        
-    }//GEN-LAST:event_btnAddActionPerformed
-
-    private void btnChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeActionPerformed
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_btnChangeActionPerformed
-
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void jDateChooserFromPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooserFromPropertyChange
         // TODO add your handling code here:
-        
+        if (jDateChooserFrom.getDate() != null && jDateChooserTo.getDate() != null) {
+            handleSearchButton();
+        }
+
     }//GEN-LAST:event_jDateChooserFromPropertyChange
 
-    private void jDateChooserFromVetoableChange(java.beans.PropertyChangeEvent evt)throws java.beans.PropertyVetoException {//GEN-FIRST:event_jDateChooserFromVetoableChange
+    private void jDateChooserFromVetoableChange(java.beans.PropertyChangeEvent evt) throws java.beans.PropertyVetoException {//GEN-FIRST:event_jDateChooserFromVetoableChange
         // TODO add your handling code here:
-
+        if (jDateChooserFrom.getDate() != null && jDateChooserTo.getDate() != null) {
+            handleSearchButton();
+        }
     }//GEN-LAST:event_jDateChooserFromVetoableChange
 
     private void jDateChooserToPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooserToPropertyChange
         // TODO add your handling code here:
-        
+        if (jDateChooserFrom.getDate() != null && jDateChooserTo.getDate() != null) {
+            handleSearchButton();
+        }
     }//GEN-LAST:event_jDateChooserToPropertyChange
 
     private void btnDanhSachNapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDanhSachNapActionPerformed
@@ -300,11 +279,37 @@ public class BillForm extends javax.swing.JInternalFrame {
         a.setVisible(true);
     }//GEN-LAST:event_btnDanhSachNapActionPerformed
 
-    
-    
+    private void textFieldEnterActionPerformed(java.awt.event.ActionEvent evt) {
+        if (jDateChooserFrom.getDate() != null && jDateChooserTo.getDate() != null) {
+            handleSearchButton();
+        }
+    }
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {
+        jDateChooserFrom.setDate(null);
+        jDateChooserTo.setDate(null);
+        jTextField1.setText("");
+        sum = 0;
+        loadDataToTable();
+    }
+
+    private void handleSearchButton() {
+        String name = jTextField1.getText();
+        String fromDate = "";
+        if (jDateChooserFrom.getDate() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            fromDate = dateFormat.format(jDateChooserFrom.getDate());
+        }
+        String toDate = "";
+        if (jDateChooserTo.getDate() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            toDate = dateFormat.format(jDateChooserTo.getDate());
+        }
+        bills = HibernateService.loadBillDataForAdmin(name, fromDate, toDate);
+        updateTableData();
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnChange;
     private javax.swing.JButton btnDanhSachNap;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnRefresh;
@@ -322,5 +327,5 @@ public class BillForm extends javax.swing.JInternalFrame {
     private javax.swing.JLabel txtDoanhThu;
     // End of variables declaration//GEN-END:variables
 
-  
+
 }

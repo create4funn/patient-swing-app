@@ -6,17 +6,22 @@ package view;
 
 import Card.MedicalHistory;
 import Card.SmartCard;
+import constant.Constant;
 import entities.Appointment;
 import entities.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import util.HibernateService;
 import util.HibernateUtil;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
+import java.util.Objects;
+
+import static util.Utils.getValueByRow;
 
 
 /**
@@ -39,37 +44,32 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
 
     public final void initTable() {
         tblModel = (DefaultTableModel) tblLichKham.getModel();
-        String[] headerTbl = new String[]{"STT", "Tên bệnh", "Ngày khám", "Tên bệnh nhân", "Mô tả ", "Giá tiền", "Trạng thái","Id"};
-        tblModel.setColumnIdentifiers(headerTbl);
+        String[] headerTblLichSu = new String[]{"STT", "Mã đơn khám", "Ngày khám","Tên bệnh nhân" ,"Tên bệnh", "Chi phí", "Description", "Id","PatientId"};
+        tblModel.setColumnIdentifiers(headerTblLichSu);
         tblLichKham.getColumnModel().getColumn(7).setMinWidth(0);
         tblLichKham.getColumnModel().getColumn(7).setMaxWidth(0);
         tblLichKham.getColumnModel().getColumn(7).setWidth(0);
-
+        tblLichKham.getColumnModel().getColumn(8).setMinWidth(0);
+        tblLichKham.getColumnModel().getColumn(8).setMaxWidth(0);
+        tblLichKham.getColumnModel().getColumn(8).setWidth(0);
     }
 
     public void loadDataToTable() {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            Query<Appointment> appointmentQuery = session.createQuery("FROM Appointment", Appointment.class);
-            appointmentList = appointmentQuery.getResultList();
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
-        session.close();
+        appointmentList = HibernateService.searchAppointment("");
         if (!this.appointmentList.isEmpty()) {
             int i = 1;
             tblModel.setRowCount(0);
             for (Appointment appointment : appointmentList) {
                 tblModel.addRow(new Object[]{
-                        i++, appointment.getName(),
+                        i++,
+                        appointment.getCode(),
                         appointment.getDate(),
                         appointment.getPatientName(),
-                        appointment.getDescription(),
+                        appointment.getName(),
                         appointment.getCost(),
-                        appointment.getStatus() ? "Đã thanh toán" : "Chưa thanh toán",
+                        appointment.getDescription(),
                         appointment.getId(),
+                        appointment.getPatientId()
                 });
             }
         }
@@ -173,6 +173,11 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnRefresh);
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -219,14 +224,85 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
     private void btnChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeActionPerformed
         // TODO add your handling code here:
         // TODO: Sửa thông tin lịch khám
+        int length = tblLichKham.getSelectedRows().length;
+        if(length < 1){
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một dòng trong bảng để xem thông tin.",
+                    "Thông báo",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }else if(length == 1) {
+            Appointment selectedAppointment = this.getSelectedAppointment(this.tblLichKham.getSelectedRow());
+            ChangeAppointmentInfo a = new ChangeAppointmentInfo(this, (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled,selectedAppointment);
+            a.setVisible(true);
+        }else if(length > 1){
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một dòng trong bảng để xem thông tin.",
+                    "Thông báo",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
 
     }//GEN-LAST:event_btnChangeActionPerformed
 
+    private Appointment getSelectedAppointment(int row){
+        Appointment appointment = new Appointment();
+        appointment.setCode(getValueByRow(tblLichKham, row, 1, String.class));
+        appointment.setDate(getValueByRow(tblLichKham, row, 2, String.class));
+        appointment.setName(getValueByRow(tblLichKham, row, 4, String.class));
+        appointment.setCost(getValueByRow(tblLichKham, row, 5, Integer.class) == null ? 0 : getValueByRow(tblLichKham, row, 5, Integer.class));
+        appointment.setId(getValueByRow(tblLichKham, row,7, Integer.class));
+        appointment.setDescription(getValueByRow(tblLichKham, row, 6,String.class));
+        appointment.setPatientId(getValueByRow(tblLichKham, row, 8,Integer.class));
+        return appointment;
+    }
+
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-
+        handleDeleteAppointment();
+    }//GEN-LAST:event_btnDeleteActionPerformed
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        this.loadDataToTable();
     }//GEN-LAST:event_btnDeleteActionPerformed
 
+
+    private void handleDeleteAppointment(){
+        int length = tblLichKham.getSelectedRows().length;
+        if(length < 1){
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một dòng trong bảng để xem thông tin.",
+                    "Thông báo",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }else if(length == 1) {
+            Appointment selectedAppointment = this.getSelectedAppointment(this.tblLichKham.getSelectedRow());
+            int option = JOptionPane.showConfirmDialog(this,
+                    "Xóa lịch hẹn : " + selectedAppointment.getCode(),
+                    "Xác nhận thanh toán",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                Boolean result = HibernateService.deleteAppointmentById(selectedAppointment.getId());
+                if(result){
+                    JOptionPane.showMessageDialog(this,
+                            "Xóa thành công cho lịch khám với mã: " + selectedAppointment.getCode(),
+                            "Thông báo",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    this.loadDataToTable();
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Hủy xóa lịch khám.",
+                        "Hủy tiến trình",
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
+
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;

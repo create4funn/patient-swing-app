@@ -2,6 +2,8 @@ package view;
 
 import Card.Patient;
 import Card.SmartCard;
+import constant.Constant;
+import entities.BalanceHistory;
 import entities.Bill;
 import util.HibernateService;
 
@@ -164,7 +166,14 @@ public class InputMoney extends javax.swing.JDialog {
                         JOptionPane.showMessageDialog(this, "Đã nạp tiền thành công.");
                         this.dispose();
                         // database
-                        HibernateService.updateBalance(patient.getId(),Integer.valueOf(inputMoneyInt));
+                        HibernateService.updateBalance(patient.getId(),patient.getBalance());
+                        // save balance his
+                        BalanceHistory balanceHistory = new BalanceHistory();
+                        balanceHistory.setCost(inputMoneyInt);
+                        balanceHistory.setPatientId(patient.getId());
+                        balanceHistory.setPatientName(patient.getHoten());
+                        balanceHistory.setType(Constant.NAP_TIEN);
+                        HibernateService.saveBalanceHistory(balanceHistory);
                         //
                         owner.loadPatientBalance();
                     } else {

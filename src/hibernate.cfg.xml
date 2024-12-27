@@ -18,6 +18,8 @@
         <mapping class="entities.User"/>
         <mapping class="entities.Bill"/>
         <mapping class="entities.Appointment"/>
+        <mapping class="entities.BalanceHistory"/>
+
 
     </session-factory>
 </hibernate-configuration>

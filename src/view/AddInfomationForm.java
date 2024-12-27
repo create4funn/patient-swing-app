@@ -6,6 +6,7 @@ import Card.SmartCard;
 import entities.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import util.HibernateService;
 import util.HibernateUtil;
 
 import java.awt.Image;
@@ -338,18 +339,8 @@ public class AddInfomationForm extends javax.swing.JDialog {
         user.setPicture(null);
         user.setPublicKey(null);
         user.setMapin(maPin);
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
-        int idCard = 0;
-        try{
-            Serializable id = session.save(user);
-            idCard = (int) id;
-            tx.commit();
-        }catch (Exception e){
-            tx.rollback();
-        }
-        session.close();
-
+        int idCard = HibernateService.saveOrUpdateUser(user);
+        // save database
         // Attempt to update the patient info on the smart card
         card.updatePatientBalance("0");
         card.updatePatientPin(maPin);
@@ -371,10 +362,11 @@ public class AddInfomationForm extends javax.swing.JDialog {
         patient.setBalance(0);
         patient.setMapin(maPin);
         // Disconnect from the card
-
         //Su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
         this.dispose();
         owner.loadDataToTable();
+        // save public key
+        HibernateService.savePublicKey(patient.getId(),card.getPatientPublicKey());
     }
 //GEN-LAST:event_jButton1ActionPerformed
 

@@ -5,8 +5,10 @@ import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
 import constant.Constant;
 import entities.Appointment;
+import entities.BalanceHistory;
 import entities.Bill;
 import util.HibernateService;
+import util.Utils;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -16,6 +18,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import static util.Utils.getValueByRow;
 
 /**
  * @author DELL
@@ -50,11 +54,11 @@ public class PatientForm extends javax.swing.JFrame {
         tblLichSu.getColumnModel().getColumn(7).setWidth(0);
 
         tblModel2 = (DefaultTableModel) tblHoaDon.getModel();
-        String[] headerTblHoaDon = new String[]{"STT", "Mã hóa đơn", "Ngày thanh toán", "Số tiền", "Id"};
+        String[] headerTblHoaDon = new String[]{"STT", "Mã hóa đơn","Mã khám", "Ngày thanh toán", "Số tiền", "Id"};
         tblModel2.setColumnIdentifiers(headerTblHoaDon);
-        tblHoaDon.getColumnModel().getColumn(4).setMinWidth(0); // Ẩn cột ID
-        tblHoaDon.getColumnModel().getColumn(4).setMaxWidth(0); // Ẩn cột ID
-        tblHoaDon.getColumnModel().getColumn(4).setWidth(0);
+        tblHoaDon.getColumnModel().getColumn(5).setMinWidth(0); // Ẩn cột ID
+        tblHoaDon.getColumnModel().getColumn(5).setMaxWidth(0); // Ẩn cột ID
+        tblHoaDon.getColumnModel().getColumn(5).setWidth(0);
     }
 
     public void loadAppointments() {
@@ -84,6 +88,7 @@ public class PatientForm extends javax.swing.JFrame {
             tblModel2.addRow(new Object[]{
                     index++, // Auto-increment index
                     b.getCode(),
+                    b.getAppointmentCode(),
                     b.getPaymentDate(),
                     b.getCost(),
             });
@@ -160,7 +165,6 @@ public class PatientForm extends javax.swing.JFrame {
 
     public void loadPatientBalance() {
         jBalance.setText(String.valueOf(patient.getBalance()));
-
     }
 
     /**
@@ -594,13 +598,7 @@ public class PatientForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jDisplayInfoActionPerformed
 
-    public <T> T getValueByRow(JTable table, int row, int column, Class<T> type) {
-        Object value = table.getValueAt(row, column);
-        if (type.isInstance(value)) {
-            return (T) value;
-        }
-        return null;
-    }
+
 
 
     private void jMakePaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMakePaymentActionPerformed
@@ -663,6 +661,7 @@ public class PatientForm extends javax.swing.JFrame {
                                         bill.setPatientId(patient.getId());
                                         bill.setAppointmentCode(appointment.getCode());
                                         bill.setCost(appointment.getCost());
+                                        bill.setPatientName(patient.getHoten());
                                         HibernateService.saveBillAndUpdateAppointment(bill, List.of(appointment.getId()));
                                         JOptionPane.showMessageDialog(this,
                                                 "Thanh toán thành công cho mã đơn: " + appointment.getCode(),
@@ -670,6 +669,13 @@ public class PatientForm extends javax.swing.JFrame {
                                                 JOptionPane.INFORMATION_MESSAGE);
                                         this.loadAppointments();
                                         this.loadBillData();
+                                        // balance his
+                                        BalanceHistory balanceHistory = new BalanceHistory();
+                                        balanceHistory.setType(Constant.THANH_TOAN);
+                                        balanceHistory.setCost(bill.getCost());
+                                        balanceHistory.setPatientName(patient.getHoten());
+                                        balanceHistory.setPatientId(patient.getId());
+                                        HibernateService.saveBalanceHistory(balanceHistory);
                                     }
                                 } else {
                                     // Mã PIN không chính xác
@@ -745,6 +751,7 @@ public class PatientForm extends javax.swing.JFrame {
                                         bill.setPatientId(patient.getId());
                                         bill.setAppointmentCode(codes);
                                         bill.setCost(cost);
+                                        bill.setPaymentDate(patient.getHoten());
                                         HibernateService.saveBillAndUpdateAppointment(bill,appointmentIds);
                                         JOptionPane.showMessageDialog(this,
                                                 "Thanh toán thành công cho mã đơn: " + codes,

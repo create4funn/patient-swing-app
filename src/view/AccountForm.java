@@ -5,12 +5,18 @@
 package view;
 
 import Card.SmartCard;
+import Components.PlaceholderTextField;
 import entities.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import util.HibernateService;
 import util.HibernateUtil;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
@@ -45,16 +51,10 @@ public class AccountForm extends javax.swing.JInternalFrame {
     }
 
     public void loadDataToTable() {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        try{
-            Query<User> userQuery =  session.createQuery("FROM User",User.class);
-             userList = userQuery.getResultList();
-            transaction.commit();
-        }catch (Exception e){
-            transaction.rollback();
-        }
-        session.close();
+        this.userList = HibernateService.getUserList();
+        updateTableData();
+    }
+    private void updateTableData(){
         if(!this.userList.isEmpty()){
             int  i = 1;
             tblModel.setRowCount(0);
@@ -65,6 +65,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
             }
         }
     }
+
 
 //    public TaiKhoan getSelected() {
 //        int i_row = tblTaiKhoan.getSelectedRow();
@@ -92,7 +93,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         jKhoaThe = new javax.swing.JButton();
         jMoKhoaThe = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        jTextField1 = new PlaceholderTextField("Nhập tên hoặc số BHYT của bạn ");
 
         setBorder(null);
         setPreferredSize(new java.awt.Dimension(1180, 750));
@@ -125,7 +126,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConnect.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnConnect.addActionListener(new java.awt.event.ActionListener() { 
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConnectActionPerformed(evt);
             }
@@ -211,6 +212,15 @@ public class AccountForm extends javax.swing.JInternalFrame {
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jTextField1.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
+        jTextField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Clear the text field
+                String text = jTextField1.getText();
+                handleSearchClick(text);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -398,6 +408,11 @@ public class AccountForm extends javax.swing.JInternalFrame {
         return "admin".equals(username) && "abc".equals(password);
     }
 
+
+    private void handleSearchClick(String name){
+        this.userList = HibernateService.searchUsersByNameAndBHYT(name);
+        this.updateTableData();
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddCard;
     private javax.swing.JButton btnChangeCard;

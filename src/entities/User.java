@@ -17,7 +17,7 @@ public class User {
     private String mapin;
     private String sdt;
     private int balance;
-    private String publicKey;
+    private byte[] publicKey;
     private byte[] picture; // Updated to byte[] to store binary image data
 
     public User(int balance, String mapin, String gioitinh, String mabn, String quequan, String ngaysinh, String hoten,String sdt) {
@@ -106,10 +106,6 @@ public class User {
         this.id = id;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
     public String getSdt() {
         return sdt;
     }
@@ -118,12 +114,16 @@ public class User {
         this.sdt = sdt;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
     @Override
     public String toString() {
         return "Họ tên: " + this.getHoten() + "; Mã bệnh nhân: " + this.getMabn();
+    }
+
+    public byte[] getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(byte[] publicKey) {
+        this.publicKey = publicKey;
     }
 }

@@ -14,6 +14,7 @@ public class Bill {
     private String code;
     private String paymentDate;
     private Integer patientId;
+    private String patientName;
 
 
     public Bill(Integer id, Integer appointmentId, int cost, String paymentDate, Integer patientId) {
@@ -52,11 +53,11 @@ public class Bill {
     }
 
     public String getPaymentDate() {
-        return paymentDate;
+        return this.paymentDate;
     }
 
     public void setPaymentDate(String paymentDate) {
-        paymentDate = paymentDate;
+        this.paymentDate = paymentDate;
     }
 
     public Integer getPatientId() {
@@ -87,4 +88,11 @@ public class Bill {
         this.code = code;
     }
 
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
 }

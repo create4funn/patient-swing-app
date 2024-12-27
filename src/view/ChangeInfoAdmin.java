@@ -6,6 +6,7 @@ import Card.SmartCard;
 import entities.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import util.HibernateService;
 import util.HibernateUtil;
 
 import java.awt.Image;
@@ -356,15 +357,7 @@ public class ChangeInfoAdmin extends javax.swing.JDialog {
         user.setPicture(null);
         user.setPublicKey(null);
         user.setMapin(patient.getMapin());
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
-        try{
-            session.save(user);
-            tx.commit();
-        }catch (Exception e){
-            tx.rollback();
-        }
-        session.close();
+        HibernateService.saveOrUpdateUser(user);
 // save
 
         // Attempt to update the patient info
