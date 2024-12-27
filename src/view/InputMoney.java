@@ -2,9 +2,11 @@ package view;
 
 import Card.Patient;
 import Card.SmartCard;
+import entities.Bill;
 import util.HibernateService;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  *
@@ -135,16 +137,60 @@ public class InputMoney extends javax.swing.JDialog {
         if (inputMoney.isEmpty() || !inputMoney.matches("\\d{0,10}") || inputMoney.length() > 10) {
             JOptionPane.showMessageDialog(this, "Số tiền nạp không hợp lệ (chỉ chứa số, tối đa 1.000.000.000đ).", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }else{
-            int inputMoneyInt = Integer.parseInt(inputMoney);
-            Patient patient = Patient.getInstance();
-            patient.setBalance(inputMoneyInt);
-            card.updatePatientBalance(String.valueOf(patient.getBalance()));
-            JOptionPane.showMessageDialog(this, "Đã nạp tiền thành công.");
-            this.dispose();
-            // database
-            HibernateService.updateBalance(patient.getId(),Integer.valueOf(inputMoneyInt));
-            //
-            owner.loadPatienInfo();
+            // Hiển thị dialog xác nhận với trường nhập mã PIN
+            JPasswordField pinField = new JPasswordField();
+            Object[] message = {
+                    "Nhập mã PIN để xác nhận thanh toán:", pinField
+            };
+
+            int option = JOptionPane.showConfirmDialog(
+                    this,
+                    message,
+                    "Xác nhận thanh toán",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+
+            if (option == JOptionPane.OK_OPTION) {
+                // Lấy mã PIN từ người dùng
+                String enteredPin = new String(pinField.getPassword());
+                byte[] PublicKey = card.getPatientPublicKey();
+                if (card.VerifyCard(PublicKey)) {
+                    if (card.CheckPin(enteredPin)) {
+                        int inputMoneyInt = Integer.parseInt(inputMoney);
+                        Patient patient = Patient.getInstance();
+                        patient.setBalance(inputMoneyInt);
+                        card.updatePatientBalance(String.valueOf(patient.getBalance()));
+                        JOptionPane.showMessageDialog(this, "Đã nạp tiền thành công.");
+                        this.dispose();
+                        // database
+                        HibernateService.updateBalance(patient.getId(),Integer.valueOf(inputMoneyInt));
+                        //
+                        owner.loadPatientBalance();
+                    } else {
+                        // Mã PIN không chính xác
+                        JOptionPane.showMessageDialog(this,
+                                "Mã PIN không chính xác. Vui lòng thử lại.",
+                                "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    // Thẻ không được xác minh
+                    JOptionPane.showMessageDialog(this,
+                            "Xác minh thẻ thất bại. Vui lòng kiểm tra thẻ và thử lại.",
+                            "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Bạn đã hủy xác nhận thanh toán.",
+                        "Thông báo",
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
+
         }
 
     }//GEN-LAST:event_jChargeCardActionPerformed

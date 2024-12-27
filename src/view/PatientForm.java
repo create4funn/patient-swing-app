@@ -1,6 +1,5 @@
 package view;
 
-import Card.MedicalHistory;
 import Card.Patient;
 import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -9,7 +8,6 @@ import entities.Appointment;
 import entities.Bill;
 import util.HibernateService;
 
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -27,7 +25,6 @@ public class PatientForm extends javax.swing.JFrame {
     List<Bill> bills = new ArrayList<>();
     private Appointment selectedAppointment;
 
-    String[] patientInfo;
     SmartCard card = SmartCard.getInstance();
     private DefaultTableModel tblModel1;
     private DefaultTableModel tblModel2;
@@ -104,7 +101,7 @@ public class PatientForm extends javax.swing.JFrame {
             appointment.setName(getValueByRow(tblLichSu, row, 3, String.class));
             appointment.setCost(getValueByRow(tblLichSu, row, 4, Integer.class) == null ? 0 : getValueByRow(tblLichSu, row, 4, Integer.class));
 
-            appointment.setStatus(Objects.equals(getValueByRow(tblLichSu, row, 5, String.class),Constant.CHUA_THANH_TOAN) ? false : true);
+            appointment.setStatus(!Objects.equals(getValueByRow(tblLichSu, row, 5, String.class), Constant.CHUA_THANH_TOAN));
             appointment.setId(getValueByRow(tblLichSu, row,6, Integer.class) == null ? 0 : getValueByRow(tblLichSu, row, 6, Integer.class));
             appointment.setName(getValueByRow(tblLichSu, row, 7,String.class));
             appointments.add(appointment);
@@ -159,6 +156,11 @@ public class PatientForm extends javax.swing.JFrame {
         } else {
             System.out.println("Failed to retrieve patient picture.");
         }
+    }
+
+    public void loadPatientBalance() {
+        jBalance.setText(String.valueOf(patient.getBalance()));
+
     }
 
     /**
@@ -559,7 +561,6 @@ public class PatientForm extends javax.swing.JFrame {
                         "Thông tin Đơn Khám",
                         JOptionPane.INFORMATION_MESSAGE
                 );
-                return;
             }
         } else if (tblHoaDon.getSelectedRow() != -1) {
             // Fetch the MedicalId from tblHoaDon
@@ -595,7 +596,7 @@ public class PatientForm extends javax.swing.JFrame {
 
     public <T> T getValueByRow(JTable table, int row, int column, Class<T> type) {
         Object value = table.getValueAt(row, column);
-        if (value != null && type.isInstance(value)) {
+        if (type.isInstance(value)) {
             return (T) value;
         }
         return null;
@@ -603,10 +604,8 @@ public class PatientForm extends javax.swing.JFrame {
 
 
     private void jMakePaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMakePaymentActionPerformed
-        // TODO: Xử lý thanh toán
         // Check if a row is selected in tblLichSu
         if (tblLichSu.getSelectedRow() != -1) {
-            // Fetch MedicalId, status, and cost from the selected row in tblLichSu
             List<Appointment> appointmentList = this.getSelectedAppointment();
             for (Appointment appointment : appointmentList) {
                 if (appointment.getStatus()) {
@@ -618,7 +617,7 @@ public class PatientForm extends javax.swing.JFrame {
                 }
             }             // Prompt user to confirm payment
             if (appointmentList.size() == 1) {
-                Appointment appointment = appointmentList.get(0);
+                Appointment appointment = appointmentList.getFirst();
                 int response = JOptionPane.showConfirmDialog(this,
                         "Thanh toán đơn khám cho mã đơn: " + appointment.getCode(),
                         "Xác nhận thanh toán",
@@ -632,25 +631,68 @@ public class PatientForm extends javax.swing.JFrame {
                                 "Thông báo",
                                 JOptionPane.WARNING_MESSAGE);
                     } else {
-                        // Deduct the cost from the patient's balance
-                        patient.setBalance(-appointment.getCost());
-                        card.updatePatientBalance(String.valueOf(patient.getBalance()));
-                        loadPatienInfo();
-                        // Update the status in the table to "Đã thanh toán"
-                        // Update
-                        if (HibernateService.updateBalance(patient.getId(), patient.getBalance())) {
-                            Bill bill = new Bill();
-                            bill.setAppointmentId(appointment.getId());
-                            bill.setPatientId(patient.getId());
-                            bill.setAppointmentCode(appointment.getCode());
-                            bill.setCost(appointment.getCost());
-                            HibernateService.saveBillAndUpdateAppointment(bill,List.of(appointment.getId()));
-                            JOptionPane.showMessageDialog(this,
-                                    "Thanh toán thành công cho mã đơn: " + appointment.getCode(),
+                        // Hiển thị dialog xác nhận với trường nhập mã PIN
+                        JPasswordField pinField = new JPasswordField();
+                        Object[] message = {
+                                "Nhập mã PIN để xác nhận thanh toán:", pinField
+                        };
+
+                        int option = JOptionPane.showConfirmDialog(
+                                this,
+                                message,
+                                "Xác nhận thanh toán",
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE
+                        );
+
+                        if (option == JOptionPane.OK_OPTION) {
+                            // Lấy mã PIN từ người dùng
+                            String enteredPin = new String(pinField.getPassword());
+                            byte[] PublicKey = card.getPatientPublicKey();
+                            if (card.VerifyCard(PublicKey)) {
+                                if (card.CheckPin(enteredPin)) {
+                                    // Deduct the cost from the patient's balance
+                                    patient.setBalance(-appointment.getCost());
+                                    card.updatePatientBalance(String.valueOf(patient.getBalance()));
+                                    loadPatienInfo();
+
+                                    // Update the status in the table to "Đã thanh toán"
+                                    if (HibernateService.updateBalance(patient.getId(), patient.getBalance())) {
+                                        Bill bill = new Bill();
+                                        bill.setAppointmentId(appointment.getId());
+                                        bill.setPatientId(patient.getId());
+                                        bill.setAppointmentCode(appointment.getCode());
+                                        bill.setCost(appointment.getCost());
+                                        HibernateService.saveBillAndUpdateAppointment(bill, List.of(appointment.getId()));
+                                        JOptionPane.showMessageDialog(this,
+                                                "Thanh toán thành công cho mã đơn: " + appointment.getCode(),
+                                                "Thông báo",
+                                                JOptionPane.INFORMATION_MESSAGE);
+                                        this.loadAppointments();
+                                        this.loadBillData();
+                                    }
+                                } else {
+                                    // Mã PIN không chính xác
+                                    JOptionPane.showMessageDialog(this,
+                                            "Mã PIN không chính xác. Vui lòng thử lại.",
+                                            "Lỗi",
+                                            JOptionPane.ERROR_MESSAGE);
+                                }
+                            } else {
+                                // Thẻ không được xác minh
+                                JOptionPane.showMessageDialog(this,
+                                        "Xác minh thẻ thất bại. Vui lòng kiểm tra thẻ và thử lại.",
+                                        "Lỗi",
+                                        JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(
+                                    this,
+                                    "Bạn đã hủy xác nhận thanh toán.",
                                     "Thông báo",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                            this.loadAppointments();
-                            this.loadBillData();
+                                    JOptionPane.WARNING_MESSAGE
+                            );
                         }
                     }
                 }
@@ -671,26 +713,70 @@ public class PatientForm extends javax.swing.JFrame {
                                 "Thông báo",
                                 JOptionPane.WARNING_MESSAGE);
                     } else {
-                        // Deduct the cost from the patient's balance
-                        patient.setBalance(-cost);
-                        card.updatePatientBalance(String.valueOf(patient.getBalance()));
-                        loadPatienInfo();
-                        // Update the status in the table to "Đã thanh toán"
-                        // Update
-                        if (HibernateService.updateBalance(patient.getId(), patient.getBalance())) {
-                            Bill bill = new Bill();
-                            bill.setAppointmentId(null);
-                            bill.setPatientId(patient.getId());
-                            bill.setAppointmentCode(codes);
-                            bill.setCost(cost);
-                            HibernateService.saveBillAndUpdateAppointment(bill,appointmentIds);
-                            JOptionPane.showMessageDialog(this,
-                                    "Thanh toán thành công cho mã đơn: " + codes,
-                                    "Thông báo",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                            this.loadAppointments();
-                            this.loadBillData();
+                        // Hiển thị dialog xác nhận với trường nhập mã PIN
+                        JPasswordField pinField = new JPasswordField();
+                        Object[] message = {
+                                "Nhập mã PIN để xác nhận thanh toán:", pinField
+                        };
+
+                        int option = JOptionPane.showConfirmDialog(
+                                this,
+                                message,
+                                "Xác nhận thanh toán",
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE
+                        );
+
+                        if (option == JOptionPane.OK_OPTION) {
+                            // Lấy mã PIN từ người dùng
+                            String enteredPin = new String(pinField.getPassword());
+                            byte[] PublicKey = card.getPatientPublicKey();
+                            if (card.VerifyCard(PublicKey)) {
+                                if (card.CheckPin(enteredPin)) {
+                                    // Deduct the cost from the patient's balance
+                                    patient.setBalance(-cost);
+                                    card.updatePatientBalance(String.valueOf(patient.getBalance()));
+                                    loadPatienInfo();
+                                    // Update the status in the table to "Đã thanh toán"
+                                    // Update
+                                    if (HibernateService.updateBalance(patient.getId(), patient.getBalance())) {
+                                        Bill bill = new Bill();
+                                        bill.setAppointmentId(null);
+                                        bill.setPatientId(patient.getId());
+                                        bill.setAppointmentCode(codes);
+                                        bill.setCost(cost);
+                                        HibernateService.saveBillAndUpdateAppointment(bill,appointmentIds);
+                                        JOptionPane.showMessageDialog(this,
+                                                "Thanh toán thành công cho mã đơn: " + codes,
+                                                "Thông báo",
+                                                JOptionPane.INFORMATION_MESSAGE);
+                                        this.loadAppointments();
+                                        this.loadBillData();
+                                    }
+                                } else {
+                                    // Mã PIN không chính xác
+                                    JOptionPane.showMessageDialog(this,
+                                            "Mã PIN không chính xác. Vui lòng thử lại.",
+                                            "Lỗi",
+                                            JOptionPane.ERROR_MESSAGE);
+                                }
+                            } else {
+                                // Thẻ không được xác minh
+                                JOptionPane.showMessageDialog(this,
+                                        "Xác minh thẻ thất bại. Vui lòng kiểm tra thẻ và thử lại.",
+                                        "Lỗi",
+                                        JOptionPane.ERROR_MESSAGE);
+                            }
                         }
+                        else {
+                            JOptionPane.showMessageDialog(
+                                    this,
+                                    "Bạn đã hủy xác nhận thanh toán.",
+                                    "Thông báo",
+                                    JOptionPane.WARNING_MESSAGE
+                            );
+                        }
+
                     }
                 }
 
