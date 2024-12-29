@@ -3,12 +3,10 @@ package view;
 import Card.Patient;
 import Card.SmartCard;
 import constant.Constant;
-import entities.BalanceHistory;
-import entities.Bill;
+import entities.Transaction;
 import util.HibernateService;
 
 import javax.swing.*;
-import java.util.List;
 
 /**
  *
@@ -168,12 +166,12 @@ public class InputMoney extends javax.swing.JDialog {
                         // database
                         HibernateService.updateBalance(patient.getId(),patient.getBalance());
                         // save balance his
-                        BalanceHistory balanceHistory = new BalanceHistory();
-                        balanceHistory.setCost(inputMoneyInt);
-                        balanceHistory.setPatientId(patient.getId());
-                        balanceHistory.setPatientName(patient.getHoten());
-                        balanceHistory.setType(Constant.NAP_TIEN);
-                        HibernateService.saveBalanceHistory(balanceHistory);
+                        Transaction transaction = new Transaction();
+                        transaction.setCost(inputMoneyInt);
+                        transaction.setPatientId(patient.getId());
+                        transaction.setPatientName(patient.getHoten());
+                        transaction.setType(Constant.NAP_TIEN);
+                        HibernateService.saveBalanceHistory(transaction);
                         //
                         owner.loadPatientBalance();
                     } else {

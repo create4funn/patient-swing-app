@@ -1,9 +1,7 @@
 package view;
 
-import Card.Patient;
 import constant.Constant;
-import entities.BalanceHistory;
-import entities.Bill;
+import entities.Transaction;
 import util.HibernateService;
 
 import javax.swing.table.DefaultTableModel;
@@ -20,9 +18,9 @@ public class TopUpListAdminForm extends javax.swing.JDialog {
      * Creates new form AdminTopUpListForm
      */
     private DefaultTableModel tblModel;
-    private List<BalanceHistory> balanceHistories;
+    private List<Transaction> balanceHistories;
 
-    private List<BalanceHistory> balanceHistoryList;
+    private List<Transaction> transactionList;
 
     public TopUpListAdminForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -229,13 +227,13 @@ public class TopUpListAdminForm extends javax.swing.JDialog {
         if (!this.balanceHistories.isEmpty()) {
             int i = 1;
             tblModel.setRowCount(0);
-            for (BalanceHistory balanceHistory : this.balanceHistories) {
+            for (Transaction transaction : this.balanceHistories) {
                 tblModel.addRow(new Object[]{
                         i++,
-                        balanceHistory.getPatientName(),
-                        balanceHistory.getDate(),
-                        convertTypeVI(balanceHistory.getType()),
-                        balanceHistory.getCost()
+                        transaction.getPatientName(),
+                        transaction.getDate(),
+                        convertTypeVI(transaction.getType()),
+                        transaction.getCost()
                 });
             }
         }

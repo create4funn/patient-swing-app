@@ -1,12 +1,10 @@
 package util;
 
-import constant.Constant;
 import entities.Appointment;
-import entities.BalanceHistory;
+import entities.Transaction;
 import entities.Bill;
 import entities.User;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.io.Serializable;
@@ -23,7 +21,7 @@ public class HibernateService {
 
     public static List<Appointment> loadAppointmentData(int id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         List<Appointment> appointments = new ArrayList<>();
         try {
             Query<Appointment> query = session.createQuery("From Appointment where patientId = :id", Appointment.class);
@@ -39,7 +37,7 @@ public class HibernateService {
 
     public static List<Bill> loadBillDataForAdmin(String text, String fromDate, String toDate) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         List<Bill> bills = null;
         try {
             String hql = " FROM Bill b WHERE (b.appointmentCode like :text or b.code like :text or b.patientName like :text) ";
@@ -63,7 +61,7 @@ public class HibernateService {
 
     public static List<Bill> loadBillData(int id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         List<entities.Bill> bills = null;
         try {
             Query<entities.Bill> query = session.createQuery("From Bill where patientId = :id", entities.Bill.class);
@@ -83,7 +81,7 @@ public class HibernateService {
         date = dateFormat.format(new Date());
         bill.setPaymentDate(date);
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         int updatedRows = 0;
         try {
             session.persist(bill);
@@ -107,7 +105,7 @@ public class HibernateService {
 
     public static Boolean saveAppointment(Appointment appointment) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         try {
             session.persist(appointment);
             session.flush();
@@ -124,7 +122,7 @@ public class HibernateService {
 
     public static int saveOrUpdateUser(User user) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         int idCard = 0;
         try {
             Serializable id = session.save(user);
@@ -140,7 +138,7 @@ public class HibernateService {
 
     public static byte[] getPublicKey(int id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         byte[] publicKey = null;
         try {
             Query<byte[]> query = session.createQuery(
@@ -160,7 +158,7 @@ public class HibernateService {
 
     public static int savePublicKey(int id, byte[] publicKey) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         int updatedRows = 0;
         try {
             String hql = "UPDATE User u SET u.publicKey = :publicKey WHERE u.id = :id";
@@ -177,9 +175,9 @@ public class HibernateService {
         return updatedRows;
     }
 
-    public static void saveBalanceHistory(BalanceHistory balanceHistory) {
+    public static void saveBalanceHistory(Transaction balanceHistory) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        org.hibernate.Transaction transaction = session.beginTransaction();
         String date = "";
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         date = dateFormat.format(new Date());
@@ -194,20 +192,20 @@ public class HibernateService {
     }
 
 
-    public static List<BalanceHistory> searchBalanceHistoryByPatientId(int patientId, String fromDate, String toDate, String type) {
+    public static List<Transaction> searchBalanceHistoryByPatientId(int patientId, String fromDate, String toDate, String type) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<BalanceHistory> balanceHistoryList = null;
+        org.hibernate.Transaction transaction = null;
+        List<Transaction> transactionList = null;
         try {
             transaction = session.beginTransaction();
-            String hql = "FROM BalanceHistory bh WHERE bh.patientId = :patientId ";
+            String hql = "FROM Transaction bh WHERE bh.patientId = :patientId ";
             if (!fromDate.isEmpty() && !toDate.isEmpty()) {
                 hql += " AND bh.date between :fromDate AND :toDate ";
             }
             if (!type.isEmpty()) {
                 hql += " AND bh.type = :type ";
             }
-            Query<BalanceHistory> query = session.createQuery(hql, BalanceHistory.class);
+            Query<Transaction> query = session.createQuery(hql, Transaction.class);
             query.setParameter("patientId", patientId);
             if (!fromDate.isEmpty() && !toDate.isEmpty()) {
                 query.setParameter("fromDate", fromDate);
@@ -216,7 +214,7 @@ public class HibernateService {
             if (!type.isEmpty()) {
                 query.setParameter("type", type);
             }
-            balanceHistoryList = query.list();
+            transactionList = query.list();
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -227,28 +225,28 @@ public class HibernateService {
             session.close();
         }
 
-        return balanceHistoryList;
+        return transactionList;
     }
 
 
 
-    public static List<BalanceHistory> searchBalanceHistory(String name, String fromDate, String toDate) {
+    public static List<Transaction> searchBalanceHistory(String name, String fromDate, String toDate) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<BalanceHistory> balanceHistoryList = null;
+        org.hibernate.Transaction transaction = null;
+        List<Transaction> transactionList = null;
         try {
             transaction = session.beginTransaction();
-            String hql = "FROM BalanceHistory bh WHERE bh.patientName like :name ";
+            String hql = "FROM Transaction bh WHERE bh.patientName like :name ";
             if (!fromDate.isEmpty() && !toDate.isEmpty()) {
                 hql += " AND bh.date between :fromDate AND :toDate ";
             }
-            Query<BalanceHistory> query = session.createQuery(hql, BalanceHistory.class);
+            Query<Transaction> query = session.createQuery(hql, Transaction.class);
             query.setParameter("name", "%" + name + "%");
             if (!fromDate.isEmpty() && !toDate.isEmpty()) {
                 query.setParameter("fromDate", fromDate);
                 query.setParameter("toDate", toDate);
             }
-            balanceHistoryList = query.list();
+            transactionList = query.list();
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -259,13 +257,13 @@ public class HibernateService {
             session.close();
         }
 
-        return balanceHistoryList;
+        return transactionList;
     }
 
 
     public static List<User> getUserList() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
+        org.hibernate.Transaction tx = session.beginTransaction();
         List<User> userList = new ArrayList<>();
         try {
             Query<User> userQuery = session.createQuery("FROM User", User.class);
@@ -280,7 +278,7 @@ public class HibernateService {
 
     public static List<User> searchUsersByNameAndBHYT(String text) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
+        org.hibernate.Transaction tx = session.beginTransaction();
         List<User> userList = new ArrayList<>();
         try {
             Query<User> userQuery = session.createQuery("FROM User where hoten like :text or mabn like :text", User.class);
@@ -296,7 +294,7 @@ public class HibernateService {
 
     public static List<Appointment> searchAppointment(String name) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
+        org.hibernate.Transaction tx = session.beginTransaction();
         List<Appointment> appointments = new ArrayList<>();
         try {
             Query<Appointment> query = session.createQuery("FROM Appointment where name like :name ", Appointment.class);
@@ -312,7 +310,7 @@ public class HibernateService {
 
     public static Boolean updateBalance(int id, int cost) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
+        org.hibernate.Transaction tx = session.beginTransaction();
         int updatedRows = 0;
         try {
             String hql = "UPDATE User u SET u.balance = :balance WHERE u.id = :id";
@@ -330,7 +328,7 @@ public class HibernateService {
 
     public static Boolean updateInformation(int id, String hoTen, String ngaySinh, String maBenhNhan, String sdt, String gioiTinh, String queQuan) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
+        org.hibernate.Transaction tx = session.beginTransaction();
         int updatedRows = 0;
         try {
             String hql = "UPDATE User u SET u.hoten = :name,u.quequan = :quequan,u.gioitinh = :gioitinh, u.mabn = :mabn, u.ngaysinh = :ngaySinh,u.sdt = :sdt WHERE u.id = :id";
@@ -353,7 +351,7 @@ public class HibernateService {
 
     public static Boolean updatePinCode(int id, String pinCode) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
+        org.hibernate.Transaction tx = session.beginTransaction();
         int updatedRows = 0;
         try {
             String hql = "UPDATE User u SET u.mapin = :pinCode WHERE u.id = :id";
@@ -371,7 +369,7 @@ public class HibernateService {
 
     public static Boolean updateAppointmentInformation(int id, User user, String name, String date, String description, int cost) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
+        org.hibernate.Transaction tx = session.beginTransaction();
         int updatedRows = 0;
         try {
             String hql = "UPDATE Appointment a SET a.name = :name,a.date = :date,a.patientId =:patientId,a.patientName=:patientName,a.description = :description, a.cost = :cost WHERE a.id = :id";
@@ -394,7 +392,7 @@ public class HibernateService {
 
     public static Boolean deleteAppointmentById(int id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
+        org.hibernate.Transaction tx = session.beginTransaction();
         int updatedRows = 0;
         try {
             Query query = session.createQuery("DELETE FROM Appointment WHERE id = :appointmentId");

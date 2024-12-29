@@ -18,7 +18,7 @@
         <mapping class="entities.User"/>
         <mapping class="entities.Bill"/>
         <mapping class="entities.Appointment"/>
-        <mapping class="entities.BalanceHistory"/>
+        <mapping class="entities.Transaction"/>
 
 
     </session-factory>

@@ -5,10 +5,9 @@ import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
 import constant.Constant;
 import entities.Appointment;
-import entities.BalanceHistory;
+import entities.Transaction;
 import entities.Bill;
 import util.HibernateService;
-import util.Utils;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -670,12 +669,12 @@ public class PatientForm extends javax.swing.JFrame {
                                         this.loadAppointments();
                                         this.loadBillData();
                                         // balance his
-                                        BalanceHistory balanceHistory = new BalanceHistory();
-                                        balanceHistory.setType(Constant.THANH_TOAN);
-                                        balanceHistory.setCost(bill.getCost());
-                                        balanceHistory.setPatientName(patient.getHoten());
-                                        balanceHistory.setPatientId(patient.getId());
-                                        HibernateService.saveBalanceHistory(balanceHistory);
+                                        Transaction transaction = new Transaction();
+                                        transaction.setType(Constant.THANH_TOAN);
+                                        transaction.setCost(bill.getCost());
+                                        transaction.setPatientName(patient.getHoten());
+                                        transaction.setPatientId(patient.getId());
+                                        HibernateService.saveBalanceHistory(transaction);
                                     }
                                 } else {
                                     // Mã PIN không chính xác

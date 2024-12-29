@@ -1,12 +1,10 @@
 package entities;
 
-import jdk.jfr.Name;
-
 import javax.persistence.*;
 
 @Entity
-@Table(name = "balance_history")
-public class BalanceHistory {
+@Table(name = "transaction")
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -16,7 +14,7 @@ public class BalanceHistory {
     private Integer cost;
     private String date;
 
-    public BalanceHistory() {
+    public Transaction() {
     }
 
     public Integer getId() {
