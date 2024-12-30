@@ -92,6 +92,14 @@ public class ConnectForm extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (card.connectCard()) {
+            if (!card.CheckCardCreated()) {
+                System.err.println("Thẻ chưa có thông tin");
+                JOptionPane.showMessageDialog(this, "Thẻ chưa có thông tin", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                // Close the JFrame
+                this.dispose();
+                return; // Exit if the card is not created
+            }
+
             SmartCard.publicKey = card.getPatientPublicKey();
             if (SmartCard.publicKey != null) {
                 boolean isVerify = card.VerifyCard(SmartCard.publicKey);
@@ -109,12 +117,12 @@ public class ConnectForm extends javax.swing.JFrame {
             }
 
             JOptionPane.showMessageDialog(this, "Kết nối thành công");
-            // Đóng JFrame
+            // Close the JFrame
             this.dispose();
 
             formLogin a = new formLogin();
             a.setVisible(true);
-        }else{
+        } else {
             JOptionPane.showMessageDialog(this, "Kết nối không thành công");
         }
     }//GEN-LAST:event_jButton1ActionPerformed

@@ -433,6 +433,23 @@ public class SmartCard {
         }
     }
 
+    public boolean CheckCardCreated() {
+        byte[] command; // Example command, adjust as needed
+        command = new byte[]{(byte) 0x00, (byte) 0x29, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        ResponseAPDU response = sendCommandAPDU(command);
+        if (response != null && response.getSW() == 0x9000) {
+            System.out.println("The card have been initialized, SW: " + Integer.toHexString(response.getSW()));
+            return true;
+        } else if (response != null && response.getSW() == 0x6A88) {
+            System.out.println("The card haven't been initialized, SW: " + Integer.toHexString(response.getSW()));
+            return false;
+        }
+        else{
+            System.out.println("Failed to called check card created.");
+            return false;
+        }
+    }
+
     public boolean ClearCard() {
         byte[] command; // Example command, adjust as needed
         command = new byte[]{(byte) 0x00, (byte) 0x18, (byte) 0x00, (byte) 0x00, (byte) 0x00};
