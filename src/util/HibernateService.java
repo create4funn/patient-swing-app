@@ -407,5 +407,37 @@ public class HibernateService {
         return updatedRows > 0;
     }
 
+    public static Boolean deleteUserById(List<Integer> ids) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        org.hibernate.Transaction tx = session.beginTransaction();
+        int updatedRows = 0;
+        try {
+            Query query = session.createQuery("DELETE FROM User WHERE id in :id");
+            query.setParameter("id", ids);
+            updatedRows = query.executeUpdate();
+            tx.commit();
+        }catch (Exception e){
+            tx.rollback();
+            return false;
+        }
+        return true;
+    }
+
+    public static Boolean deleteBillByIds(List<Integer> ids) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        org.hibernate.Transaction tx = session.beginTransaction();
+        int updatedRows = 0;
+        try {
+            Query query = session.createQuery("DELETE FROM Bill WHERE id in :id");
+            query.setParameter("id", ids);
+            updatedRows = query.executeUpdate();
+            tx.commit();
+        }catch (Exception e){
+            tx.rollback();
+            return false;
+        }
+        return true;
+    }
+
 
 }

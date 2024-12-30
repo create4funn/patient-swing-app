@@ -5,6 +5,8 @@
 package view;
 
 import Card.SmartCard;
+import entities.Appointment;
+import entities.Bill;
 import entities.Bill;
 import entities.User;
 import util.HibernateService;
@@ -12,10 +14,11 @@ import util.HibernateService;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
+
+import static util.Utils.getValueByRow;
 
 
 /**
@@ -39,8 +42,11 @@ public class BillForm extends javax.swing.JInternalFrame {
 
     public final void initTable() {
         tblModel = (DefaultTableModel) tblKeDon.getModel();
-        String[] headerTbl = new String[]{"STT", "Mã hóa đơn", "Tên bệnh nhân", "Mã khám", "Ngày thanh toán", "Giá tiền"};
+        String[] headerTbl = new String[]{"STT", "Mã hóa đơn", "Tên bệnh nhân", "Mã khám", "Ngày thanh toán", "Giá tiền","Id"};
         tblModel.setColumnIdentifiers(headerTbl);
+        tblKeDon.getColumnModel().getColumn(6).setMinWidth(0);
+        tblKeDon.getColumnModel().getColumn(6).setMaxWidth(0);
+        tblKeDon.getColumnModel().getColumn(6).setWidth(0);
 
     }
 
@@ -55,7 +61,7 @@ public class BillForm extends javax.swing.JInternalFrame {
             tblModel.setRowCount(0);
             for (Bill bill : bills) {
                 tblModel.addRow(new Object[]{
-                        i++, bill.getCode(), bill.getPatientName(), bill.getAppointmentCode(), bill.getPaymentDate(), bill.getCost()
+                        i++, bill.getCode(), bill.getPatientName(), bill.getAppointmentCode(), bill.getPaymentDate(), bill.getCost(),bill.getId()
                 });
                 sum+=bill.getCost();
             }
@@ -140,6 +146,11 @@ public class BillForm extends javax.swing.JInternalFrame {
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnRefresh);
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -245,9 +256,38 @@ public class BillForm extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    private List<Integer> getSelectedIds(int[] rows){
+        List<Integer> ids = new ArrayList<>();
+        for(int row : rows){
+            int id = getValueByRow(tblKeDon,row,6,Integer.class);
+            ids.add(id);
+        }
+        return ids;
+    }
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
+
+        int length = tblKeDon.getSelectedRows().length;
+        if(length < 1){
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một dòng trong bảng để xóa.",
+                    "Thông báo",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }else {
+
+            List<Integer> ids = this.getSelectedIds(this.tblKeDon.getSelectedRows());
+            Boolean success = HibernateService.deleteBillByIds(ids);
+            if(success){
+                JOptionPane.showMessageDialog(this,
+                        "Xóa thành công.",
+                        "Thông báo",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                this.loadDataToTable();
+            }
+        }
 
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -308,7 +348,10 @@ public class BillForm extends javax.swing.JInternalFrame {
         updateTableData();
     }
 
-
+    private boolean verifyAdminCredentials(String username, String password) {
+        // Replace this logic with your actual admin username/password verification
+        return "admin".equals(username) && "abc".equals(password);
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDanhSachNap;
     private javax.swing.JButton btnDelete;

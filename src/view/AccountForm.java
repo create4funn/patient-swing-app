@@ -4,6 +4,7 @@
  */
 package view;
 
+import Card.Patient;
 import Card.SmartCard;
 import Components.PlaceholderTextField;
 import entities.User;
@@ -35,6 +36,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private final SmartCard card = new SmartCard();
     private DefaultTableModel tblModel;
     private List<User> userList = new ArrayList<>();
+    private Patient patient;
     public AccountForm() {
         initComponents();
         BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
@@ -47,6 +49,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
         tblModel = (DefaultTableModel) tblAccount.getModel();
         String[] headerTbl = new String[]{"STT","Tên","BHYT", "SÐT", "Giới tính", "Ngày Sinh","Balance"};
         tblModel.setColumnIdentifiers(headerTbl);
+        patient = Patient.getInstance();
 
     }
 
@@ -208,6 +211,11 @@ public class AccountForm extends javax.swing.JInternalFrame {
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setMargin(new java.awt.Insets(2, 20, 2, 20));
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jMoKhoaThe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setBtnRefreshActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnRefresh);
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -328,6 +336,10 @@ public class AccountForm extends javax.swing.JInternalFrame {
         a.setVisible(true);
     }//GEN-LAST:event_btnChangeCardActionPerformed
 
+    private void setBtnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeCardActionPerformed
+        this.jTextField1.setText("");
+    }//GEN-LAST:event_btnChangeCardActionPerformed
+
     private void btnDeleteCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCardActionPerformed
         // Prompt the user to enter the admin username and password
         JTextField usernameField = new JTextField();
@@ -377,6 +389,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                             "Thành công",
                             JOptionPane.INFORMATION_MESSAGE
                     );
+                    HibernateService.deleteUserById(List.of(patient.getId()));
                 } else {
                     JOptionPane.showMessageDialog(
                             null,
