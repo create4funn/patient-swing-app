@@ -32,6 +32,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
     SmartCard card = SmartCard.getInstance();
     private AccountForm owner;
     private Patient patient;
+    private BufferedImage tempImage;
 
     public AddInfomationForm(javax.swing.JInternalFrame parent, javax.swing.JFrame frame, boolean modal) {
         super(frame, modal);

@@ -288,34 +288,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                         btnConnect.setText("Ngắt kết nối");
                         JOptionPane.showMessageDialog(this, "Kết nối và xác thực thành công");
                         if(card.CheckCardCreated()){
-                            // Retrieve patient information from the Java card
-                            String[] patientInfo = card.getPatientInfo();
-                            if (patientInfo != null && patientInfo.length >= 6) { // Assuming there are at least 6 fields
-                                patient.setHoten(patientInfo[0]);   // Patient name
-                                patient.setNgaysinh(patientInfo[1]); // Date of birth
-                                patient.setQuequan(patientInfo[2]); // Hometown
-                                patient.setGioitinh(patientInfo[3]);    // Gender
-                                patient.setSdt(patientInfo[4]); // Phone Number
-                                patient.setMabn(patientInfo[5]); // Patient ID
-                            } else {
-                                JOptionPane.showMessageDialog(this, "Không thể lấy thông tin bệnh nhân từ thẻ.");
-                                return; // Exit if patient info retrieval failed
-                            }
-
-                            String[] patientBalance = card.getPatientBalance();
-                            patient.setBalance(Integer.parseInt(patientBalance[0]));
-                            String[] patientCardId = card.getPatientCardId();
-                            patient.setCardId(patientCardId[0]);
-                            patient.setId(Integer.valueOf(patientCardId[0]));
-                            System.out.println(patient.getBalance());
-                            System.out.println(patient.getCardId());
-                            // Retrieve and set the patient picture
-                            BufferedImage picture = card.GetPatientPicture();
-                            if (picture != null) {
-                                patient.setPicture(picture); // Set the retrieved picture
-                            } else {
-                                JOptionPane.showMessageDialog(this, "Không thể lấy ảnh của bệnh nhân từ thẻ.");
-                            }
+                            getPatientInfo();
                         }
                     } else {
                         System.err.println("Xác thực thất bại");
@@ -346,6 +319,37 @@ public class AccountForm extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_btnConnectActionPerformed
+
+    private void getPatientInfo(){
+        // Retrieve patient information from the Java card
+        String[] patientInfo = card.getPatientInfo();
+        if (patientInfo != null && patientInfo.length >= 6) { // Assuming there are at least 6 fields
+            patient.setHoten(patientInfo[0]);   // Patient name
+            patient.setNgaysinh(patientInfo[1]); // Date of birth
+            patient.setQuequan(patientInfo[2]); // Hometown
+            patient.setGioitinh(patientInfo[3]);    // Gender
+            patient.setSdt(patientInfo[4]); // Phone Number
+            patient.setMabn(patientInfo[5]); // Patient ID
+        } else {
+            JOptionPane.showMessageDialog(this, "Không thể lấy thông tin bệnh nhân từ thẻ.");
+            return; // Exit if patient info retrieval failed
+        }
+
+        String[] patientBalance = card.getPatientBalance();
+        patient.setBalance(Integer.parseInt(patientBalance[0]));
+        String[] patientCardId = card.getPatientCardId();
+        patient.setCardId(patientCardId[0]);
+        patient.setId(Integer.valueOf(patientCardId[0]));
+        System.out.println(patient.getBalance());
+        System.out.println(patient.getCardId());
+        // Retrieve and set the patient picture
+        BufferedImage picture = card.GetPatientPicture();
+        if (picture != null) {
+            patient.setPicture(picture); // Set the retrieved picture
+        } else {
+            JOptionPane.showMessageDialog(this, "Không thể lấy ảnh của bệnh nhân từ thẻ.");
+        }
+    }
 
     private void jKhoaTheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jKhoaTheActionPerformed
         if(card.LockCard()) {

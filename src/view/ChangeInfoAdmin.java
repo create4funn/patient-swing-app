@@ -382,7 +382,7 @@ public class ChangeInfoAdmin extends javax.swing.JDialog {
             owner.loadDataToTable();
 
         } else {
-            JOptionPane.showMessageDialog(this, "Failed to update patient information.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Cập nhập thông tin bệnh nhân thất bại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }//GEN-LAST:event_jButton1ActionPerformed

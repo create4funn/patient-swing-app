@@ -78,18 +78,6 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
         }catch (Exception e){
             e.printStackTrace();
         }
-//        BufferedImage image = patient.getPicture();
-//        // Convert the BufferedImage to an ImageIcon
-//        ImageIcon icon = new ImageIcon(image);
-//
-//        // Resize the image to fit the JLabel
-//        Image img = icon.getImage();
-//        Image scaledImg = img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH);
-//        icon = new ImageIcon(scaledImg);
-//
-//        // Set the icon to the JLabel
-//        imgLabel.setText(null); // Clear any existing text
-//        imgLabel.setIcon(icon);
     }
     /**
      * This method is called from within the constructor to initialize the form.
