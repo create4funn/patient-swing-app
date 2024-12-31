@@ -362,6 +362,10 @@ public class AddInfomationForm extends javax.swing.JDialog {
         patient.setGioitinh(gioiTinh);
         patient.setBalance(0);
         patient.setMapin(maPin);
+        // Update the patient picture and display the image
+        card.updatePatientPicture(tempImage);
+        // Update the patient instance
+        patient.setPicture(tempImage);
         // Disconnect from the card
         //Su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
         this.dispose();
@@ -382,22 +386,16 @@ public class AddInfomationForm extends javax.swing.JDialog {
 
             try {
                 // Read the image file into a BufferedImage
-                BufferedImage image = ImageIO.read(selectedFile);
+                tempImage = ImageIO.read(selectedFile);
 
                 // Convert the BufferedImage to a byte array
-                byte[] byteArray = HelpMethod.convertImageToByteArray(image);
+                byte[] byteArray = HelpMethod.convertImageToByteArray(tempImage);
 
                 // Check if the byte array size exceeds 30 KB
                 if (byteArray == null || byteArray.length > 30 * 1000) { // 30 KB = 30 * 1024 bytes
                     JOptionPane.showMessageDialog(this, "Ảnh không được vượt quá 30KB sau khi chuyển đổi.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
-                // Update the patient picture and display the image
-                card.updatePatientPicture(image);
-
-                // Update the patient instance
-                patient.setPicture(image);
 
                 // Display the image on the UI
                 displayImage();
@@ -411,7 +409,7 @@ public class AddInfomationForm extends javax.swing.JDialog {
 
     private void displayImage() {
         // Retrieve the picture as a BufferedImage
-        BufferedImage image = patient.getPicture();
+        BufferedImage image = tempImage;
 
         if (image == null) {
             imgLabel.setText("Không có ảnh.");
