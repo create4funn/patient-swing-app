@@ -64,13 +64,6 @@ public class AccountForm extends javax.swing.JInternalFrame {
         }
     }
 
-
-//    public TaiKhoan getSelected() {
-//        int i_row = tblTaiKhoan.getSelectedRow();
-//        String userName = tblTaiKhoan.getValueAt(i_row, 2).toString();
-//        TaiKhoan tk = TaiKhoanDAO.getInstance().selectById(userName);
-//        return tk;
-//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -352,19 +345,28 @@ public class AccountForm extends javax.swing.JInternalFrame {
     }
 
     private void jKhoaTheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jKhoaTheActionPerformed
-        if(card.LockCard()) {
-            SmartCard.counter = 4;
-            SmartCard.isCardBlocked = true;
-            JOptionPane.showMessageDialog(this, "Thẻ đã được khóa thành công."); // Display success message for locking the card
+        if (isConnect) {
+            if(card.LockCard()) {
+                SmartCard.counter = 4;
+                SmartCard.isCardBlocked = true;
+                JOptionPane.showMessageDialog(this, "Thẻ đã được khóa thành công."); // Display success message for locking the card
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Chưa connect đến applet", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jKhoaTheActionPerformed
 
     private void jMoKhoaTheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMoKhoaTheActionPerformed
-        if(card.UnLockCard()) {
-            SmartCard.counter = 0;
-            SmartCard.isCardBlocked = false;
-            JOptionPane.showMessageDialog(this, "Thẻ đã được mở khóa thành công."); // Display success message for unlocking the card
+        if (isConnect) {
+            if(card.UnLockCard()) {
+                SmartCard.counter = 0;
+                SmartCard.isCardBlocked = false;
+                JOptionPane.showMessageDialog(this, "Thẻ đã được mở khóa thành công."); // Display success message for unlocking the card
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Chưa connect đến applet", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
+
     }//GEN-LAST:event_jMoKhoaTheActionPerformed
 
     private void btnChangeCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeCardActionPerformed

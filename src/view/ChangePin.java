@@ -153,11 +153,11 @@ public class ChangePin extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     String[] pass = card.getPatientPin();
     String oldPass = jOldPass.getText();
-    String reOldPass = jReOldPass.getText();
+    String reNewPass = jReOldPass.getText();
     String newPass = jNewPass.getText();
         // TODO : update ma pin
 // Validate inputs
-        if (!oldPass.equals(reOldPass)) {
+        if (!newPass.equals(reNewPass)) {
             // Show error dialog for mismatched passwords
             javax.swing.JOptionPane.showMessageDialog(this,
                     "Mật khẩu nhập lại phải giống nhau",
