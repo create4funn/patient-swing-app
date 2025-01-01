@@ -228,16 +228,16 @@ public class AddAppointment extends javax.swing.JDialog {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             appointmentDate = dateFormat.format(jDateChooser1.getDate());
         }
-        if (name == null) {
+        if (name.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Tên bệnh không được bỏ trống", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        if (description == null) {
+        if (description.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Mô tả không được bỏ trống ", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (cost == null || !cost.matches("\\d{0,10}")) {
+        if (cost.isEmpty() || !cost.matches("\\d{0,10}")) {
             JOptionPane.showMessageDialog(this, "Giá tiền không được bỏ trống", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }

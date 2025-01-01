@@ -268,7 +268,7 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
             Appointment selectedAppointment = this.getSelectedAppointment(this.tblLichKham.getSelectedRow());
             int option = JOptionPane.showConfirmDialog(this,
                     "Xóa lịch hẹn : " + selectedAppointment.getCode(),
-                    "Xác nhận thanh toán",
+                    "Xác nhận",
                     JOptionPane.YES_NO_OPTION);
 
             if (option == JOptionPane.OK_OPTION) {

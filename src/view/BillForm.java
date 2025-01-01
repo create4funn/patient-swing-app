@@ -68,14 +68,6 @@ public class BillForm extends javax.swing.JInternalFrame {
             txtDoanhThu.setText(String.valueOf(sum));
         }
     }
-//    public TaiKhoan getSelected() {
-//        int i_row = tblTaiKhoan.getSelectedRow();
-//        String userName = tblTaiKhoan.getValueAt(i_row, 2).toString();
-//        TaiKhoan tk = TaiKhoanDAO.getInstance().selectById(userName);
-//        return tk;
-//    }
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
