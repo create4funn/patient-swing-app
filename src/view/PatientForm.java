@@ -549,7 +549,7 @@ public class PatientForm extends javax.swing.JFrame {
 
     private void jDisplayInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDisplayInfoActionPerformed
         // Determine the currently focused table
-        if (tblLichSu.getSelectedRow() > 0) {
+        if (tblLichSu.getSelectedRow() != -1) {
             // Fetch the MedicalId from tblLichSu
             Appointment appointment = getSelectedAppointment().get(0);
 
@@ -565,28 +565,6 @@ public class PatientForm extends javax.swing.JFrame {
                         JOptionPane.INFORMATION_MESSAGE
                 );
             }
-        } else if (tblHoaDon.getSelectedRow() != -1) {
-            // Fetch the MedicalId from tblHoaDon
-//            String medicalId = getSelectedMedicalIdHoaDon(tblHoaDon);
-//
-//            if (medicalId != null && !medicalId.isEmpty()) {
-//                // Find the MedicalHistory corresponding to the selected MedicalId
-//                for (MedicalHistory history : medicalHistories) {
-//                    if (history.getMedicalId().equals(medicalId)) {
-//                        // Display MedicalHistory details in a dialog
-//                        JOptionPane.showMessageDialog(this,
-//                                "Mã đơn khám: " + history.getMedicalId() + "\n" +
-//                                        "Ngày khám: " + history.getMedicalHistoryDate() + "\n" +
-//                                        "Lý do khám: " + history.getMedicalDescription() + "\n" +
-//                                        "Chi phí: " + history.getMedicalCost() + "\n" +
-//                                        "Trạng thái: " + history.getMedicalStatus(),
-//                                "Thông tin Hóa Đơn",
-//                                JOptionPane.INFORMATION_MESSAGE
-//                        );
-//                        return; // Exit after displaying the info
-//                    }
-//                }
-//            }
         } else {
             // No table row selected
             JOptionPane.showMessageDialog(this,

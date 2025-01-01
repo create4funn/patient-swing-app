@@ -75,14 +75,6 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
         }
     }
 
-//    public TaiKhoan getSelected() {
-//        int i_row = tblTaiKhoan.getSelectedRow();
-//        String userName = tblTaiKhoan.getValueAt(i_row, 2).toString();
-//        TaiKhoan tk = TaiKhoanDAO.getInstance().selectById(userName);
-//        return tk;
-//    }
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -216,14 +208,11 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
         AddAppointment a = new AddAppointment(this, (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this), rootPaneCheckingEnabled);
         a.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeActionPerformed
-        // TODO add your handling code here:
-        // TODO: Sửa thông tin lịch khám
         int length = tblLichKham.getSelectedRows().length;
         if(length < 1){
             JOptionPane.showMessageDialog(this,
@@ -237,7 +226,7 @@ public class CreateAppointmentForm extends javax.swing.JInternalFrame {
             a.setVisible(true);
         }else if(length > 1){
             JOptionPane.showMessageDialog(this,
-                    "Vui lòng chọn một dòng trong bảng để xem thông tin.",
+                    "Vui lòng chọn một dòng trong bảng để sửa thông tin.",
                     "Thông báo",
                     JOptionPane.WARNING_MESSAGE
             );
