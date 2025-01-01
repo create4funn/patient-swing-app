@@ -328,6 +328,11 @@ public class AddInfomationForm extends javax.swing.JDialog {
             return;
         }
 
+        if(tempImage == null) {
+            JOptionPane.showMessageDialog(this, "Không được để trống ảnh", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         // save
         User user = new User();
         user.setBalance(0);
@@ -366,7 +371,6 @@ public class AddInfomationForm extends javax.swing.JDialog {
         card.updatePatientPicture(tempImage);
         // Update the patient instance
         patient.setPicture(tempImage);
-        // Disconnect from the card
         //Su dung owner goi hàm loadLoadData tu Accountform de cap nhat du lieu thay doi
         this.dispose();
         owner.loadDataToTable();

@@ -439,6 +439,7 @@ public class AccountForm extends javax.swing.JInternalFrame {
                             JOptionPane.INFORMATION_MESSAGE
                     );
                     HibernateService.deleteUserById(List.of(patient.getId()));
+                    this.loadDataToTable();
                 } else {
                     JOptionPane.showMessageDialog(
                             null,
