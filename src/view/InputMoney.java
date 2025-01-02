@@ -16,6 +16,7 @@ public class InputMoney extends javax.swing.JDialog {
 
     SmartCard card = SmartCard.getInstance();
     private final PatientForm owner;
+    Patient patient = Patient.getInstance();
     /**
      * Creates new form InputMoney
      */
@@ -154,7 +155,7 @@ public class InputMoney extends javax.swing.JDialog {
             if (option == JOptionPane.OK_OPTION) {
                 // Lấy mã PIN từ người dùng
                 String enteredPin = new String(pinField.getPassword());
-                byte[] PublicKey = card.getPatientPublicKey();
+                byte[] PublicKey = HibernateService.getPublicKey(Integer.parseInt(patient.getCardId()));
                 if (card.VerifyCard(PublicKey)) {
                     if (card.CheckPin(enteredPin)) {
                         int inputMoneyInt = Integer.parseInt(inputMoney);

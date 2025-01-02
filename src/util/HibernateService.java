@@ -135,7 +135,7 @@ public class HibernateService {
         session.close();
         return idCard;
     }
-
+    //call chô nào
     public static byte[] getPublicKey(int id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         org.hibernate.Transaction transaction = session.beginTransaction();

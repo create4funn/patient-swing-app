@@ -1,7 +1,10 @@
 package view;
 
+import Card.Patient;
 import Card.SmartCard;
 import com.formdev.flatlaf.FlatLightLaf;
+import util.HibernateService;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -100,9 +103,11 @@ public class ConnectForm extends javax.swing.JFrame {
                 return; // Exit if the card is not created
             }
 
-            SmartCard.publicKey = card.getPatientPublicKey();
-            if (SmartCard.publicKey != null) {
-                boolean isVerify = card.VerifyCard(SmartCard.publicKey);
+            //SmartCard.publicKey = card.getPatientPublicKey();
+            String[] CardId = card.getPatientCardId();
+            byte[] publicKey = HibernateService.getPublicKey(Integer.parseInt(CardId[0]));
+            if (publicKey != null) {
+                boolean isVerify = card.VerifyCard(publicKey);
                 if (isVerify) {
                     System.out.println("Xác thực thành công");
                 } else {

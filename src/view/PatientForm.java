@@ -623,7 +623,7 @@ public class PatientForm extends javax.swing.JFrame {
                         if (option == JOptionPane.OK_OPTION) {
                             // Lấy mã PIN từ người dùng
                             String enteredPin = new String(pinField.getPassword());
-                            byte[] PublicKey = card.getPatientPublicKey();
+                            byte[] PublicKey = HibernateService.getPublicKey(Integer.parseInt(patient.getCardId()));
                             if (card.VerifyCard(PublicKey)) {
                                 if (card.CheckPin(enteredPin)) {
                                     // Deduct the cost from the patient's balance
@@ -713,7 +713,7 @@ public class PatientForm extends javax.swing.JFrame {
                         if (option == JOptionPane.OK_OPTION) {
                             // Lấy mã PIN từ người dùng
                             String enteredPin = new String(pinField.getPassword());
-                            byte[] PublicKey = card.getPatientPublicKey();
+                            byte[] PublicKey = HibernateService.getPublicKey(Integer.parseInt(patient.getCardId()));
                             if (card.VerifyCard(PublicKey)) {
                                 if (card.CheckPin(enteredPin)) {
                                     // Deduct the cost from the patient's balance

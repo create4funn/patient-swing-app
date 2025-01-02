@@ -273,27 +273,33 @@ public class AccountForm extends javax.swing.JInternalFrame {
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         if (!isConnect) {
             if (card.connectCard()) {
-                SmartCard.publicKey = card.getPatientPublicKey();
-                if (SmartCard.publicKey != null) {
-                    boolean isVerify = card.VerifyCard(SmartCard.publicKey);
-                    if (isVerify) {
-                        isConnect = true;
-                        btnConnect.setText("Ngắt kết nối");
-                        JOptionPane.showMessageDialog(this, "Kết nối và xác thực thành công");
-                        if(card.CheckCardCreated()){
-                            getPatientInfo();
+                if (card.CheckCardCreated()) {
+                    getPatientInfo();
+                    // Card has been created, proceed to verification
+                    byte[] publicKey = HibernateService.getPublicKey(Integer.parseInt(patient.getCardId()));
+                    if (publicKey != null) {
+                        boolean isVerify = card.VerifyCard(publicKey);
+                        if (isVerify) {
+                            isConnect = true;
+                            btnConnect.setText("Ngắt kết nối");
+                            JOptionPane.showMessageDialog(this, "Kết nối và xác thực thành công");
+                        } else {
+                            System.err.println("Xác thực thất bại");
+                            JOptionPane.showMessageDialog(this, "Xác thực thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            isConnect = false;
+                            btnConnect.setText("Kết nối");
                         }
                     } else {
-                        System.err.println("Xác thực thất bại");
-                        JOptionPane.showMessageDialog(this, "Xác thực thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        System.err.println("Không thể lấy khóa công khai");
+                        JOptionPane.showMessageDialog(this, "Không thể lấy khóa công khai từ thẻ", "Lỗi", JOptionPane.ERROR_MESSAGE);
                         isConnect = false;
                         btnConnect.setText("Kết nối");
                     }
                 } else {
-                    System.err.println("Không thể lấy khóa công khai");
-                    JOptionPane.showMessageDialog(this, "Không thể lấy khóa công khai từ thẻ", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    isConnect = false;
-                    btnConnect.setText("Kết nối");
+                    // Card has not been created, skip verification
+                    isConnect = true;
+                    btnConnect.setText("Ngắt kết nối");
+                    JOptionPane.showMessageDialog(this, "Thẻ chưa có thông tin, kết nối thành công");
                 }
             } else {
                 System.err.println("Kết nối thất bại: Không thể kết nối đến applet");
