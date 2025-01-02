@@ -107,7 +107,7 @@ public class PatientForm extends javax.swing.JFrame {
 
             appointment.setStatus(!Objects.equals(getValueByRow(tblLichSu, row, 5, String.class), Constant.CHUA_THANH_TOAN));
             appointment.setId(getValueByRow(tblLichSu, row,6, Integer.class) == null ? 0 : getValueByRow(tblLichSu, row, 6, Integer.class));
-            appointment.setName(getValueByRow(tblLichSu, row, 7,String.class));
+            appointment.setDescription(getValueByRow(tblLichSu, row, 7,String.class));
             appointments.add(appointment);
         }
         return appointments;
