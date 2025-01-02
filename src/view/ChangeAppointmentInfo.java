@@ -21,7 +21,7 @@ public class ChangeAppointmentInfo extends javax.swing.JDialog {
     private List<User> userList = new ArrayList<User>();
     private User selectedUser;
     private HibernateService hibernateService;
-    private Appointment appointment;
+    private final Appointment appointment;
 
     /**
      * Creates new form AddAppointment
