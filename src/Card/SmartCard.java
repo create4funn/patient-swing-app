@@ -128,7 +128,7 @@ public class SmartCard {
     // Method to get patient info from the applet
     public String[] getPatientInfo() {
         byte[] command; // Example command, adjust as needed
-        command = new byte[]{(byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        command = new byte[]{(byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
         ResponseAPDU response = sendCommandAPDU(command);
         if (response != null && response.getSW() == 0x9000) {
             byte[] data = response.getData();
@@ -184,8 +184,7 @@ public class SmartCard {
     // Method to get patient picture from the applet
     public BufferedImage GetPatientPicture() {
         byte[] command;
-        // Example command for APDU extended with 0x23, adjust as needed for your specific applet
-        command = new byte[]{(byte) 0x00, (byte) 0x23, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        command = new byte[]{(byte) 0x00, (byte) 0x23, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
 
         // Send the APDU command to get the picture data
         ResponseAPDU response = sendCommandAPDU(command);
