@@ -625,7 +625,7 @@ public class PatientForm extends javax.swing.JFrame {
                             String enteredPin = new String(pinField.getPassword());
                             byte[] PublicKey = HibernateService.getPublicKey(Integer.parseInt(patient.getCardId()));
                             if (card.VerifyCard(PublicKey)) {
-                                if (card.CheckPin(enteredPin)) {
+                                if (card.VerifyPin(enteredPin)) {
                                     // Deduct the cost from the patient's balance
                                     patient.setBalance(-appointment.getCost());
                                     card.updatePatientBalance(String.valueOf(patient.getBalance()));
@@ -715,7 +715,7 @@ public class PatientForm extends javax.swing.JFrame {
                             String enteredPin = new String(pinField.getPassword());
                             byte[] PublicKey = HibernateService.getPublicKey(Integer.parseInt(patient.getCardId()));
                             if (card.VerifyCard(PublicKey)) {
-                                if (card.CheckPin(enteredPin)) {
+                                if (card.VerifyPin(enteredPin)) {
                                     // Deduct the cost from the patient's balance
                                     patient.setBalance(-cost);
                                     card.updatePatientBalance(String.valueOf(patient.getBalance()));

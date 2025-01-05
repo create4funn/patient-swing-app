@@ -432,6 +432,46 @@ public class SmartCard {
         }
     }
 
+    public boolean VerifyPin(String userPin) {
+        try {
+            byte[] pinBytes = HelpMethod.ConvertStringToByteArr(userPin);
+            // Construct APDU command
+            byte[] command = new byte[5 + pinBytes.length];
+            command[0] = (byte) 0x00; // CLA
+            command[1] = (byte) 0x30; // INS
+            command[2] = (byte) 0x00; // P1
+            command[3] = (byte) 0x00; // P2
+            command[4] = (byte) pinBytes.length; // Lc (length of data)
+            System.arraycopy(pinBytes, 0, command, 5, pinBytes.length); // Add PIN data
+            // Send the command and receive the response
+            ResponseAPDU response = sendCommandAPDU(command);
+            if (response != null) {
+                byte[] responseBytes = response.getBytes();
+                int sw = response.getSW();
+
+                if (responseBytes.length >= 1 && responseBytes[0] == (byte) 0x00 && sw == 0x9000) {
+                    // Correct PIN
+                    System.out.println("PIN verified successfully.");
+                    return true;
+                } else if (responseBytes.length >= 1 && responseBytes[0] == (byte) 0x01 && sw == 0x9000) {
+                    // Incorrect PIN
+                    System.out.println("Incorrect PIN entered.");
+                    return false;
+                } else {
+                    // Unexpected response
+                    System.out.println("Unexpected response. SW: " + Integer.toHexString(sw));
+                    return false;
+                }
+            } else {
+                System.out.println("No response from the card.");
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Error verifying PIN: " + e);
+            return false;
+        }
+    }
+
     public boolean CheckCardCreated() {
         byte[] command; // Example command, adjust as needed
         command = new byte[]{(byte) 0x00, (byte) 0x29, (byte) 0x00, (byte) 0x00, (byte) 0x00};

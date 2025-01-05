@@ -157,7 +157,7 @@ public class InputMoney extends javax.swing.JDialog {
                 String enteredPin = new String(pinField.getPassword());
                 byte[] PublicKey = HibernateService.getPublicKey(Integer.parseInt(patient.getCardId()));
                 if (card.VerifyCard(PublicKey)) {
-                    if (card.CheckPin(enteredPin)) {
+                    if (card.VerifyPin(enteredPin)) {
                         int inputMoneyInt = Integer.parseInt(inputMoney);
                         Patient patient = Patient.getInstance();
                         patient.setBalance(inputMoneyInt);
