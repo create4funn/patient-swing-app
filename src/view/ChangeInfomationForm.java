@@ -350,7 +350,7 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
         }
 
         // Attempt to update the patient info
-        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, maBenhNhan, sdt);
+        boolean updated = card.updatePatientInfo(hoTen, ngaySinh, queQuan, gioiTinh, sdt, maBenhNhan);
 
         if (updated) {
             // save database
@@ -361,8 +361,8 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
             patient.setHoten(hoTen);
             patient.setNgaysinh(ngaySinh);
             patient.setQuequan(queQuan);
-            patient.setMabn(maBenhNhan);
             patient.setSdt(sdt);
+            patient.setMabn(maBenhNhan);
             patient.setGioitinh(gioiTinh);
             if(tempImage != null) {
                 card.updatePatientPicture(tempImage);
