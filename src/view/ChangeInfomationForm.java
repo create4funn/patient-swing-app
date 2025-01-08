@@ -158,6 +158,11 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
         jButton2.setBackground(new java.awt.Color(255, 51, 51));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton2.setText("Hủy");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         imgLabel.setBackground(new java.awt.Color(255, 204, 204));
         imgLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -408,6 +413,11 @@ public class ChangeInfomationForm extends javax.swing.JDialog {
         }
 
     }//GEN-LAST:event_btnChooseImgActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void displayImage() {
         // Get the Patient instance
